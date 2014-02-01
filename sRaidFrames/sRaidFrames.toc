@@ -1,0 +1,37 @@
+﻿## Interface: 11200
+## Author: Saroz
+## X-Email: saroz@random-guild.com
+## X-Category: Raid
+## Dependencies: Zorlen
+## Title: sRaidFrames Improved v0.42
+## Notes: 40y range check added by Ogrisch
+## Notes-zhCN: CT_RaidAssist 风格的团队框架
+## Notes-zhTW: CT_RaidAssist 風格的團隊框架
+## DefaultState: Enabled
+## OptionalDeps: Ace2, FuBar, Babble-2.2, DewdropLib, TabletLib, FuBarPlugin-2.0, JustClick, Clique, RosterLib, BanzaiLib, ProximityLib, SurfaceLib
+## SavedVariables: sRaidFramesDB
+
+libs\AceLibrary\AceLibrary.lua
+libs\AceOO-2.0\AceOO-2.0.lua
+libs\AceEvent-2.0\AceEvent-2.0.lua
+libs\AceAddon-2.0\AceAddon-2.0.lua
+libs\AceDB-2.0\AceDB-2.0.lua
+libs\AceConsole-2.0\AceConsole-2.0.lua
+libs\AceLocale-2.2\AceLocale-2.2.lua
+libs\Babble-Spell-2.2\Babble-Spell-2.2.lua
+libs\Tablet-2.0\Tablet-2.0.lua
+libs\Dewdrop-2.0\Dewdrop-2.0.lua
+libs\FuBarPlugin-2.0\FuBarPlugin-2.0.lua
+
+libs\RosterLib-2.0\RosterLib-2.0.lua
+libs\Banzai-1.0\Banzai-1.0.lua
+libs\ProximityLib\ProximityLib.lua
+libs\Surface-1.0\Surface-1.0.lua 
+
+localization.enUS.lua
+localization.koKR.lua
+localization.zhCN.lua
+localization.zhTW.lua
+localization.frFR.lua
+sRaidFrames.lua
+sRaidFramesOptions.lua
