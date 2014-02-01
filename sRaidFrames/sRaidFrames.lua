@@ -398,7 +398,7 @@ function sRaidFrames:RangeCheck()
 		end	
 		if counter > 1 then 
 			self:Debug("RC_TOTAL "..table.getn(self.ExtendedRangeScan))
-			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, 4/table.getn(self.ExtendedRangeScan), self) 
+			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, 3/table.getn(self.ExtendedRangeScan), self) 
 		end
 	end
 end
@@ -412,7 +412,7 @@ function sRaidFrames:ExtendedRangeCheck()
 		j = blockmatch;
 	end
 	
-	if not self.opt.RangeCheck or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (not UnitAffectingCombat("player") and InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible()) or IsShiftKeyDown() then 
+	if not self.opt.RangeCheck or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or IsShiftKeyDown() then 
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		self.ExtendedRangeScan = {}
 		return 
