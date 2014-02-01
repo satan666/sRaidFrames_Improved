@@ -10,13 +10,14 @@ surface:Register("Smooth", "Interface\\AddOns\\sRaidFrames\\textures\\smooth")
 surface:Register("Striped", "Interface\\AddOns\\sRaidFrames\\textures\\striped")
 surface:Register("BantoBar", "Interface\\AddOns\\sRaidFrames\\textures\\bantobar")
 
-local Original_TargetFrame_OnEvent = TargetFrame_OnEvent;
+--local Original_TargetFrame_OnEvent = TargetFrame_OnEvent;
 
 sRaidFrames = AceLibrary("AceAddon-2.0"):new(
 	"AceDB-2.0",
 	"AceEvent-2.0",
 	"AceConsole-2.0",
-	"FuBarPlugin-2.0"
+	"FuBarPlugin-2.0",
+	"AceHook-2.0"
 )
 
 -- Look I'm a fubar plugin!!
@@ -27,7 +28,7 @@ sRaidFrames.hasNoColor = true
 sRaidFrames.clickableTooltip = false
 sRaidFrames.hideWithoutStandby = true
 sRaidFrames.independentProfile = true
-
+sRaidFrames.TargetMonitor = nil
 
 sRaidFrames.ClassCheck = false
 sRaidFrames.SpellCheck = false
@@ -39,7 +40,7 @@ sRaidFrames.MapScale = 0
 
 sRaidFrames.UnitRangeArray = {}
 sRaidFrames.ExtendedRangeScan = {}
-sRaidFrames.ClassSpellArray = {Paladin = "Holy Light", Priest = "Lesser Heal", Druid = "Healing Touch", Shaman = "Healing Wave"}
+sRaidFrames.ClassSpellArray = {Paladin = "Holy Light", Priest = "Flash Heal", Druid = "Healing Touch", Shaman = "Healing Wave"}
 
 
 function sRaidFrames:OnInitialize()
@@ -109,19 +110,9 @@ function sRaidFrames:OnInitialize()
 	end
 	
 	--==Added by Ogrisch 
-	
-	TargetFrame_OnEvent = sRaidFrames_TargetFrame_OnEvent
+	self:Hook("TargetFrame_OnEvent")
 	Zorlen_MakeFirstMacros = nil
 	DEFAULT_CHAT_FRAME:AddMessage("_SRaidFrames Improved by ".."|cff9900FF".."Ogrisch".."|cffffffff".. " loaded")
-end
-
-function sRaidFrames_TargetFrame_OnEvent(event)
-	if UnitExists("target") then 
-		--DEFAULT_CHAT_FRAME:AddMessage(GetUnitName("target")) 
-	end
-	if not TargetMonitor then
-		Original_TargetFrame_OnEvent(event);
-	end	
 end
 
 function sRaidFrames:OnProfileEnable()
@@ -136,6 +127,13 @@ function sRaidFrames:OnEnable()
 	self:RegisterBucketEvent("RAID_ROSTER_UPDATE", 0.1, "UpdateRoster")
 
 	self:UpdateRoster()
+	
+end
+
+function sRaidFrames:TargetFrame_OnEvent(event)
+	if not self.TargetMonitor then
+		self.hooks.TargetFrame_OnEvent.orig(event)
+	end	
 end
 
 function sRaidFrames:OnDisable()
@@ -426,7 +424,7 @@ function sRaidFrames:ExtendedRangeCheck()
 
 		if not UnitExists("target") or UnitExists("target") and not UnitIsUnit("target", j) then
 			targetchanged = true
-			TargetMonitor = true
+			self.TargetMonitor = true
 			TargetUnit(j)
 		end
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
@@ -437,7 +435,7 @@ function sRaidFrames:ExtendedRangeCheck()
 		end
 		if targetchanged then 
 			TargetLastTarget()
-			TargetMonitor = nil
+			self.TargetMonitor = nil
 		end
 		if jumpnext then
 			self.frames[j]:SetAlpha(self.opt.RangeAlpha)

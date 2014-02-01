@@ -1,0 +1,10 @@
+- after enabling extended rage check you you'll have to wait around 15s to apply changes
+- 40y range check is only limited to healing classes due its mechanism
+- 40y check only work with classic blizzard target frame, does not support other unit frames 
+- 40y range check require certain spells to be on actionbar(you will be noticed by message if spell missing)
+
+
+--cheers Ogrisch
+
+
+
