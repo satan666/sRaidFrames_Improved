@@ -88,7 +88,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Range"] = true,
 	["Set about range"] = true,
 	["Enable range check"] = true,
-	["Enable 40y range checking"] = true,
+	["Enable 40y range check"] = true,
 	
 	["Enable dungeon range check"] = true,
 	["Enable 40y range check in dungeons, require certain spells to be on actionbar"] = true,
