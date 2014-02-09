@@ -353,7 +353,11 @@ function sRaidFrames:RangeCheck()
 	if not UnitIsDeadOrGhost("player") and (now > self.NextScan or self.MapEnable and self.MapScale == 0 or not self.MapEnable) and table.getn(self.ExtendedRangeScan) == 0 then
 		self.NextScan = now + self.opt.RangeFrequency
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
-		self.ExtendedRangeScan = {}
+		
+		--self.ExtendedRangeScan = {}
+		for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
+			blockmatch = nil
+		end
 		
 		local counter = 1		
 		for unit in pairs(self.visible) do	
@@ -362,18 +366,19 @@ function sRaidFrames:RangeCheck()
 				--
 			elseif unitcheck and CheckInteractDistance(unit, 4) then
 				self.frames[unit]:SetAlpha(1)
-				self.UnitRangeArray[unit] = " ~30y"
+				self.UnitRangeArray[unit] = " 28Y"
 				if self.MapEnable then
 					local _tx, _ty = GetPlayerMapPosition(unit)
 					local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
 					if _tx > 0 and _ty > 0 then
 						if (dist/11.11) > self.MapScale and CheckInteractDistance(unit, 2) then
+							self.UnitRangeArray[unit] = " 11Y"
 							local adjust = dist/11.11
-							self:Debug("RC_INC "..GetUnitName(unit).."_11y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+							self:Debug("RC_INC "..GetUnitName(unit).."_11Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 							self.MapScale = adjust
 						elseif (dist/28) > self.MapScale then
 							local adjust = dist/28
-							self:Debug("RC_INC "..GetUnitName(unit).."_28y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+							self:Debug("RC_INC "..GetUnitName(unit).."_28Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 							self.MapScale = adjust
 						end
 					end	
@@ -383,7 +388,7 @@ function sRaidFrames:RangeCheck()
 				local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
 				if _tx > 0 and _ty > 0 and self:VerifyUnitRange(unit, dist) then
 					self.frames[unit]:SetAlpha(1)
-					self.UnitRangeArray[unit] = " ~40y"
+					self.UnitRangeArray[unit] = " 40Y"
 				else
 					self.UnitRangeArray[unit] = ""
 					self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
@@ -412,9 +417,14 @@ function sRaidFrames:ExtendedRangeCheck()
 		j = blockmatch;
 	end
 	
-	if not self.opt.RangeCheck or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or IsShiftKeyDown() then 
+	if not self.opt.RangeCheck or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or IsShiftKeyDown() or Zorlen_isEnemy("target") and isShootActive() then 
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
-		self.ExtendedRangeScan = {}
+		
+		--self.ExtendedRangeScan = {}
+		for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
+			blockmatch = nil
+		end
+		
 		return 
 	end
 
@@ -429,7 +439,7 @@ function sRaidFrames:ExtendedRangeCheck()
 		end
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			self.frames[j]:SetAlpha(1)
-			if not self.MapEnable then self.UnitRangeArray[j] = " ~40y" else self.UnitRangeArray[j] = " ~40y*"	end
+			if not self.MapEnable then self.UnitRangeArray[j] = " 40Y" else self.UnitRangeArray[j] = " 40Y*"	end
 			self:Debug("RC "..GetUnitName(j).."_40y - " .."|cff00FF00 PASS")
 			jumpnext = nil
 		end
@@ -451,13 +461,13 @@ function sRaidFrames:VerifyUnitRange(unit, dist)
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			if dist > (self.MapScale*40) then
 				local adjust = dist/(40*0.99)
-				self:Debug("RC_INC "..GetUnitName(unit).."_40y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+				self:Debug("RC_INC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 				self.MapScale = adjust
 			end	
 			return true
 		elseif dist < (self.MapScale*40) then
 			local adjust = dist/(40*1.01)
-			self:Debug("RC_DEC "..GetUnitName(unit).."_40y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+			self:Debug("RC_DEC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 			self.MapScale = adjust
 			return nil
 		else
