@@ -86,9 +86,15 @@ local spellTimers = {
 	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, time, heal_amount, sufix)
 	    if sender == UnitName("player") then return end
 		if not RL:GetUnitIDFromName(sender) then return end
-
+		
+		local duration = nil
+		
+		if spell and watchSpells[spell] then
+			duration = spellTimers[spell]
+		end
+		
 		if what == "HN" then
-			self:UnitIsHealed(who)
+			self:UnitIsHealed(who, duration)
 		elseif what == "HG" then
 			self:GroupHeal(sender)
 		end
@@ -101,14 +107,14 @@ local spellTimers = {
 		-- TO DO
 	end
 	
-	function sRaidFramesHeals:UnitIsHealed(name, timer)
+	function sRaidFramesHeals:UnitIsHealed(name, duration)
 		local unit = RL:GetUnitIDFromName(name)
-		timer = timer or 2
+		duration = duration or 2
 		
 		if not unit then return end
 		
 		sRaidFrames:ShowHealIndicator(unit)
-		self:ScheduleEvent("HealCompleted_"..unit, self.UnitHealCompleted, timer, self, name)
+		self:ScheduleEvent("HealCompleted_"..unit, self.UnitHealCompleted, duration, self, name)
 	end
 	
 	function sRaidFramesHeals:UnitHealCompleted(name)

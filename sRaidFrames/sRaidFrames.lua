@@ -1,5 +1,7 @@
 ﻿local L = AceLibrary("AceLocale-2.2"):new("sRaidFrames")
 local BS = AceLibrary("Babble-Spell-2.2")
+local Compost = AceLibrary("Compost-2.0")
+
 --local proximity = ProximityLib:GetInstance("1")
 local surface = AceLibrary("Surface-1.0") 
 local roster = AceLibrary("RosterLib-2.0")
@@ -355,10 +357,8 @@ function sRaidFrames:RangeCheck()
 		self.NextScan = now + self.opt.RangeFrequency
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		
-		self.ExtendedRangeScan = {}
-		--for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
-			--blockmatch = nil
-		--end
+		--self.ExtendedRangeScan = {} 
+		self.ExtendedRangeScan = Compost and Compost:Acquire() or {}
 		
 		local counter = 1		
 		for unit in pairs(self.visible) do	
@@ -421,12 +421,9 @@ function sRaidFrames:ExtendedRangeCheck()
 	if not self.opt.RangeCheck or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or IsShiftKeyDown() or Zorlen_isEnemy("target") and isShootActive() then 
 		
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
-		
-		self.ExtendedRangeScan = {}
-		--for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
-			--blockmatch = nil
-		--end
-		
+		Compost:Reclaim(self.ExtendedRangeScan)
+		--self.ExtendedRangeScan = {}
+
 		return 
 	end
 
@@ -640,6 +637,7 @@ function sRaidFrames:UpdateBuffs(units)
 					debuffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 					debuffFrame.count:SetText(debuffApplications > 1 and debuffApplications or nil);
 					debuffFrame.texture:SetTexture(debuffTexture)
+					debuffFrame:SetFrameLevel(5)
 					debuffFrame:Show()
 				end
 			end
@@ -1213,7 +1211,7 @@ function sRaidFrames:CreateHealIndicator(unit)
 					  })
 		self.indicator[unit]:SetBackdropBorderColor(0,0,0,1)
 		self.indicator[unit]:SetBackdropColor(1,1,1,1)
-		self.indicator[unit]:SetFrameLevel(5)
+		self.indicator[unit]:SetFrameLevel(10)
 		self.indicator[unit]:Hide()
 
 
@@ -1227,7 +1225,7 @@ end
 function sRaidFrames:ShowHealIndicator(unit)
 	--DEFAULT_CHAT_FRAME:AddMessage(unit)
 	if not unit then return end
-	if not self.indicator[unit] then return end
+	if not self.indicator then return end
 	
 	self.indicator[unit].active = self.indicator[unit].active + 1
 	
@@ -1247,7 +1245,7 @@ end
 
 function sRaidFrames:HideHealIndicator(unit)
 	if not unit then return end
-	if not self.indicator[unit] then return end
+	if not self.indicator then return end
 	
 	self.indicator[unit].active = 0
 	self.indicator[unit]:SetBackdropColor(0, 0, 0, 0)

@@ -28,6 +28,7 @@ libs\AceComm-2.0\AceComm-2.0.lua
 libs\AceModuleCore-2.0\AceModuleCore-2.0.lua
 
 
+libs\Compost-2.0\Compost-2.0.lua
 libs\RosterLib-2.0\RosterLib-2.0.lua
 libs\Banzai-1.0\Banzai-1.0.lua
 libs\ProximityLib\ProximityLib.lua
