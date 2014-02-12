@@ -42,15 +42,37 @@ local watchSpells = {
 		-- register events
 		self:RegisterEvent("SPELLCAST_START")
 		self:RegisterEvent("SPELLCAST_STOP")
-		--self:RegisterEvent("CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF","CombatLogHeal")
-		--self:RegisterEvent("CHAT_MSG_SPELL_PARTY_BUFF","CombatLogHeal")
+		self:RegisterEvent("CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF","CombatLogHeal")
+		self:RegisterEvent("CHAT_MSG_SPELL_PARTY_BUFF","CombatLogHeal")
 		-- AceComm
 
 		self:RegisterComm("Grid", "GROUP", "OnCommReceive")
 
 	end
 	
-	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, sufix)
+	
+	function sRaidFramesHeals:CombatLogHeal(msg)
+		for helper, spell in string.gfind(msg, "(.+) begins to cast (.+).") do
+			if not watchSpells[spell] then return end
+			local unitid = RL:GetUnitIDFromName(helper)
+
+			if not helper or not spell or not unitid then return end
+			if gridusers[helper] then return end
+			if spell == BS["Prayer of Healing"] then
+				self:GroupHeal(helper)
+			else
+				local u = RL:GetUnitObjectFromUnit(unitid.."target")
+				if not u then return end
+				-- filter units that are probably not the correct unit
+				if UnitHealth(u.unitid)/UnitHealthMax(u.unitid) < 0.9 then
+					self:UnitIsHealed(u.name)
+				end
+			end
+		end
+	end
+	
+	
+	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, time, heal_amount, sufix)
 
 	    if sender == UnitName("player") then return end
 		if not RL:GetUnitIDFromName(sender) then return end
@@ -61,7 +83,7 @@ local watchSpells = {
 			self:GroupHeal(sender)
 		end
 		
-		--DEFAULT_CHAT_FRAME:AddMessage("xxx")
+		--DEFAULT_CHAT_FRAME:AddMessage("TEST")
 	end
 	
 	
@@ -96,7 +118,7 @@ local watchSpells = {
 					if GridStatusHeals then
 						GridStatusHeals:SendCommMessage("GROUP", "HN", self.target, arg1, GetTime(), nil, "SRF_"..self.ver)
 					else
-						self:SendCommMessage("GROUP", "HN", self.target, arg1, GetTime(), nil, "SRF_"..self.ver)
+						self:SendCommMessage("GROUP", "HN", self.target, arg1, GetTime(), nil, "SRF_"..self.ver)     
 					end	
 				end
 			end
@@ -136,7 +158,7 @@ local watchSpells = {
 				self.spell = spellName
 			else
 				self.spell = spellName
-				--self.target = UnitName("target") -------------------------------------------------------------------------------
+				--self.target = UnitName("target") 
 			end
 		end
 	end
@@ -207,7 +229,7 @@ local watchSpells = {
 -- life , aggro, confirm
 -- combatLog orange
 -- Spellcastctart green
--- latency detection events vs on_comm  bedzie x2
+-- latency detection events vs on_comm  x2
 
 
 --}}}
