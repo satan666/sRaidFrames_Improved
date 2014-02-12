@@ -355,10 +355,10 @@ function sRaidFrames:RangeCheck()
 		self.NextScan = now + self.opt.RangeFrequency
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		
-		--self.ExtendedRangeScan = {}
-		for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
-			blockmatch = nil
-		end
+		self.ExtendedRangeScan = {}
+		--for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
+			--blockmatch = nil
+		--end
 		
 		local counter = 1		
 		for unit in pairs(self.visible) do	
@@ -419,12 +419,13 @@ function sRaidFrames:ExtendedRangeCheck()
 	end
 	
 	if not self.opt.RangeCheck or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or IsShiftKeyDown() or Zorlen_isEnemy("target") and isShootActive() then 
+		
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		
-		--self.ExtendedRangeScan = {}
-		for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
-			blockmatch = nil
-		end
+		self.ExtendedRangeScan = {}
+		--for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
+			--blockmatch = nil
+		--end
 		
 		return 
 	end
@@ -513,6 +514,7 @@ function sRaidFrames:UpdateUnit(units)
 			
 			local _, class = UnitClass(unit)
 			if class then
+				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:UpdateUnit "..unit.." - "..GetUnitName(unit))
 				f.title:SetText(self.classColors[class]..UnitName(unit)..range.."|r")
 			else
 				f.title:SetText(UnitName(unit) or L["Unknown"])
@@ -553,6 +555,9 @@ function sRaidFrames:UpdateUnit(units)
 					f.mpbar:SetValue(0)
 					f:SetBackdropColor(0.3, 0.3, 0.3, 1)
 				else
+					
+					self:CreateHealIndicator(unit)
+					
 					self.unavail[unit] = false
 					self.res[unit] = nil
 					local hp = UnitHealth(unit) or 0
@@ -1182,3 +1187,82 @@ end
 function sRaidFrames:S(var, val)
 	self.db.profile[var] = val
 end
+
+
+
+
+--==Added by Ogrisch
+
+
+function sRaidFrames:CreateHealIndicator(unit)
+	f = self.frames[unit]
+	
+	if not self.indicator then
+		self.indicator = {}
+	end	
+	
+	if not self.indicator[unit] then
+		self.indicator[unit] = CreateFrame("Frame", nil, f)
+		self.indicator[unit].active = 0
+		self.indicator[unit]:SetWidth(7)
+		self.indicator[unit]:SetHeight(7.5)
+		self.indicator[unit]:SetBackdrop( {
+						  bgFile = "Interface\\Addons\\sRaidFrames\\white16x16", tile = true, tileSize = 16,
+						  edgeFile = "Interface\\Addons\\sRaidFrames\\white16x16", edgeSize = 1,
+						  insets = {left = 1, right = 1, top = 1, bottom = 1},
+					  })
+		self.indicator[unit]:SetBackdropBorderColor(0,0,0,1)
+		self.indicator[unit]:SetBackdropColor(1,1,1,1)
+		self.indicator[unit]:SetFrameLevel(5)
+		self.indicator[unit]:Hide()
+
+
+		--self.indicator:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 1, 1)
+		--self.indicator:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -1, 1)
+		--self.indicator:SetPoint("TOPLEFT", f, "TOPLEFT", 1, -1)
+		self.indicator[unit]:SetPoint("TOPRIGHT", f, "TOPRIGHT", -6, -6)
+	end
+end
+
+function sRaidFrames:ShowHealIndicator(unit)
+	--DEFAULT_CHAT_FRAME:AddMessage(unit)
+	if not unit then return end
+	if not self.indicator[unit] then return end
+	
+	self.indicator[unit].active = self.indicator[unit].active + 1
+	
+	if self.indicator[unit].active == 1 then
+		self.indicator[unit]:SetBackdropColor(0, 1, 0, 1)
+	elseif self.indicator[unit].active == 2 then
+		self.indicator[unit]:SetBackdropColor(1, 1, 0, 1)
+	elseif self.indicator[unit].active == 3 then
+		self.indicator[unit]:SetBackdropColor(1, 0.4, 0, 1)
+	else
+		self.indicator[unit]:SetBackdropColor(1, 0, 0, 1)
+	end
+	
+	self.indicator[unit]:Show()
+	
+end
+
+function sRaidFrames:HideHealIndicator(unit)
+	if not unit then return end
+	if not self.indicator[unit] then return end
+	
+	self.indicator[unit].active = 0
+	self.indicator[unit]:SetBackdropColor(0, 0, 0, 0)
+	self.indicator[unit]:Hide()
+end
+
+
+
+function sRaidFrames:Test(unit)
+	unit = "raid2"
+	--self:CreateIndicator(self.groupframes[unit], pos)
+	--self:CreateHealIndicator(unit)
+	--self:ShowHealIndicator(unit)
+	--sRaidFramesHeals:UnitIsHealed(unit)
+	DEFAULT_CHAT_FRAME:AddMessage(self.indicator[unit].active)
+end
+
+

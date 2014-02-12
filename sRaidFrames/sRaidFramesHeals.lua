@@ -1,5 +1,6 @@
 local RL = AceLibrary("RosterLib-2.0")
 local BS = AceLibrary("Babble-Spell-2.2")
+local Banzai = AceLibrary("Banzai-1.0")
 
 sRaidFramesHeals = sRaidFrames:NewModule("sRaidFramesHeals", "AceComm-2.0", "AceHook-2.0", "AceEvent-2.0")
 sRaidFramesHeals.ver = GetAddOnMetadata("sRaidFrames", "Version")
@@ -18,6 +19,17 @@ local watchSpells = {
 	[BS["Prayer of Healing"]] = true,
 }
 
+local spellTimers = {
+	["Holy Light"] = 2.5,
+	["Flash of Light"] = 1.5,
+	["Flash Heal"] = 1.5,
+	["Greater Heal"] = 2.5,  --3s but - 0.5 from talents
+	["Heal"] = 2.5,			--3s but - 0.5 from talents
+	["Healing Touch"] = 2.75,  --3.5s but - 0.5 from talents and - 0.25 bcuz of lower ranks
+	["Regrowth"] = 1.9,
+	["Lesser Healing Wave"] = 1.5,  
+	["Healing Wave"] = 2.5 --3s but - 0.5 from talents
+}
 
 	function sRaidFramesHeals:OnInitialize()
 		if not Grid then  --need to check if Grid active othervise error 
@@ -57,15 +69,14 @@ local watchSpells = {
 			local unitid = RL:GetUnitIDFromName(helper)
 
 			if not helper or not spell or not unitid then return end
-			if gridusers[helper] then return end
 			if spell == BS["Prayer of Healing"] then
 				self:GroupHeal(helper)
 			else
 				local u = RL:GetUnitObjectFromUnit(unitid.."target")
 				if not u then return end
 				-- filter units that are probably not the correct unit
-				if UnitHealth(u.unitid)/UnitHealthMax(u.unitid) < 0.9 then
-					self:UnitIsHealed(u.name)
+				if UnitHealth(u.unitid)/UnitHealthMax(u.unitid) < 0.9 or Banzai:GetUnitAggroByUnitId(u.unitid) then
+					self:UnitIsHealed(u.name, spellTimers[spell])
 				end
 			end
 		end
@@ -73,7 +84,6 @@ local watchSpells = {
 	
 	
 	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, time, heal_amount, sufix)
-
 	    if sender == UnitName("player") then return end
 		if not RL:GetUnitIDFromName(sender) then return end
 
@@ -91,14 +101,24 @@ local watchSpells = {
 		-- TO DO
 	end
 	
-	function sRaidFramesHeals:UnitIsHealed(name)
-		-- TO DO
+	function sRaidFramesHeals:UnitIsHealed(name, timer)
+		local unit = RL:GetUnitIDFromName(name)
+		timer = timer or 2
+		
+		if not unit then return end
+		
+		sRaidFrames:ShowHealIndicator(unit)
+		self:ScheduleEvent("HealCompleted_"..unit, self.UnitHealCompleted, timer, self, name)
+	end
+	
+	function sRaidFramesHeals:UnitHealCompleted(name)
+		local unit = RL:GetUnitIDFromName(name)
+		if not unit then return end
+		sRaidFrames:HideHealIndicator(unit)
 	end
 
 	
 	function sRaidFramesHeals:SPELLCAST_START()
-		
-		
 		if not self.target and UnitExists("target") and UnitIsFriend("target", "player") then
 			self.target = GetUnitName("target")
 		end
