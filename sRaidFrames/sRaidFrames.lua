@@ -17,6 +17,7 @@ sRaidFrames = AceLibrary("AceAddon-2.0"):new(
 	"AceEvent-2.0",
 	"AceConsole-2.0",
 	"FuBarPlugin-2.0",
+	"AceModuleCore-2.0",
 	"AceHook-2.0"
 )
 
@@ -403,7 +404,7 @@ function sRaidFrames:RangeCheck()
 		end	
 		if counter > 1 then 
 			self:Debug("RC_TOTAL "..table.getn(self.ExtendedRangeScan))
-			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, 3/table.getn(self.ExtendedRangeScan), self) 
+			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, 2.5/table.getn(self.ExtendedRangeScan), self) 
 		end
 	end
 end
@@ -489,7 +490,7 @@ end
 
 function sRaidFrames:Debug(msg)
 	if msg and self.opt.Debug then 
-		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames Debug: |cffffffff"..msg) 
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames Debug: |cffffffff"..msg); 
 	end
 end
 
@@ -518,7 +519,7 @@ function sRaidFrames:UpdateUnit(units)
 			end
 
 			self.feign[unit] = nil
-			--[[
+			
 			-- Silly hunters, why do you have to be so annoying
 			if class == "HUNTER" then
 				if UnitIsDead(unit) then
@@ -532,7 +533,7 @@ function sRaidFrames:UpdateUnit(units)
 					end
 				end
 			end
-			--]]
+			
 			
 			if not self.feign[unit] then
 				local status, dead, ghost = nil, UnitIsDead(unit), UnitIsGhost(unit)
