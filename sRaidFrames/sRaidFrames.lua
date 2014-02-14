@@ -1229,29 +1229,43 @@ function sRaidFrames:ShowHealIndicator(unit)
 	
 	self.indicator[unit].active = self.indicator[unit].active + 1
 	
-	if self.indicator[unit].active == 1 then
-		self.indicator[unit]:SetBackdropColor(0, 1, 0, 1)
-	elseif self.indicator[unit].active == 2 then
-		self.indicator[unit]:SetBackdropColor(1, 1, 0, 1)
-	elseif self.indicator[unit].active == 3 then
-		self.indicator[unit]:SetBackdropColor(1, 0.4, 0, 1)
-	else
-		self.indicator[unit]:SetBackdropColor(1, 0, 0, 1)
-	end
-	
-	self.indicator[unit]:Show()
-	
+	self:SetHealIndicator(unit);
 end
 
 function sRaidFrames:HideHealIndicator(unit)
 	if not unit then return end
 	if not self.indicator then return end
 	
-	self.indicator[unit].active = 0
-	self.indicator[unit]:SetBackdropColor(0, 0, 0, 0)
-	self.indicator[unit]:Hide()
+	if self.indicator[unit].active > 0 then
+		self.indicator[unit].active = self.indicator[unit].active - 1
+	end
+	
+	self:SetHealIndicator(unit);
 end
 
+function sRaidFrames:SetHealIndicator(unit)
+	if not unit then return end
+	if not self.indicator then return end
+	
+	
+	if self.indicator[unit].active == 0 then
+		self.indicator[unit]:SetBackdropColor(0, 0, 0, 0)
+		self.indicator[unit]:Hide()
+	else
+		if self.indicator[unit].active == 1 then
+			self.indicator[unit]:SetBackdropColor(0, 1, 0, 1)
+		elseif self.indicator[unit].active == 2 then
+			self.indicator[unit]:SetBackdropColor(1, 1, 0, 1)
+		elseif self.indicator[unit].active == 3 then
+			self.indicator[unit]:SetBackdropColor(1, 0.4, 0, 1)
+		else
+			self.indicator[unit]:SetBackdropColor(1, 0, 0, 1)
+		end
+		
+		self.indicator[unit]:Show()
+	end	
+
+end
 
 
 function sRaidFrames:Test(unit)

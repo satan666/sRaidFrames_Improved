@@ -83,7 +83,7 @@ local spellTimers = {
 	end
 	
 	
-	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, time, heal_amount, sufix)
+	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, spell_start, spell_fnish, heal_amount, sufix)
 	    if sender == UnitName("player") then return end
 		if not RL:GetUnitIDFromName(sender) then return end
 		
@@ -94,7 +94,7 @@ local spellTimers = {
 		end
 		
 		if what == "HN" then
-			self:UnitIsHealed(who, duration)
+			self:UnitIsHealed(who, sender, duration)
 		elseif what == "HG" then
 			self:GroupHeal(sender)
 		end
@@ -107,20 +107,27 @@ local spellTimers = {
 		-- TO DO
 	end
 	
-	function sRaidFramesHeals:UnitIsHealed(name, duration)
-		local unit = RL:GetUnitIDFromName(name)
+	function sRaidFramesHeals:UnitIsHealed(target_name, caster_name, duration)
+		local unit = RL:GetUnitIDFromName(target_name)
 		duration = duration or 2
 		
 		if not unit then return end
 		
 		sRaidFrames:ShowHealIndicator(unit)
-		self:ScheduleEvent("HealCompleted_"..unit, self.UnitHealCompleted, duration, self, name)
+		
+		if self:IsEventScheduled("HealCompleted_"..target_name..caster_name) then
+			self:CancelScheduledEvent("HealCompleted_"..target_name..caster_name);
+			self:UnitHealCompleted(target_name);
+		end
+		
+		self:ScheduleEvent("HealCompleted_"..target_name..caster_name, self.UnitHealCompleted, duration, self, target_name)
 	end
 	
-	function sRaidFramesHeals:UnitHealCompleted(name)
-		local unit = RL:GetUnitIDFromName(name)
+	function sRaidFramesHeals:UnitHealCompleted(target_name)
+		local unit = RL:GetUnitIDFromName(target_name)
 		if not unit then return end
 		sRaidFrames:HideHealIndicator(unit)
+
 	end
 
 	
@@ -140,11 +147,14 @@ local spellTimers = {
 					self:SendCommMessage("GROUP", "HG")
 				end	
 			else
+				local spell_start = GetTime()
+				local spell_finish = nil
+				local heal_amount = nil
 				if RL:GetUnitIDFromName(self.target) then
 					if GridStatusHeals then
-						GridStatusHeals:SendCommMessage("GROUP", "HN", self.target, arg1, GetTime(), nil, "SRF_"..self.ver)
+						GridStatusHeals:SendCommMessage("GROUP", "HN", self.target, arg1, spell_start, spell_finish, heal_amount, "SRF_"..self.ver)
 					else
-						self:SendCommMessage("GROUP", "HN", self.target, arg1, GetTime(), nil, "SRF_"..self.ver)     
+						self:SendCommMessage("GROUP", "HN", self.target, arg1, spell_start, spell_finish, heal_amount, "SRF_"..self.ver)     
 					end	
 				end
 			end
