@@ -5,6 +5,7 @@ local Banzai = AceLibrary("Banzai-1.0")
 sRaidFramesHeals = sRaidFrames:NewModule("sRaidFramesHeals", "AceComm-2.0", "AceHook-2.0", "AceEvent-2.0")
 sRaidFramesHeals.ver = GetAddOnMetadata("sRaidFrames", "Version")
 
+sRaidFramesHeals.WhoHealsWho = {}
 
 local watchSpells = {
 	[BS["Holy Light"]] = true,
@@ -75,31 +76,36 @@ local spellTimers = {
 				local u = RL:GetUnitObjectFromUnit(unitid.."target")
 				if not u then return end
 				-- filter units that are probably not the correct unit
-				if UnitHealth(u.unitid)/UnitHealthMax(u.unitid) < 0.9 or Banzai:GetUnitAggroByUnitId(u.unitid) then
-					self:UnitIsHealed(u.name, spellTimers[spell])
-				end
+				--if UnitHealth(u.unitid)/UnitHealthMax(u.unitid) < 0.9 or Banzai:GetUnitAggroByUnitId(u.unitid) then
+					self:UnitIsHealed(u.name, helper, spellTimers[spell], "log")
+				--end
 			end
 		end
 	end
 	
 	
-	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, spell_start, spell_fnish, heal_amount, sufix)
+	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, spell_start, spell_finish, heal_amount, sufix)
 	    if sender == UnitName("player") then return end
 		if not RL:GetUnitIDFromName(sender) then return end
 		
 		local duration = nil
 		
-		if spell and watchSpells[spell] then
+		if spell_finish then
+			duration = tonumber(spell_finish) - GetTime()
+			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive 1"..prefix..duration)
+		elseif spell and watchSpells[spell] then
 			duration = spellTimers[spell]
+			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive 2"..prefix..duration)
 		end
+		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive "..duration)
 		
 		if what == "HN" then
-			self:UnitIsHealed(who, sender, duration)
+			self:UnitIsHealed(who, sender, duration, strlower(prefix))
 		elseif what == "HG" then
 			self:GroupHeal(sender)
 		end
 		
-		--DEFAULT_CHAT_FRAME:AddMessage("TEST")
+		
 	end
 	
 	
@@ -107,37 +113,56 @@ local spellTimers = {
 		-- TO DO
 	end
 	
-	function sRaidFramesHeals:UnitIsHealed(target_name, caster_name, duration)
+
+	function sRaidFramesHeals:UnitIsHealed(target_name, caster_name, duration, prefix)
 		local unit = RL:GetUnitIDFromName(target_name)
-		duration = duration or 2
+		local check1 = self:IsEventScheduled("HealCompleted_"..caster_name)
+		local check2 = nil
 		
-		if not unit then return end
-		
-		sRaidFrames:ShowHealIndicator(unit)
-		
-		if self:IsEventScheduled("HealCompleted_"..target_name..caster_name) then
-			self:CancelScheduledEvent("HealCompleted_"..target_name..caster_name);
-			self:UnitHealCompleted(target_name);
+		if not unit then 
+			return 
 		end
 		
-		self:ScheduleEvent("HealCompleted_"..target_name..caster_name, self.UnitHealCompleted, duration, self, target_name)
+		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealed "..prefix..duration)
+		
+		if check1 and (prefix == "log" or prefix ~= "log" and self.WhoHealsWho[caster_name] ~= target_name) then 
+			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealed x1"..caster_name..target_name.." old "..caster_name..self.WhoHealsWho[caster_name].." "..prefix)
+			self:CancelScheduledEvent("HealCompleted_"..caster_name);
+			self:UnitHealCompleted(caster_name);
+			check2 = true
+			
+		end
+		
+		if not check1 or check2 then
+			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealed x2 "..caster_name..target_name)
+			sRaidFrames:ShowHealIndicator(unit)
+			self.WhoHealsWho[caster_name] = target_name
+			self:ScheduleEvent("HealCompleted_"..caster_name, self.UnitHealCompleted, duration, self, caster_name)
+		end	
+		
 	end
 	
-	function sRaidFramesHeals:UnitHealCompleted(target_name)
-		local unit = RL:GetUnitIDFromName(target_name)
+	
+	function sRaidFramesHeals:UnitHealCompleted(caster)
+		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitHealCompleted ")
+		local target = self.WhoHealsWho[caster]
+		if not target then return end
+		
+		local unit = RL:GetUnitIDFromName(target)
 		if not unit then return end
+		
+		self.WhoHealsWho[caster] = nil
 		sRaidFrames:HideHealIndicator(unit)
-
+		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitHealCompleted "..GetUnitName(unit))
 	end
 
-	
 	function sRaidFramesHeals:SPELLCAST_START()
 		if not self.target and UnitExists("target") and UnitIsFriend("target", "player") then
 			self.target = GetUnitName("target")
 		end
 
 		if watchSpells[arg1] and self.target then
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SPELLCAST_START");
+			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SPELLCAST_START "..arg2);
 
 			if self.spell == BS["Prayer of Healing"] then
 				self:GroupHeal(playerName)
@@ -148,8 +173,9 @@ local spellTimers = {
 				end	
 			else
 				local spell_start = GetTime()
-				local spell_finish = nil
+				local spell_finish = spell_start + arg2/1000
 				local heal_amount = nil
+				
 				if RL:GetUnitIDFromName(self.target) then
 					if GridStatusHeals then
 						GridStatusHeals:SendCommMessage("GROUP", "HN", self.target, arg1, spell_start, spell_finish, heal_amount, "SRF_"..self.ver)
@@ -168,8 +194,7 @@ local spellTimers = {
 
 
 	--{{{ hooks 
-	
-	-- we need to replace these in TBC by a different logic
+
 
 	function sRaidFramesHeals:CastSpell(spellId, spellbookTabNum)
 		--DEFAULT_CHAT_FRAME:AddMessage("CastSpell");
@@ -224,7 +249,6 @@ local spellTimers = {
 		self.hooks["SpellTargetUnit"](a1)
 		if shallTargetUnit and self.spell and not SpellIsTargeting() then
 			self.target = UnitName(a1)
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SpellTargetUnit - "..self.target)
 		end
 	end
 
