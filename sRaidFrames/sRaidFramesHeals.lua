@@ -88,7 +88,7 @@ local spellTimers = {
 	    if sender == UnitName("player") then return end
 		if not RL:GetUnitIDFromName(sender) then return end
 		
-		local duration = nil
+		local duration = 2
 		
 		if spell_finish then
 			duration = tonumber(spell_finish) - GetTime()
@@ -116,7 +116,7 @@ local spellTimers = {
 
 	function sRaidFramesHeals:UnitIsHealed(target_name, caster_name, duration, prefix)
 		local unit = RL:GetUnitIDFromName(target_name)
-		local check1 = self:IsEventScheduled("HealCompleted_"..caster_name)
+		local check1 = self:IsEventScheduled("HealCompleted"..caster_name)
 		local check2 = nil
 		
 		if not unit then 
@@ -127,17 +127,17 @@ local spellTimers = {
 		
 		if check1 and (prefix == "log" or prefix ~= "log" and self.WhoHealsWho[caster_name] ~= target_name) then 
 			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealed x1"..caster_name..target_name.." old "..caster_name..self.WhoHealsWho[caster_name].." "..prefix)
-			self:CancelScheduledEvent("HealCompleted_"..caster_name);
+			self:CancelScheduledEvent("HealCompleted"..caster_name);
 			self:UnitHealCompleted(caster_name);
 			check2 = true
 			
 		end
 		
 		if not check1 or check2 then
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealed x2 "..caster_name..target_name)
+			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealed x2 "..prefix)
 			sRaidFrames:ShowHealIndicator(unit)
 			self.WhoHealsWho[caster_name] = target_name
-			self:ScheduleEvent("HealCompleted_"..caster_name, self.UnitHealCompleted, duration, self, caster_name)
+			self:ScheduleEvent("HealCompleted"..caster_name, self.UnitHealCompleted, duration, self, caster_name)
 		end	
 		
 	end
