@@ -1217,26 +1217,31 @@ function sRaidFrames:CreateHealIndicator(unit)
 
 		--self.indicator:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 1, 1)
 		--self.indicator:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -1, 1)
-		--self.indicator:SetPoint("TOPLEFT", f, "TOPLEFT", 1, -1)
-		self.indicator[unit]:SetPoint("TOPRIGHT", f, "TOPRIGHT", -6, -6)
+		if sRaidFrames.opt.Border then
+			self.indicator[unit]:SetPoint("TOPLEFT", f, "TOPLEFT", 3, -2)
+		else
+			self.indicator[unit]:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
+		end	
+		--self.indicator[unit]:SetPoint("TOPRIGHT", f, "TOPRIGHT", -6, -6)
 	end
 end
 
 function sRaidFrames:ShowHealIndicator(unit)
-	--DEFAULT_CHAT_FRAME:AddMessage(unit)
-	if not unit then return end
-	if not self.indicator then return end
+	if not self.opt.heal then return end
+	if not unit or not self.indicator or not self.indicator[unit] then return end
 	
-	self.indicator[unit].active = self.indicator[unit].active + 1
+	if self.indicator[unit] then
+		self.indicator[unit].active = self.indicator[unit].active + 1
+	end	
 	
 	self:SetHealIndicator(unit);
 end
 
 function sRaidFrames:HideHealIndicator(unit)
-	if not unit then return end
-	if not self.indicator then return end
+	if not self.opt.heal then return end
+	if not unit or not self.indicator or not self.indicator[unit] then return end
 	
-	if self.indicator[unit].active > 0 then
+	if self.indicator[unit] and self.indicator[unit].active > 0 then
 		self.indicator[unit].active = self.indicator[unit].active - 1
 	end
 	
@@ -1244,9 +1249,6 @@ function sRaidFrames:HideHealIndicator(unit)
 end
 
 function sRaidFrames:SetHealIndicator(unit)
-	if not unit then return end
-	if not self.indicator then return end
-	
 	
 	if self.indicator[unit].active == 0 then
 		self.indicator[unit]:SetBackdropColor(0, 0, 0, 0)
@@ -1274,7 +1276,7 @@ function sRaidFrames:Test(unit)
 	--self:CreateHealIndicator(unit)
 	--self:ShowHealIndicator(unit)
 	--sRaidFramesHeals:UnitIsHealed(unit)
-	DEFAULT_CHAT_FRAME:AddMessage(self.indicator[unit].active)
+	sRaidFrames:ShowHealIndicator(unit)
 end
 
 

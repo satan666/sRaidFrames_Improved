@@ -7,6 +7,9 @@
 L:RegisterTranslations("enUS", function() return {
 	["hidden"] = true,
 	["shown"] = true,
+	
+	["Healing Indicators"] = true,
+	["Show/Hide healing indicators"] = true,
 
 	["Lock"] = true,
 	["Lock/Unlock the raid frames"] = true,

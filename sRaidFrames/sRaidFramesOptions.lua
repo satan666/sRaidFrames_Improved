@@ -6,6 +6,20 @@ local surface = AceLibrary("Surface-1.0")
 sRaidFrames.options = {
 	type = "group",
 	args = {
+		
+		heal = {
+			name = L["Healing Indicators"],
+			type = "toggle",
+			desc = L["Show/Hide healing indicators"],
+			get = function()
+				return sRaidFrames.opt.heal
+			end,
+			set = function(heal)
+				sRaidFrames:S("heal", heal)
+				
+			end,
+		},
+		
 		lock = {
 			name = L["Lock"],
 			type = "toggle",
@@ -717,6 +731,11 @@ function sRaidFrames:chatSetLayout(layout)
 end
 
 function sRaidFrames:chatToggleBorder(value)
+	for key,value in pairs(self.indicator) do
+		self.indicator[key]:Hide()
+		self.indicator[key] = nil
+	end
+	
 	self:S("Border", value)
 
 	for k,f in pairs(self.frames) do
