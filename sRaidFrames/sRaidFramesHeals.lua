@@ -162,7 +162,7 @@ local spellTimers = {
 		end
 
 		if watchSpells[arg1] and self.target then
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SPELLCAST_START "..arg2);
+			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SPELLCAST_START "..self.target);
 
 			if self.spell == BS["Prayer of Healing"] then
 				self:GroupHeal(playerName)
@@ -241,14 +241,16 @@ local spellTimers = {
 
 
 	function sRaidFramesHeals:SpellTargetUnit(a1)
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SpellTargetUnit")
+		
 		local shallTargetUnit
 		if SpellIsTargeting() then
 			shallTargetUnit = true
 		end
 		self.hooks["SpellTargetUnit"](a1)
-		if shallTargetUnit and self.spell and not SpellIsTargeting() then
+		if shallTargetUnit and not SpellIsTargeting() then
+			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SpellTargetUnit "..UnitName(a1))
 			self.target = UnitName(a1)
+			
 		end
 	end
 
@@ -270,6 +272,7 @@ local spellTimers = {
 
 
 	function sRaidFramesHeals:sRaidFramesHealsOnMouseDown()
+		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:sRaidFramesHealsOnMouseDown")
 		if self.spell and UnitName("mouseover") then
 			self.target = UnitName("mouseover")
 		elseif self.spell and GameTooltipTextLeft1:IsVisible() then
@@ -278,7 +281,6 @@ local spellTimers = {
 				self.target = name;
 			end
 		end
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:sRaidFramesHealsOnMouseDown");
 		self.hooks[WorldFrame]["OnMouseDown"]()
 	end
 
