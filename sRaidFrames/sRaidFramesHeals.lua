@@ -18,6 +18,7 @@ local watchSpells = {
 	[BS["Healing Wave"]] = true,
 	[BS["Regrowth"]] = true,
 	[BS["Prayer of Healing"]] = true,
+	[BS["Lesser Heal"]] = true
 }
 
 local spellTimers = {
@@ -29,7 +30,8 @@ local spellTimers = {
 	["Healing Touch"] = 2.75,  --3.5s but - 0.5 from talents and - 0.25 bcuz of lower ranks
 	["Regrowth"] = 1.9,
 	["Lesser Healing Wave"] = 1.5,  
-	["Healing Wave"] = 2.5 --3s but - 0.5 from talents
+	["Healing Wave"] = 2.5, --3s but - 0.5 from talents
+	["Lesser Heal"] = 2
 }
 
 	function sRaidFramesHeals:OnInitialize()

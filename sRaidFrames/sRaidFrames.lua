@@ -354,7 +354,8 @@ function sRaidFrames:RangeCheck()
 	end
 	
 	if not UnitIsDeadOrGhost("player") and (now > self.NextScan or self.MapEnable and self.MapScale == 0 or not self.MapEnable) and table.getn(self.ExtendedRangeScan) == 0 then
-		self.NextScan = now + self.opt.RangeFrequency
+		local freq = self.opt.RangeFrequency or 1
+		self.NextScan = now + freq 
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		
 		--self.ExtendedRangeScan = {} 
@@ -364,7 +365,7 @@ function sRaidFrames:RangeCheck()
 		for unit in pairs(self.visible) do	
 			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) and UnitHealth(unit) > 0
 			if unitcheck and UnitIsUnit("player", unit) then
-				--
+				self.frames[unit]:SetAlpha(1)
 			elseif unitcheck and CheckInteractDistance(unit, 4) then
 				self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = " 28Y"
@@ -375,11 +376,11 @@ function sRaidFrames:RangeCheck()
 						if (dist/11.11) > self.MapScale and CheckInteractDistance(unit, 2) then
 							self.UnitRangeArray[unit] = " 11Y"
 							local adjust = dist/11.11
-							self:Debug("RC_INC "..GetUnitName(unit).."_11Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+							self:Debug("RC_INC "..GetUnitName(unit).."_11Y - "..math.floor(adjust/self.MapScale).."% "..adjust)
 							self.MapScale = adjust
 						elseif (dist/28) > self.MapScale then
 							local adjust = dist/28
-							self:Debug("RC_INC "..GetUnitName(unit).."_28Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+							self:Debug("RC_INC "..GetUnitName(unit).."_28Y - "..math.floor(adjust/self.MapScale).."% "..adjust)
 							self.MapScale = adjust
 						end
 					end	
@@ -403,7 +404,7 @@ function sRaidFrames:RangeCheck()
 			end
 		end	
 		if counter > 1 then 
-			self:Debug("RC_TOTAL "..table.getn(self.ExtendedRangeScan))
+			self:Debug("RC_TOTAL: "..table.getn(self.ExtendedRangeScan).." COUNTER: "..counter)
 			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, 2.5/table.getn(self.ExtendedRangeScan), self) 
 		end
 	end
@@ -460,13 +461,13 @@ function sRaidFrames:VerifyUnitRange(unit, dist)
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			if dist > (self.MapScale*40) then
 				local adjust = dist/(40*0.99)
-				self:Debug("RC_INC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+				self:Debug("RC_INC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale).."% "..adjust)
 				self.MapScale = adjust
 			end	
 			return true
 		elseif dist < (self.MapScale*40) then
 			local adjust = dist/(40*1.01)
-			self:Debug("RC_DEC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+			self:Debug("RC_DEC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale).."% "..adjust)
 			self.MapScale = adjust
 			return nil
 		else
