@@ -86,21 +86,29 @@ local spellTimers = {
 	end
 	
 	
-	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, spell_start, spell_finish, heal_amount, sufix)
+	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, duration, heal_amount, sufix)
 	    if sender == UnitName("player") then return end
 		if not RL:GetUnitIDFromName(sender) then return end
 		
-		local duration = 2
+
 		
-		if spell_finish and (tonumber(spell_finish) - GetTime()) < 3.5 then
-			duration = tonumber(spell_finish) - GetTime()
+		--if spell_finish and (tonumber(spell_finish) - GetTime()) < 3.5 then
+			--duration = tonumber(spell_finish) - GetTime()
 			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive 1"..prefix..duration)
 		
+		if duration then
+			--
+
 		elseif spell and watchSpells[spell] then
 			duration = spellTimers[spell]
 			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive 2"..prefix..duration)
 		end
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive "..duration)
+		
+		if not duration then
+		
+			DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive - duration nil")
+		
+		end
 		
 		if what == "HN" then
 			self:UnitIsHealed(who, sender, duration, strlower(prefix))
@@ -176,14 +184,15 @@ local spellTimers = {
 				end	
 			else
 				local spell_start = GetTime()
-				local spell_finish = spell_start + arg2/1000
+				local duration = arg2/1000
 				local heal_amount = nil
 				
 				if RL:GetUnitIDFromName(self.target) then
 					if GridStatusHeals then
-						GridStatusHeals:SendCommMessage("GROUP", "HN", self.target, arg1, spell_start, spell_finish, heal_amount, "SRF_"..self.ver)
+						GridStatusHeals:SendCommMessage("GROUP", "HN", self.target, arg1, duration, heal_amount, "SRF_"..self.ver)
 					else
-						self:SendCommMessage("GROUP", "HN", self.target, arg1, spell_start, spell_finish, heal_amount, "SRF_"..self.ver)     
+						--self:SendCommMessage("GROUP", "HN", self.target, arg1, spell_start, spell_finish, heal_amount, "SRF_"..self.ver)
+						self:SendCommMessage("GROUP", "HN", self.target, arg1, duration, heal_amount, "SRF_"..self.ver)   
 					end	
 				end
 			end
