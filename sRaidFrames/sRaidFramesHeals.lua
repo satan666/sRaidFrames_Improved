@@ -92,9 +92,10 @@ local spellTimers = {
 		
 		local duration = 2
 		
-		if spell_finish then
+		if spell_finish and (tonumber(spell_finish) - GetTime()) < 3.5 then
 			duration = tonumber(spell_finish) - GetTime()
 			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive 1"..prefix..duration)
+		
 		elseif spell and watchSpells[spell] then
 			duration = spellTimers[spell]
 			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive 2"..prefix..duration)

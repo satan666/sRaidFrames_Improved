@@ -1286,7 +1286,24 @@ function sRaidFrames:Test(unit)
 	--self:CreateHealIndicator(unit)
 	--self:ShowHealIndicator(unit)
 	--sRaidFramesHeals:UnitIsHealed(unit)
-	sRaidFrames:ShowHealIndicator(unit)
+	sRaidFrames:ShowHealIndicator("raid2")
+	sRaidFrames:ShowHealIndicator("raid2")
+	
+	sRaidFrames:ShowHealIndicator("raid7")
+	sRaidFrames:ShowHealIndicator("raid11")
+	sRaidFrames:ShowHealIndicator("raid11")
+	sRaidFrames:ShowHealIndicator("raid11")
+	
+	
+	sRaidFrames:ShowHealIndicator("raid11")
+	sRaidFrames:ShowHealIndicator("raid22")
+	sRaidFrames:ShowHealIndicator("raid25")
+	sRaidFrames:ShowHealIndicator("raid25")
+	sRaidFrames:ShowHealIndicator("raid39")
+	
+	sRaidFrames:ShowHealIndicator("raid31")
+	sRaidFrames:ShowHealIndicator("raid31")
+	sRaidFrames:ShowHealIndicator("raid2")
 end
 
 
