@@ -151,6 +151,7 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterBucketEvent("UNIT_AURA", 0.2, "UpdateBuffs")
 	
 	self:RegisterBucketEvent("ZONE_CHANGED_NEW_AREA", 0.5, "ZoneCheck")
+	self:RegisterBucketEvent("PLAYER_REGEN_ENABLED", 2, "ResetHealIndicators")
 
 	self:RegisterEvent("Banzai_UnitGainedAggro")
 	self:RegisterEvent("Banzai_UnitLostAggro")
@@ -1268,6 +1269,14 @@ function sRaidFrames:SetHealIndicator(unit)
 		self.indicator[unit]:Show()
 	end	
 
+end
+
+
+function sRaidFrames:ResetHealIndicators()
+	for key,value in pairs(self.indicator) do
+		self.indicator[key].active = 0
+		self:SetHealIndicator(key)
+	end
 end
 
 
