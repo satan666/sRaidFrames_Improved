@@ -27,7 +27,7 @@ local spellTimers = {
 	["Flash Heal"] = 1.5,
 	["Greater Heal"] = 2.5,  --3s but - 0.5 from talents
 	["Heal"] = 2.5,			--3s but - 0.5 from talents
-	["Healing Touch"] = 2.5,  --3.5s but - 0.5 from talents and - 0.5 bcuz of lower ranks
+	["Healing Touch"] = 2.5,  --3.5s but - 0.5 from talents and - 0.5 cuz of lower ranks
 	["Regrowth"] = 1.9,
 	["Lesser Healing Wave"] = 1.5,  
 	["Healing Wave"] = 2.5, --3s but - 0.5 from talents
@@ -41,7 +41,6 @@ local spellTimers = {
 	end
 
 	function sRaidFramesHeals:OnEnable()
-
 		if not self.tooltip then
 			self.tooltip = CreateFrame("GameTooltip", "sRaidFramesHeals_Tooltip", UIParent, "GameTooltipTemplate")
 			self.tooltip:SetScript("OnLoad",function() this:SetOwner(WorldFrame, "ANCHOR_NONE") end)
@@ -62,10 +61,29 @@ local spellTimers = {
 		-- AceComm
 
 		self:RegisterComm("Grid", "GROUP", "OnCommReceive")
-
+		self:RegisterEvent("CHAT_MSG_ADDON", "OnCommReceive_LUNA")
 	end
 	
-	
+	--code taken from HealComm by Luna
+	local function strsplit(pString, pPattern)
+		local Table = {}
+		local fpat = "(.-)" .. pPattern
+		local last_end = 1
+		local s, e, cap = strfind(pString, fpat, 1)
+		while s do
+			if s ~= 1 or cap ~= "" then
+				table.insert(Table,cap)
+			end
+			last_end = e+1
+			s, e, cap = strfind(pString, fpat, last_end)
+		end
+		if last_end <= strlen(pString) then
+			cap = strfind(pString, last_end)
+			table.insert(Table, cap)
+		end
+		return Table
+	end
+
 	function sRaidFramesHeals:CombatLogHeal(msg)
 		for helper, spell in string.gfind(msg, "(.+) begins to cast (.+).") do
 			if not watchSpells[spell] then return end
@@ -84,39 +102,42 @@ local spellTimers = {
 			end
 		end
 	end
-	
+
+	function sRaidFramesHeals:OnCommReceive_LUNA(val1, val2, val3, val4)
+		if (val1 == "HealComm" or val1 == "healcommComm") and val4 ~= UnitName("player") then
+			local result = strsplit(val2,"/")
+			if result[1] == "Heal" then	
+				self:UnitIsHealed(result[2], val4, result[4]/1000, "luf")			
+			elseif val2 == "Healstop" then
+				self:CancelScheduledEvent("HealCompleted"..val4);
+				self:UnitHealCompleted(val4);
+			elseif result[1] == "Healdelay" then
+				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive_LUNA Healdelay - "..val4)
+			end
+		end
+	end
+
 	
 	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, duration, heal_amount, sufix)
 	    if sender == UnitName("player") then return end
 		if not RL:GetUnitIDFromName(sender) then return end
 		
-
-		
-		--if spell_finish and (tonumber(spell_finish) - GetTime()) < 3.5 then
-			--duration = tonumber(spell_finish) - GetTime()
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive 1"..prefix..duration)
-		
 		if duration then
 			--
-
 		elseif spell and watchSpells[spell] then
 			duration = spellTimers[spell]
 			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive 2"..prefix..duration)
 		end
 		
 		if not duration then
-		
-			DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive - duration nil")
-		
-		end
+			duration = 2
+		end	
 		
 		if what == "HN" then
 			self:UnitIsHealed(who, sender, duration, strlower(prefix))
 		elseif what == "HG" then
 			self:GroupHeal(sender)
 		end
-		
-		
 	end
 	
 	
@@ -134,8 +155,6 @@ local spellTimers = {
 			return 
 		end
 		
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealed "..prefix..duration)
-		
 		if check1 and (prefix == "log" or prefix ~= "log" and self.WhoHealsWho[caster_name] ~= target_name) then 
 			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealed x1"..caster_name..target_name.." old "..caster_name..self.WhoHealsWho[caster_name].." "..prefix)
 			self:CancelScheduledEvent("HealCompleted"..caster_name);
@@ -152,8 +171,7 @@ local spellTimers = {
 		end	
 		
 	end
-	
-	
+
 	function sRaidFramesHeals:UnitHealCompleted(caster)
 		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitHealCompleted ")
 		local target = self.WhoHealsWho[caster]
@@ -191,7 +209,6 @@ local spellTimers = {
 					if GridStatusHeals then
 						GridStatusHeals:SendCommMessage("GROUP", "HN", self.target, arg1, duration, heal_amount, "SRF_"..self.ver)
 					else
-						--self:SendCommMessage("GROUP", "HN", self.target, arg1, spell_start, spell_finish, heal_amount, "SRF_"..self.ver)
 						self:SendCommMessage("GROUP", "HN", self.target, arg1, duration, heal_amount, "SRF_"..self.ver)   
 					end	
 				end
@@ -199,14 +216,9 @@ local spellTimers = {
 		end
 	end
 
-
 	function sRaidFramesHeals:SPELLCAST_STOP()
 		self.target = nil
 	end
-
-
-	--{{{ hooks 
-
 
 	function sRaidFramesHeals:CastSpell(spellId, spellbookTabNum)
 		--DEFAULT_CHAT_FRAME:AddMessage("CastSpell");
@@ -220,7 +232,6 @@ local spellTimers = {
 			--self.target = UnitName("target")
 		end
 	end
-
 
 	function sRaidFramesHeals:CastSpellByName(a1, a2)
 		--DEFAULT_CHAT_FRAME:AddMessage("CastSpellByName");
@@ -236,7 +247,6 @@ local spellTimers = {
 		end
 	end
 
-
 	function sRaidFramesHeals:UseAction(a1, a2, a3)
 		sRaidFramesHeals_Tooltip:SetAction(a1)
 		local spellName = sRaidFramesHeals_TooltipTextLeft1:GetText()
@@ -250,7 +260,6 @@ local spellTimers = {
 			self.target = UnitName("target")
 		end
 	end
-
 
 	function sRaidFramesHeals:SpellTargetUnit(a1)
 		
@@ -266,13 +275,11 @@ local spellTimers = {
 		end
 	end
 
-
 	function sRaidFramesHeals:SpellStopTargeting()
 		self.hooks["SpellStopTargeting"]()
 		self.spell = nil
 		self.target = nil
 	end
-
 
 	function sRaidFramesHeals:TargetUnit(a1)
 		self.hooks["TargetUnit"](a1)
@@ -281,7 +288,6 @@ local spellTimers = {
 			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:TargetUnit");
 		end
 	end
-
 
 	function sRaidFramesHeals:sRaidFramesHealsOnMouseDown()
 		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:sRaidFramesHealsOnMouseDown")
@@ -296,16 +302,5 @@ local spellTimers = {
 		self.hooks[WorldFrame]["OnMouseDown"]()
 	end
 
-	--}}}
 
---}}}
-
--- life , aggro, confirm
--- combatLog orange
--- Spellcastctart green
--- latency detection events vs on_comm  x2
-
-
---}}}
-	
 	
