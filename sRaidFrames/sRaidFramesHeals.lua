@@ -104,7 +104,7 @@ local spellTimers = {
 	end
 
 	function sRaidFramesHeals:VerifyDuration(val)
-		if val and val < 3.5 and val > 0 then
+		if val and val <= 3.5 and val > 0 then
 			return true
 		end
 		return nil
