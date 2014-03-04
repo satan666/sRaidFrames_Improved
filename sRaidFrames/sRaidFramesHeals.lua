@@ -103,11 +103,22 @@ local spellTimers = {
 		end
 	end
 
+	function sRaidFramesHeals:VerifyDuration(val)
+		if val and val < 3.5 and val > 0 then
+			return true
+		end
+		return nil
+	end
+
 	function sRaidFramesHeals:OnCommReceive_LUNA(val1, val2, val3, val4)
 		if (val1 == "HealComm" or val1 == "healcommComm") and val4 ~= UnitName("player") then
 			local result = strsplit(val2,"/")
 			if result[1] == "Heal" then	
-				self:UnitIsHealed(result[2], val4, result[4]/1000, "luf")			
+				local duration = result[4]/1000
+				if not self:VerifyDuration(duration) then
+					duration = 2
+				end
+				self:UnitIsHealed(result[2], val4, duration, "luf")			
 			elseif val2 == "Healstop" then
 				self:CancelScheduledEvent("HealCompleted"..val4);
 				self:UnitHealCompleted(val4);
@@ -117,19 +128,17 @@ local spellTimers = {
 		end
 	end
 
-	
 	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, duration, heal_amount, sufix)
-	    if sender == UnitName("player") then return end
+		if sender == UnitName("player") then return end
 		if not RL:GetUnitIDFromName(sender) then return end
 		
-		if duration then
+		if duration and self:VerifyDuration(duration) then
 			--
 		elseif spell and watchSpells[spell] then
 			duration = spellTimers[spell]
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive 2"..prefix..duration)
 		end
 		
-		if not duration then
+		if not self:VerifyDuration(duration) then
 			duration = 2
 		end	
 		
@@ -140,12 +149,10 @@ local spellTimers = {
 		end
 	end
 	
-	
 	function sRaidFramesHeals:GroupHeal(healer)
 		-- TO DO
 	end
 	
-
 	function sRaidFramesHeals:UnitIsHealed(target_name, caster_name, duration, prefix)
 		local unit = RL:GetUnitIDFromName(target_name)
 		local check1 = self:IsEventScheduled("HealCompleted"..caster_name)
