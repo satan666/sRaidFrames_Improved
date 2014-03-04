@@ -1,6 +1,7 @@
 ﻿local L = AceLibrary("AceLocale-2.2"):new("sRaidFrames")
 local BS = AceLibrary("Babble-Spell-2.2")
 local Compost = AceLibrary("Compost-2.0")
+local Banzai = AceLibrary("Banzai-1.0")
 
 --local proximity = ProximityLib:GetInstance("1")
 local surface = AceLibrary("Surface-1.0") 
@@ -377,11 +378,11 @@ function sRaidFrames:RangeCheck()
 						if (dist/11.11) > self.MapScale and CheckInteractDistance(unit, 2) then
 							self.UnitRangeArray[unit] = " 11Y"
 							local adjust = dist/11.11
-							self:Debug("RC_INC "..GetUnitName(unit).."_11Y - "..math.floor(adjust/self.MapScale).."% "..adjust)
+							self:Debug("RC_INC "..GetUnitName(unit).."_11Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 							self.MapScale = adjust
 						elseif (dist/28) > self.MapScale then
 							local adjust = dist/28
-							self:Debug("RC_INC "..GetUnitName(unit).."_28Y - "..math.floor(adjust/self.MapScale).."% "..adjust)
+							self:Debug("RC_INC "..GetUnitName(unit).."_28Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 							self.MapScale = adjust
 						end
 					end	
@@ -462,13 +463,13 @@ function sRaidFrames:VerifyUnitRange(unit, dist)
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			if dist > (self.MapScale*40) then
 				local adjust = dist/(40*0.99)
-				self:Debug("RC_INC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale).."% "..adjust)
+				self:Debug("RC_INC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 				self.MapScale = adjust
 			end	
 			return true
 		elseif dist < (self.MapScale*40) then
 			local adjust = dist/(40*1.01)
-			self:Debug("RC_DEC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale).."% "..adjust)
+			self:Debug("RC_DEC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 			self.MapScale = adjust
 			return nil
 		else
@@ -500,6 +501,7 @@ function sRaidFrames:UpdateRangeFrequency()
 end
 
 function sRaidFrames:UpdateUnit(units)
+	local red_nickname = self.opt.red
 	for unit in pairs(units) do
 		if self.visible[unit] and UnitExists(unit) then
 			local f = self.frames[unit]
@@ -512,7 +514,10 @@ function sRaidFrames:UpdateUnit(units)
 			end
 			
 			local _, class = UnitClass(unit)
-			if class then
+			
+			if red_nickname and Banzai:GetUnitAggroByUnitId(unit) then
+				f.title:SetText("|cffff0000"..UnitName(unit)..range.."|r")	
+			elseif class then
 				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:UpdateUnit "..unit.." - "..GetUnitName(unit))
 				f.title:SetText(self.classColors[class]..UnitName(unit)..range.."|r")
 			else
@@ -539,13 +544,22 @@ function sRaidFrames:UpdateUnit(units)
 			if not self.feign[unit] then
 				local status, dead, ghost = nil, UnitIsDead(unit), UnitIsGhost(unit)
 				
-				if not UnitIsConnected(unit) then status = "|cffff0000"..L["Offline"].."|r"
+				--[[
+				if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
+				elseif self.res[unit] == 1 and dead then status = "|cfffff700"..L["Can Recover"].."|r"
+				elseif self.res[unit] == 2 and (dead or ghost) then status = "|cfffff700"..L["Resurrected"].."|r"
+				elseif ghost then status = "|cffff8c00"..L["Released"].."|r"
+				elseif dead then status = "|cffff8c00"..L["Dead"].."|r"
+				end
+				--]]
+				
+				if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
 				elseif self.res[unit] == 1 and dead then status = "|cffff8c00"..L["Can Recover"].."|r"
 				elseif self.res[unit] == 2 and (dead or ghost) then status = "|cffff8c00"..L["Resurrected"].."|r"
 				elseif ghost then status = "|cffff0000"..L["Released"].."|r"
 				elseif dead then status = "|cffff0000"..L["Dead"].."|r"
 				end
-
+				
 				if status then
 					self.unavail[unit] = true
 					f.hpbar.text:SetText(status)

@@ -10,6 +10,9 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["Healing Indicators"] = true,
 	["Show/Hide healing indicators"] = true,
+	
+	["Red nickname on aggro"] = true,
+	["Enable/Disable color change on aggro"] = true,
 
 	["Lock"] = true,
 	["Lock/Unlock the raid frames"] = true,
