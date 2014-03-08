@@ -21,9 +21,9 @@ sRaidFrames.options = {
 		},
 		
 		redname = {
-			name = L["Red nickname on aggro"],
+			name = L["Red names on aggro"],
 			type = "toggle",
-			desc = L["Enable/Disable color change on aggro"],
+			desc = L["Enable/Disable name color change on aggro"],
 			get = function()
 				return sRaidFrames.opt.red
 			end,
