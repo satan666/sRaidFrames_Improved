@@ -211,6 +211,9 @@ local spellTimers = {
 			self:UnitHealCompletedGroup(sender);
 		end
 	end
+	
+	
+	
 
 	function sRaidFramesHeals:UnitIsHealedGroup(caster_name, duration, prefix)
 		local u1 = RL:GetUnitObjectFromName(caster_name)
@@ -263,8 +266,6 @@ local spellTimers = {
 			
 		end
 		self:CancelScheduledEvent("HealCompletedGroup"..caster_name);
-		
-		
 	end
 	
 	
