@@ -100,7 +100,6 @@ local spellTimers = {
 		return nil
 	end
 
-
 	function sRaidFramesHeals:LogExamine(mode, caster_name, duration, prefix)
 		local check = self.IgnoreLog[caster_name]
 		if mode == "add"  then
@@ -130,7 +129,6 @@ local spellTimers = {
 		for blockindex,blockmatch in pairs(self.IgnoreLog) do
 			self.IgnoreLog[blockindex] = nil
 		end
-	
 	end
 
 	function sRaidFramesHeals:CombatLogHeal(msg)
@@ -175,7 +173,6 @@ local spellTimers = {
 				self:UnitHealCompleted(val4);
 			elseif val2 == "GrpHealstop" then	
 				self:UnitHealCompletedGroup(val4);
-				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive_LUNA HealstopHrp - "..val4)
 			elseif result[1] == "Healdelay" then
 				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive_LUNA Healdelay - "..val4)
 			end
@@ -191,18 +188,18 @@ local spellTimers = {
 		elseif spell and watchSpells[spell] then
 			duration = spellTimers[spell]
 		end
+		
+		if what == "HG" or spell and spell == "Prayer of Healing" then 
+			if not self:VerifyDuration(duration) then
+				duration = 3
+			end
+			self:UnitIsHealedGroup(sender, duration, strlower(prefix))
 
-		if what == "HN" then
+		elseif what == "HN" then
 			if not self:VerifyDuration(duration) then
 				duration = 2
 			end
 			self:UnitIsHealed(who, sender, duration, strlower(prefix))
-		elseif what == "HG" then
-			if not self:VerifyDuration(duration) then
-				duration = 3
-			end
-			self:UnitIsHealedGroup(sender, duration, prefix)
-			
 			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive - UnitIsHealedGroup "..sender)
 		
 		elseif what == "STOP_CAST" then
@@ -211,9 +208,6 @@ local spellTimers = {
 			self:UnitHealCompletedGroup(sender);
 		end
 	end
-	
-	
-	
 
 	function sRaidFramesHeals:UnitIsHealedGroup(caster_name, duration, prefix)
 		local u1 = RL:GetUnitObjectFromName(caster_name)
@@ -245,16 +239,13 @@ local spellTimers = {
 		end
 		
 		self:ScheduleEvent("HealCompletedGroup"..caster_name, self.UnitHealCompletedGroup, duration, self, caster_name)
-		
 		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealedGroup - "..prefix)
 	end
 	
 	function sRaidFramesHeals:UnitHealCompletedGroup(caster_name)
 		if not caster_name then return end
 		if not self.WhoHealsWhoGroup[caster_name] then return end
-		
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitHealCompletedGroup "..caster_name)
-		
+	
 		for blockindex,blockmatch in pairs(self.WhoHealsWhoGroup[caster_name]) do
 			local unit = RL:GetUnitIDFromName(blockindex)
 			
@@ -266,11 +257,9 @@ local spellTimers = {
 			
 		end
 		self:CancelScheduledEvent("HealCompletedGroup"..caster_name);
+				
+		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitHealCompletedGroup "..caster_name)
 	end
-	
-	
-	
-	
 
 	function sRaidFramesHeals:UnitIsHealed(target_name, caster_name, duration, prefix)
 		local unit = RL:GetUnitIDFromName(target_name)
@@ -323,22 +312,23 @@ local spellTimers = {
 		end
 
 		if watchSpells[arg1] then
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SPELLCAST_START "..arg1);
+			
 			local duration = arg2/1000
 			local heal_amount = nil
-			
-			if self.spell == BS["Prayer of Healing"] then
+			if arg1 == BS["Prayer of Healing"] then
+				DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SPELLCAST_START - "..self.ver);
 				if GridStatusHeals then
-					GridStatusHeals:SendCommMessage("GROUP", "HG", nil, arg1, duration, heal_amount, "SRF_"..self.ver)
+					GridStatusHeals:SendCommMessage("GROUP", "HG", "", arg1, duration, heal_amount, "srf_"..self.ver)
 				else
-					self:SendCommMessage("GROUP", "HG", nil, arg1, duration, heal_amount, "SRF_"..self.ver)
+					self:SendCommMessage("GROUP", "HG", "", arg1, duration, heal_amount, "srf_"..self.ver)
+					
 				end	
 			elseif self.target then
 				if RL:GetUnitIDFromName(self.target) then
 					if GridStatusHeals then
-						GridStatusHeals:SendCommMessage("GROUP", "HN", self.target, arg1, duration, heal_amount, "SRF_"..self.ver)
+						GridStatusHeals:SendCommMessage("GROUP", "HN", self.target, arg1, duration, heal_amount, "srf_"..self.ver)
 					else
-						self:SendCommMessage("GROUP", "HN", self.target, arg1, duration, heal_amount, "SRF_"..self.ver)   
+						self:SendCommMessage("GROUP", "HN", self.target, arg1, duration, heal_amount, "srf_"..self.ver)   
 					end	
 				end
 			end
