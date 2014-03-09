@@ -312,11 +312,9 @@ local spellTimers = {
 		end
 
 		if watchSpells[arg1] then
-			
 			local duration = arg2/1000
 			local heal_amount = nil
 			if arg1 == BS["Prayer of Healing"] then
-				DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SPELLCAST_START - "..self.ver);
 				if GridStatusHeals then
 					GridStatusHeals:SendCommMessage("GROUP", "HG", "", arg1, duration, heal_amount, "srf_"..self.ver)
 				else
