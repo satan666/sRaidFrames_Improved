@@ -340,7 +340,6 @@ local spellTimers = {
 	
 	function sRaidFramesHeals:SpellInterrupted()
 		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals - SpellInterrupted");
-		
 		self.target = nil
 		if GridStatusHeals then
 			GridStatusHeals:SendCommMessage("GROUP", "STOP_CAST")
