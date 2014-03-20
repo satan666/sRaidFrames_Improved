@@ -13,7 +13,6 @@ surface:Register("Smooth", "Interface\\AddOns\\sRaidFrames\\textures\\smooth")
 surface:Register("Striped", "Interface\\AddOns\\sRaidFrames\\textures\\striped")
 surface:Register("BantoBar", "Interface\\AddOns\\sRaidFrames\\textures\\bantobar")
 
---local Original_TargetFrame_OnEvent = TargetFrame_OnEvent;
 
 sRaidFrames = AceLibrary("AceAddon-2.0"):new(
 	"AceDB-2.0",
@@ -42,6 +41,7 @@ sRaidFrames.MapEnable = false
 sRaidFrames.NextScan = 0
 sRaidFrames.MapScale = 0
 
+sRaidFrames.UnitFocusArray = {}
 sRaidFrames.UnitRangeArray = {}
 sRaidFrames.ExtendedRangeScan = {}
 sRaidFrames.ClassSpellArray = {Paladin = "Holy Light", Priest = "Flash Heal", Druid = "Healing Touch", Shaman = "Healing Wave"}
@@ -96,12 +96,14 @@ function sRaidFrames:OnInitialize()
 	self.tooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
 
 	self.master:Hide()
+	
+	self:LoadStyle()
 
 	for i = 1, MAX_RAID_MEMBERS do
 		self:CreateUnitFrame(i)
 	end
 
-	for i = 1, 8 do
+	for i = 1, 9 do
 		self:CreateGroupFrame(i)
 	end
 
@@ -142,6 +144,22 @@ end
 
 function sRaidFrames:OnDisable()
 	self.master:Hide()
+end
+
+function sRaidFrames:LoadStyle()
+	if sRaidFrames.opt.style then
+		sRaidFrames.unit_debuff_aura = nil
+		sRaidFrames.unit_target_aura = nil
+		sRaidFrames.unitframe_width = 60
+		sRaidFrames.unit_name_lenght = 3
+		sRaidFrames.show_txt_buff = nil
+	else
+		sRaidFrames.unit_debuff_aura = true
+		sRaidFrames.unit_target_aura = nil
+		sRaidFrames.unitframe_width = 90
+		sRaidFrames.unit_name_lenght = nil
+		sRaidFrames.show_txt_buff = true
+	end
 end
 
 function sRaidFrames:JoinedRaid()
@@ -516,14 +534,19 @@ function sRaidFrames:UpdateUnit(units)
 			end
 			
 			local _, class = UnitClass(unit)
+
+			local unit_name = UnitName(unit)
+			if self.unit_name_lenght then
+				unit_name = string.sub(UnitName(unit), 1, self.unit_name_lenght) --UnitName(unit)
+			end
 			
 			if red_nickname and Banzai:GetUnitAggroByUnitId(unit) then
-				f.title:SetText("|cffff0000"..UnitName(unit)..range.."|r")	
+				f.title:SetText("|cffff0000"..unit_name..range.."|r")	
 			elseif class then
 				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:UpdateUnit "..unit.." - "..GetUnitName(unit))
-				f.title:SetText(self.classColors[class]..UnitName(unit)..range.."|r")
+				f.title:SetText(self.classColors[class]..unit_name..range.."|r")
 			else
-				f.title:SetText(UnitName(unit) or L["Unknown"])
+				f.title:SetText(unit_name or L["Unknown"])
 			end
 
 			self.feign[unit] = nil
@@ -642,7 +665,7 @@ function sRaidFrames:UpdateBuffs(units)
 				local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, self.opt.ShowOnlyDispellable)
 				if not debuffTexture then break end
 
-				if debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
+				if self.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
 					cAura = self.debuffColors[debuffType]
 				end
 
@@ -659,7 +682,16 @@ function sRaidFrames:UpdateBuffs(units)
 					debuffFrame:Show()
 				end
 			end
-
+			
+			self.debuffColors["Ogrisch1"]    = { ["r"] = 0.4, ["g"] = 0.4, ["b"] = 0.4, ["a"] = 1, ["priority"] = 4 }
+			self.debuffColors["Ogrisch2"]    = { ["r"] = 1, ["g"] = 0, ["b"] = 0.75, ["a"] = 0.3, ["priority"] = 4 }
+			
+			
+			
+			if self.unit_target_aura and UnitExists("target") and UnitIsUnit("target", unit) then
+				cAura = self.debuffColors["Ogrisch1"]
+			end	
+			
 			if cAura then
 				f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
 			elseif not self.unavail[unit] then
@@ -667,43 +699,44 @@ function sRaidFrames:UpdateBuffs(units)
 			end
 
 			f.mpbar.text:SetText()
+			
+			if self.show_txt_buff then
+				for i=1,32 do
+					local texture = UnitBuff(unit, i)
+					if not texture then break end
 
-			for i=1,32 do
-				local texture = UnitBuff(unit, i)
-				if not texture then break end
-
-				-- First we match the texture, then we pull the name of the debuff from a tooltip, and compare it to BabbleSpell
-				-- The idea is that we do a simple string match, and only if that string match triggers something, then we do the extra check
-				-- This should prevent unnessesary calls to functions and lookups
-				if texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
-					f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
-				elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
-					f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
-				elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
-					f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
-				elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
-					f.mpbar.text:SetText("|cffffffff"..L["Shield Wall"].."|r")
-				elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then
-					f.mpbar.text:SetText("|cffffffff"..L["Last stand"].."|r")
-				elseif texture == "Interface\\Icons\\INV_Misc_Gem_Pearl_05" then
-					f.mpbar.text:SetText("|cffffffff"..L["Gift of Life"].."|r")
-				elseif texture == "Interface\\Icons\\Spell_Frost_Frost" and self:GetBuffName(unit, i) == BS["Ice Block"] then
-					f.mpbar.text:SetText("|cffbfefff"..L["Ice block"].."|r")
-				elseif texture == "Interface\\Icons\\Spell_Holy_SealOfProtection" and self:GetBuffName(unit, i) == BS["Blessing of Protection"] then
-					f.mpbar.text:SetText("|cffffffff"..L["Protection"].."|r")
-				elseif texture == "Interface\\Icons\\Spell_Holy_DivineIntervention" and self:GetBuffName(unit, i) == BS["Divine Shield"] then
-					f.mpbar.text:SetText("|cffffffff"..L["Divine Shield"].."|r")
-				elseif texture == "Interface\\Icons\\Ability_Vanish" and self:GetBuffName(unit, i) == BS["Vanish"] then
-					f.mpbar.text:SetText("|cffffffff"..L["Vanished"].."|r")
-				elseif texture == "Interface\\Icons\\Ability_Stealth" and self:GetBuffName(unit, i) == BS["Stealth"] then
-					f.mpbar.text:SetText("|cffffffff"..L["Stealthed"].."|r")
-				elseif texture == "Interface\\Icons\\Spell_Holy_PowerInfusion" and self:GetBuffName(unit, i) == BS["Power Infusion"] then
-					f.mpbar.text:SetText("|cffffffff"..L["Infused"].."|r")
-				elseif texture == "Interface\\Icons\\Spell_Holy_Excorcism" and self:GetBuffName(unit, i) == BS["Fear Ward"] then
-					f.mpbar.text:SetText("|cffffff00"..L["Fear Ward"].."|r")
+					-- First we match the texture, then we pull the name of the debuff from a tooltip, and compare it to BabbleSpell
+					-- The idea is that we do a simple string match, and only if that string match triggers something, then we do the extra check
+					-- This should prevent unnessesary calls to functions and lookups
+					if texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
+						f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
+					elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
+						f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
+					elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
+						f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
+					elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
+						f.mpbar.text:SetText("|cffffffff"..L["Shield Wall"].."|r")
+					elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then
+						f.mpbar.text:SetText("|cffffffff"..L["Last stand"].."|r")
+					elseif texture == "Interface\\Icons\\INV_Misc_Gem_Pearl_05" then
+						f.mpbar.text:SetText("|cffffffff"..L["Gift of Life"].."|r")
+					elseif texture == "Interface\\Icons\\Spell_Frost_Frost" and self:GetBuffName(unit, i) == BS["Ice Block"] then
+						f.mpbar.text:SetText("|cffbfefff"..L["Ice block"].."|r")
+					elseif texture == "Interface\\Icons\\Spell_Holy_SealOfProtection" and self:GetBuffName(unit, i) == BS["Blessing of Protection"] then
+						f.mpbar.text:SetText("|cffffffff"..L["Protection"].."|r")
+					elseif texture == "Interface\\Icons\\Spell_Holy_DivineIntervention" and self:GetBuffName(unit, i) == BS["Divine Shield"] then
+						f.mpbar.text:SetText("|cffffffff"..L["Divine Shield"].."|r")
+					elseif texture == "Interface\\Icons\\Ability_Vanish" and self:GetBuffName(unit, i) == BS["Vanish"] then
+						f.mpbar.text:SetText("|cffffffff"..L["Vanished"].."|r")
+					elseif texture == "Interface\\Icons\\Ability_Stealth" and self:GetBuffName(unit, i) == BS["Stealth"] then
+						f.mpbar.text:SetText("|cffffffff"..L["Stealthed"].."|r")
+					elseif texture == "Interface\\Icons\\Spell_Holy_PowerInfusion" and self:GetBuffName(unit, i) == BS["Power Infusion"] then
+						f.mpbar.text:SetText("|cffffffff"..L["Infused"].."|r")
+					elseif texture == "Interface\\Icons\\Spell_Holy_Excorcism" and self:GetBuffName(unit, i) == BS["Fear Ward"] then
+						f.mpbar.text:SetText("|cffffff00"..L["Fear Ward"].."|r")
+					end
 				end
 			end
-
 
 			if self.opt.BuffType == "buffs" or (self.opt.BuffType == "buffsifnotdebuffed" and debuffSlots == 0) then
 				local buffSlots = 0
@@ -929,7 +962,13 @@ function sRaidFrames:CreateGroupFrame(id)
 	f:SetWidth(90)
 	f:SetMovable(true)
 	f:EnableMouse(true)
-	f:SetScript("OnDragStart", function() if self.opt.lock then return end if IsAltKeyDown() then self:StartMovingAll() end f:StartMoving() end)
+	
+	if id == 9 then
+		f:SetScript("OnDragStart", function() if self.opt.lock_focus then return end if IsAltKeyDown() then self:StartMovingAll() end f:StartMoving() end)
+	else
+		f:SetScript("OnDragStart", function() if self.opt.lock then return end if IsAltKeyDown() then self:StartMovingAll() end f:StartMoving() end)
+	end
+	
 	f:SetScript("OnDragStop", function() if f.multidrag == 1 then self:StopMovingOrSizingAll() end f:StopMovingOrSizing() self:SavePosition() end)
 	f:RegisterForDrag("LeftButton")
 	f:SetParent(self.master)
@@ -938,20 +977,31 @@ function sRaidFrames:CreateGroupFrame(id)
 	f.title:SetFontObject(GameFontNormalSmall)
 	f.title:SetJustifyH("CENTER")
 	f.title:SetText("Group ".. id);
-	if not self.opt.ShowGroupTitles then
+	if id ~= 9 and not self.opt.ShowGroupTitles or id == 9 and not self.opt.ShowGroupTitles_Focus then
 		f.title:Hide()
 	end
 
 	self:SetWHP(f.title, 80, f:GetHeight(), "TOPLEFT", f, "TOPLEFT",  0, 0)
-
+	
 	f:ClearAllPoints();
 	f:SetPoint("LEFT", self.master, "LEFT")
-
+	
+	
 	f:SetID(id)
 	f.id = id
-	f:Hide();
 
+	f:Hide();
 	self.groupframes[id] = f
+end
+
+function sRaidFrames:SortGroupFrames(frame, id)
+	frame:ClearAllPoints();
+	if id == 1 then
+		frame:SetPoint("TOPLEFT", self.master, "BOTTOMLEFT")
+	else
+		frame:SetPoint("TOPLEFT", self.groupframes[id-1], "BOTTOMLEFT")
+	end
+	DEFAULT_CHAT_FRAME:AddMessage(id)
 end
 
 function sRaidFrames:SetBackdrop(f)
@@ -975,16 +1025,16 @@ function sRaidFrames:SetBackdrop(f)
 end
 
 function sRaidFrames:SetStyle(f)
-	self:SetWHP(f, 90, 40)
-	self:SetWHP(f.title, 80, 16, "TOPLEFT", f, "TOPLEFT",  5, -4)
-	self:SetWHP(f.aura1, 16, 16, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
-	self:SetWHP(f.aura2, 16, 16, "RIGHT", f.aura1, "LEFT", 0, 0)
-	self:SetWHP(f.buff1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
-	self:SetWHP(f.buff2, 12, 12, "RIGHT", f.buff1, "LEFT", 0, 0)
-	self:SetWHP(f.buff3, 12, 12, "RIGHT", f.buff2, "LEFT", 0, 0)
-	self:SetWHP(f.buff4, 12, 12, "RIGHT", f.buff3, "LEFT", 0, 0)
-	self:SetWHP(f.hpbar, 80, 12, "TOPLEFT", f.title, "BOTTOMLEFT", 0, 0)
-	self:SetWHP(f.mpbar, 80, 4, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
+	self:SetWHP(f, self.unitframe_width, 40)
+	self:SetWHP(f.title, self.unitframe_width - 10, 16, "TOPLEFT", f, "TOPLEFT",  5, -4)
+	self:SetWHP(f.aura1, 13, 13, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
+	self:SetWHP(f.aura2, 13, 13, "RIGHT", f.aura1, "LEFT", 0, 0)
+	self:SetWHP(f.buff1, 10, 10, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
+	self:SetWHP(f.buff2, 10, 10, "RIGHT", f.buff1, "LEFT", 0, 0)
+	self:SetWHP(f.buff3, 10, 10, "RIGHT", f.buff2, "LEFT", 0, 0)
+	self:SetWHP(f.buff4, 10, 10, "RIGHT", f.buff3, "LEFT", 0, 0)
+	self:SetWHP(f.hpbar, self.unitframe_width - 10, 13, "TOPLEFT", f.title, "BOTTOMLEFT", 0, 0)
+	self:SetWHP(f.mpbar, self.unitframe_width - 10, 4, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
 
 	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f.hpbar, "CENTER", 0, 0)
 	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f.mpbar, "CENTER", 0, 0)
@@ -1006,7 +1056,7 @@ function sRaidFrames:Sort()
 	local self = sRaidFrames
 	local frameAssignments = {}
 	local sort = {}
-	local counter={0,0,0,0,0,0,0,0}
+	local counter={0,0,0,0,0,0,0,0,0}
 
 	for id = 1, MAX_RAID_MEMBERS do
 		if self.visible["raid" .. id] then
@@ -1058,6 +1108,9 @@ function sRaidFrames:Sort()
 		self.groupframes[7].title:SetText(L["Group 7"]);
 		self.groupframes[8].title:SetText(L["Group 8"]);
 	end
+	
+	frameAssignments[9] = 9;
+	self.groupframes[9].title:SetText("Focus");
 
 	-- -- -- Do the sorting -- -- --
 
@@ -1075,15 +1128,21 @@ function sRaidFrames:Sort()
 			end
 		end
 
+		local growth = self.opt.Growth
+		if self:CheckFocusUnit("raid"..id) then
+			frameAssignee = 9
+			growth = self.opt.Growth_Focus
+		end
+
 		if frameAssignee then
 			local f = self.frames["raid" .. id]
 			local groupframe = self.groupframes[frameAssignee]
 
-			if self.opt.Growth == "up" then
+			if growth == "up" then
 				a1, a2, yMod, xMod = "BOTTOM", "TOP", (counter[frameAssignee]*(f:GetHeight()+self.opt.Spacing)), 0
-			elseif self.opt.Growth == "right" then
+			elseif growth == "right" then
 				a1, a2, yMod, xMod = "TOP", "BOTTOM", 0, (counter[frameAssignee]*(f:GetWidth()+self.opt.Spacing))
-			elseif self.opt.Growth == "left" then
+			elseif growth == "left" then
 				a1, a2, yMod, xMod = "TOP", "BOTTOM", 0, -1*(counter[frameAssignee]*(f:GetWidth()+self.opt.Spacing))
 			else
 				a1, a2, yMod, xMod = "TOP", "BOTTOM", -1*(counter[frameAssignee]*(f:GetHeight()+self.opt.Spacing)), 0
@@ -1094,8 +1153,8 @@ function sRaidFrames:Sort()
 
 			counter[frameAssignee] = counter[frameAssignee] + 1
 			groupframe:Show()
-
-			if self.opt.ShowGroupTitles then
+			
+			if frameAssignee ~= 9 and self.opt.ShowGroupTitles or frameAssignee == 9 and self.opt.ShowGroupTitles_Focus then
 				groupframe.title:Show()
 			else
 				groupframe.title:Hide()
@@ -1140,6 +1199,7 @@ function sRaidFrames:SavePosition()
 	local s = self.master:GetEffectiveScale()
 
 	for k,f in pairs(self.groupframes) do
+
 		aryPos[k] = {x = f:GetLeft()*s, y = f:GetTop()*s}
 	end
 
@@ -1295,31 +1355,50 @@ function sRaidFrames:ResetHealIndicators()
 	end
 end
 
+function sRaidFrames:CheckFocusUnit(unit)
+	if not unit then 
+		return 
+	end
+	local name = UnitName(unit)
+	if not name then 
+		return
+	end	
+	local focus = self.UnitFocusArray[name]
+	if focus then
+		return true	
+	end
+	return nil
+end
 
-function sRaidFrames:Test(unit)
-	unit = "raid2"
-	--self:CreateIndicator(self.groupframes[unit], pos)
-	--self:CreateHealIndicator(unit)
-	--self:ShowHealIndicator(unit)
-	--sRaidFramesHeals:UnitIsHealed(unit)
-	sRaidFrames:ShowHealIndicator("raid2")
-	sRaidFrames:ShowHealIndicator("raid2")
+function sRaidFrames:AddRemoveFocusUnit(unit)
+	local name = UnitName(unit)
+	if not name then 
+		return 
+	end
+
+	local class, classFileName = UnitClass(unit)
+	local color = RAID_CLASS_COLORS[classFileName]
 	
-	sRaidFrames:ShowHealIndicator("raid7")
-	sRaidFrames:ShowHealIndicator("raid11")
-	sRaidFrames:ShowHealIndicator("raid11")
-	sRaidFrames:ShowHealIndicator("raid11")
+	if self.UnitFocusArray[name] then
+		self.UnitFocusArray[name] = nil
+		UIErrorsFrame:Clear()
+		UIErrorsFrame:AddMessage("Remove Focus: "..name, color.r, color.g, color.b)
+		self:UpdateVisibility()
+		return
+	end
 	
+	local unit = roster:GetUnitIDFromName(name)
 	
-	sRaidFrames:ShowHealIndicator("raid11")
-	sRaidFrames:ShowHealIndicator("raid22")
-	sRaidFrames:ShowHealIndicator("raid25")
-	sRaidFrames:ShowHealIndicator("raid25")
-	sRaidFrames:ShowHealIndicator("raid39")
-	
-	sRaidFrames:ShowHealIndicator("raid31")
-	sRaidFrames:ShowHealIndicator("raid31")
-	sRaidFrames:ShowHealIndicator("raid2")
+	if unit then 
+		self.UnitFocusArray[name] = true
+		UIErrorsFrame:Clear()
+		UIErrorsFrame:AddMessage("Add Focus : "..name, color.r, color.g, color.b)
+		self:UpdateVisibility()
+	else
+		UIErrorsFrame:Clear()
+		UIErrorsFrame:AddMessage("Unit not in Group: "..name)
+	end
+	return
 end
 
 

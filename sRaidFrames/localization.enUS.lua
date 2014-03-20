@@ -8,10 +8,26 @@ L:RegisterTranslations("enUS", function() return {
 	["hidden"] = true,
 	["shown"] = true,
 	
-	["Healing Indicators"] = true,
-	["Show/Hide healing indicators"] = true,
+	["_Focus frame"] = true,
+	["Custom frames"] = true,
 	
-	["Red names on aggro"] = true,
+	["Load predefined settings"] = true,
+	["Load profile - Normal"] = true,
+	["Load profile - Inverted"] = true,
+	["_Pure view"] = true,
+	["Compact style"] = true,
+	["Clear and compact raid frames"] = true,
+	
+	["_Focus frames"] = true,
+	["Use keybinding to add/remove unit - UNDER DEVELOPMENT"] = true,
+	
+
+	["Requires UI reload"] = true,
+	
+	["_Healing indicators"] = true,
+	["Show/Hide incoming heal indicators"] = true,
+	
+	["_Red names on aggro"] = true,
 	["Enable/Disable name color change on aggro"] = true,
 
 	["Lock"] = true,
@@ -91,13 +107,13 @@ L:RegisterTranslations("enUS", function() return {
 
 	["Highlight units with aggro"] = true,
 	["Turn the border of units who have aggro red"] = true,
-	["Range"] = true,
+	["_Range"] = true,
 	["Set about range"] = true,
 	["Enable range check"] = true,
-	["Enable 40y range check"] = true,
+	["Enable 40y range check - Outdoors and BGs"] = true,
 	
 	["Enable dungeon range check"] = true,
-	["Enable 40y range check in dungeons, require certain spells to be on actionbar"] = true,
+	["Enable 40y range check in Dungeons, requires certain spells to be on actionbar and Blizzard target frame"] = true,
 	
 	["Enable debug"] = true,
 	["Range accuracy calculation, only for testing"] = true,

@@ -30,4 +30,9 @@
 	<Binding name="Toggle display of only dispellable debuffs">
 		sRaidFrames:chatToggleDispellable(not sRaidFrames.opt.ShowOnlyDispellable);
 	</Binding>
+	<Binding name="Add/Remove focus unit.">
+		if UnitExists("target") then 
+			sRaidFrames:AddRemoveFocusUnit("target");
+		end	
+	</Binding>
 </Bindings>

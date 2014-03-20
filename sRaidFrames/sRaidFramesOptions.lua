@@ -6,11 +6,181 @@ local surface = AceLibrary("Surface-1.0")
 sRaidFrames.options = {
 	type = "group",
 	args = {
-		
+	
+
+		focus = {
+			name = L["_Focus frame"],
+			type = "group",
+			desc = L["Custom frames"],
+			args = {
+
+				growth_focus = {
+					name = L["Growth"],
+					type = "text",
+					desc = L["Set the growth of the raid frames"],
+					get = function()
+						return sRaidFrames.opt.Growth_Focus
+					end,
+					set = function(value)
+						sRaidFrames:S("Growth_Focus", value)
+						sRaidFrames:UpdateVisibility()
+					end,
+					validate = {["up"] = L["Up"], ["down"] = L["Down"], ["left"] = L["Left"], ["right"] = L["Right"]},
+				},
+				
+				lock_focus = {
+					name = L["Lock"],
+					type = "toggle",
+					desc = L["Lock/Unlock the raid frames"],
+					get = function()
+						return sRaidFrames.opt.lock_focus
+					end,
+					set = function(locked)
+						sRaidFrames:S("lock_focus", locked)
+						if not locked then
+							sRaidFrames:S("ShowGroupTitles_Focus", true)
+							f = sRaidFrames.groupframes[9]
+							if not locked and f:IsVisible() then
+								f.title:Show()
+							else
+								f.title:Hide()
+							end
+							
+						end
+					end,
+					map = {[false] = L["Unlocked"], [true] = L["Locked"]},
+				},
+				
+				titles_focus = {
+					name = L["Show group titles"],
+					type = "toggle",
+					desc = L["Toggle display of titles above each group frame"],
+					get = function()
+						return sRaidFrames.opt.ShowGroupTitles_Focus
+					end,
+					set = function(value)
+						sRaidFrames:S("ShowGroupTitles_Focus", value)
+						f = sRaidFrames.groupframes[9]
+						if value and f:IsVisible() then
+							f.title:Show()
+						else
+							f.title:Hide()
+						end
+						
+					end,
+					disabled = function() return not sRaidFrames.opt.lock_focus end,
+				},
+				
+				
+				
+				
+				
+				
+				
+
+			}
+			
+		},	
+
+		compact = {
+			name = L["_Pure view"],
+			type = "group",
+			desc = L["Clear and compact raid frames"],
+			args = {
+				style = {
+					name = L["Compact style"],
+					type = "toggle",
+					desc = L["Requires UI reload"],
+					get = function()
+						return sRaidFrames.opt.style
+					end,
+					set = function(style)
+						sRaidFrames:S("style", style)
+					end,
+				},
+			
+				profile1 = {
+						name = L["Load profile - Normal"],
+						type = "toggle",
+						desc = L["Load predefined settings"],
+						get = function()
+							return sRaidFrames.opt.profile1
+						end,
+						set = function(value)
+							if value then
+								sRaidFrames.opt.profile2 = not value
+								sRaidFrames.opt.healthDisplayType = "none"
+								sRaidFrames.opt.TooltipMethod = "never"
+								sRaidFrames:chatToggleBorder(not value)
+								sRaidFrames:chatTexture("BantoBar")
+								
+								sRaidFrames.opt.PowerFilter[0] = false
+								sRaidFrames.opt.PowerFilter[1] = false
+								sRaidFrames.opt.PowerFilter[2] = false
+								sRaidFrames.opt.PowerFilter[3] = false
+								
+								sRaidFrames.opt.BackgroundColor.r = 0
+								sRaidFrames.opt.BackgroundColor.g = 0
+								sRaidFrames.opt.BackgroundColor.b = 0
+								sRaidFrames.opt.BackgroundColor.a = 1
+								
+								sRaidFrames.opt.RangeCheck = value
+								sRaidFrames.opt.ExtendedRangeCheck = value
+								sRaidFrames.opt.RangeAlpha = 0.3
+								sRaidFrames.opt.BuffType = "debuffs"
+								sRaidFrames.opt.Invert = not value
+
+								sRaidFrames:UpdateAll()
+
+							end
+							sRaidFrames:S("profile1", value)
+						end,
+					},
+				
+				profile2 = {
+						name = L["Load profile - Inverted"],
+						type = "toggle",
+						desc = L["Load predefined settings"],
+						get = function()
+							return sRaidFrames.opt.profile2
+						end,
+						set = function(value)
+							if value then
+								sRaidFrames.opt.profile1 = not value
+								sRaidFrames.opt.healthDisplayType = "none"
+								sRaidFrames.opt.TooltipMethod = "never"
+								sRaidFrames:chatToggleBorder(not value)
+								sRaidFrames:chatTexture("BantoBar")
+								
+								sRaidFrames.opt.PowerFilter[0] = false
+								sRaidFrames.opt.PowerFilter[1] = false
+								sRaidFrames.opt.PowerFilter[2] = false
+								sRaidFrames.opt.PowerFilter[3] = false
+								
+								sRaidFrames.opt.BackgroundColor.r = 0
+								sRaidFrames.opt.BackgroundColor.g = 0
+								sRaidFrames.opt.BackgroundColor.b = 0
+								sRaidFrames.opt.BackgroundColor.a = 1
+								
+								sRaidFrames.opt.RangeCheck = value
+								sRaidFrames.opt.ExtendedRangeCheck = value
+								sRaidFrames.opt.RangeAlpha = 0.3
+								sRaidFrames.opt.BuffType = "debuffs"
+								sRaidFrames.opt.Invert = value
+								
+								sRaidFrames:UpdateAll()
+
+							end
+							sRaidFrames:S("profile2", value)
+						end,
+					},
+			}
+		},
+	
 		heal = {
-			name = L["Healing Indicators"],
+			name = L["_Healing indicators"],
 			type = "toggle",
-			desc = L["Show/Hide healing indicators"],
+			desc = L["Show/Hide incoming heal indicators"],
 			get = function()
 				return sRaidFrames.opt.heal
 			end,
@@ -21,7 +191,7 @@ sRaidFrames.options = {
 		},
 		
 		redname = {
-			name = L["Red names on aggro"],
+			name = L["_Red names on aggro"],
 			type = "toggle",
 			desc = L["Enable/Disable name color change on aggro"],
 			get = function()
@@ -44,12 +214,14 @@ sRaidFrames.options = {
 				sRaidFrames:S("lock", locked)
 				if not locked then
 					sRaidFrames:S("ShowGroupTitles", true)
-					for _,f in pairs(sRaidFrames.groupframes) do
-						if not locked and f:IsVisible() then
-							f.title:Show()
-						else
-							f.title:Hide()
-						end
+					for cnt,f in pairs(sRaidFrames.groupframes) do
+						if cnt ~= 9 then	
+							if not locked and f:IsVisible() then
+								f.title:Show()
+							else
+								f.title:Hide()
+							end
+						end	
 					end
 				end
 			end,
@@ -100,12 +272,14 @@ sRaidFrames.options = {
 			end,
 			set = function(value)
 				sRaidFrames:S("ShowGroupTitles", value)
-				for _,f in pairs(sRaidFrames.groupframes) do
-					if value and f:IsVisible() then
-						f.title:Show()
-					else
-						f.title:Hide()
-					end
+				for cnt,f in pairs(sRaidFrames.groupframes) do
+					if cnt ~= 9 then
+						if value and f:IsVisible() then
+							f.title:Show()
+						else
+							f.title:Hide()
+						end
+					end	
 				end
 			end,
 			disabled = function() return not sRaidFrames.opt.lock end,
@@ -313,14 +487,14 @@ sRaidFrames.options = {
 		},
 
 		range = {
-			name = L["Range"],
+			name = L["_Range"],
 			type = "group",
 			desc = L["Set about range"],
 			args = {
 				enable = {
 					name = L["Enable range check"],
 					type = "toggle",
-					desc = L["Enable 40y range check"],
+					desc = L["Enable 40y range check - Outdoors and BGs"],
 					get = function() return sRaidFrames.opt.RangeCheck end,
 					set = function(value)
 						sRaidFrames.opt.RangeCheck = value
@@ -336,7 +510,7 @@ sRaidFrames.options = {
 				enable40y = {
 					name = L["Enable dungeon range check"],
 					type = "toggle",
-					desc = L["Enable 40y range check in dungeons, require certain spells to be on actionbar"],
+					desc = L["Enable 40y range check in Dungeons, requires certain spells to be on actionbar and Blizzard target frame"],
 					get = function() return sRaidFrames.opt.ExtendedRangeCheck end,
 					set = function(value)
 						if value  then
@@ -379,9 +553,9 @@ sRaidFrames.options = {
 						sRaidFrames.opt.RangeFrequency = value
 						sRaidFrames:UpdateRangeFrequency()
 					end,
-					min  = 1.0,
-					max  = 3.0,
-					step = 0.5,
+					min  = 0.25,
+					max  = 1,
+					step = 0.25,
 					disabled = function() return not sRaidFrames.opt.RangeCheck end,
 				},
 			},
