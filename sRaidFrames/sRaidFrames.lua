@@ -149,13 +149,11 @@ end
 function sRaidFrames:LoadStyle()
 	if sRaidFrames.opt.style then
 		sRaidFrames.unit_debuff_aura = nil
-		sRaidFrames.unit_target_aura = nil
 		sRaidFrames.unitframe_width = 60
 		sRaidFrames.unit_name_lenght = 3
 		sRaidFrames.show_txt_buff = nil
 	else
 		sRaidFrames.unit_debuff_aura = true
-		sRaidFrames.unit_target_aura = nil
 		sRaidFrames.unitframe_width = 90
 		sRaidFrames.unit_name_lenght = nil
 		sRaidFrames.show_txt_buff = true
@@ -182,7 +180,7 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterEvent("oRA_PlayerNotResurrected")
 
 	-- TODO: only updateunit
-	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.25, self)
+	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 1.0, self)
 	--self:RegisterBucketEvent("UNIT_HEALTH", 0.2, "Sort_Force")
 	
 	self:ScheduleRepeatingEvent("sRaidFramesUpdateAll", self.UpdateAll, 1.5, self)
@@ -688,13 +686,14 @@ function sRaidFrames:UpdateBuffs(units)
 				end
 			end
 			
-			self.debuffColors["Ogrisch1"]    = { ["r"] = 0.4, ["g"] = 0.4, ["b"] = 0.4, ["a"] = 1, ["priority"] = 4 }
-			self.debuffColors["Ogrisch2"]    = { ["r"] = 1, ["g"] = 0, ["b"] = 0.75, ["a"] = 0.3, ["priority"] = 4 }
+			
+			self.debuffColors["Mix"]    = { ["r"] = 0.4, ["g"] = 0.2, ["b"] = 0.6, ["a"] = 1, ["priority"] = 4 }
+			self.debuffColors["Blue"]    = { ["r"] = 0, ["g"] = 0, ["b"] = 1, ["a"] = 1, ["priority"] = 4 }
+			self.debuffColors["Red"]    = { ["r"] = 1, ["g"] = 0, ["b"] = 0, ["a"] = 1, ["priority"] = 4 }
 			
 			
-			
-			if self.unit_target_aura and UnitExists("target") and UnitIsUnit("target", unit) then
-				cAura = self.debuffColors["Ogrisch1"]
+			if self.opt.aura and sRaidFrames.opt.style and UnitExists("target") and UnitIsUnit("target", unit) and UnitHealth(unit) > 1 and self:CheckFocusUnit(unit) then
+				cAura = self.debuffColors["Blue"]
 			end	
 			
 			if cAura then
@@ -1065,7 +1064,9 @@ end
 
 function sRaidFrames:UnitModHP(unit)
 	local percent = nil
-	if UnitHealth(unit) <= 1 then
+	if self.opt.exclude and UnitExists("target") and UnitIsUnit(unit, "target") then
+		percent = 0
+	elseif UnitHealth(unit) <= 1 then
 		percent = 300
 	else
 		local health = math.floor(Zorlen_HealthPercent(unit))

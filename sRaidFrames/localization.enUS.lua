@@ -21,6 +21,11 @@ L:RegisterTranslations("enUS", function() return {
 	["_Focus frames"] = true,
 	["Dynamic health sort lvl1"] = true,
 	["Dynamic range sort lvl2"] = true,
+	["Target special aura"] = true,
+	["Change background color of targeted unit"] = true,
+	["Exclude target from sorting"] = true,
+	["Target unit always on top"] = true,
+	
 	
 	["Requires UI reload"] = true,
 	

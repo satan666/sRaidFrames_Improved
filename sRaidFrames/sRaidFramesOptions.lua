@@ -102,6 +102,33 @@ sRaidFrames.options = {
 						end		
 					end,
 				},
+				
+				
+				aura_target_focus = {
+					name = L["Target special aura"],
+					type = "toggle",
+					desc = L["Change background color of targeted unit"],
+					get = function()
+						return sRaidFrames.opt.aura
+					end,
+					set = function(aura)
+						sRaidFrames:S("aura", aura)
+						
+					end,
+				},
+				
+				exclude_target_focus = {
+					name = L["Exclude target from sorting"],
+					type = "toggle",
+					desc = L["Target unit always on top"],
+					get = function()
+						return sRaidFrames.opt.exclude
+					end,
+					set = function(exclude)
+						sRaidFrames:S("exclude", exclude)
+						
+					end,
+				},
 
 			}
 			
