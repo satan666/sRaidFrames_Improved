@@ -182,7 +182,9 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterEvent("oRA_PlayerNotResurrected")
 
 	-- TODO: only updateunit
-	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.5, self)
+	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.25, self)
+	--self:RegisterBucketEvent("UNIT_HEALTH", 0.2, "Sort_Force")
+	
 	self:ScheduleRepeatingEvent("sRaidFramesUpdateAll", self.UpdateAll, 1.5, self)
 	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, 0.5, self)
 
@@ -522,10 +524,11 @@ function sRaidFrames:UpdateRangeFrequency()
 	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, 0.5, self)
 end
 
-function sRaidFrames:UpdateUnit(units)
+function sRaidFrames:UpdateUnit(units, force_focus)
 	local red_nickname = self.opt.red
 	for unit in pairs(units) do
-		if self.visible[unit] and UnitExists(unit) then
+		local focus_unit = self:CheckFocusUnit(unit)
+		if self.visible[unit] and UnitExists(unit) and (not focus_unit and not force_focus or focus_unit and force_focus) then
 			local f = self.frames[unit]
 			local range = ""
 			if self.opt.Debug then
@@ -1068,7 +1071,7 @@ function sRaidFrames:UnitModHP(unit)
 		local health = math.floor(Zorlen_HealthPercent(unit))
 		percent = health + 100
 		
-		if self.opt.dynamicrange_sort and self.UnitRangeArray[unit] ~= "" then
+		if self.opt.dynamic_range_sort and self.UnitRangeArray[unit] ~= "" then
 			percent = health
 		end
 	end	
@@ -1093,6 +1096,7 @@ function sRaidFrames:Sort(force_sort)
 		table.sort(sort, function(a,b) return UnitClass("raid" .. a) < UnitClass("raid" ..b) end)
 	end
 
+
 	if self.opt.SortBy == "class" then
 		frameAssignments["WARRIOR"] = 1;
 		frameAssignments["MAGE"] = 2;
@@ -1112,6 +1116,7 @@ function sRaidFrames:Sort(force_sort)
 		self.groupframes[6].title:SetText(L["Rogue"]);
 		self.groupframes[7].title:SetText(L["Warlock"]);
 		self.groupframes[8].title:SetText(L["Priest"]);
+
 	elseif self.opt.SortBy == "group" or self.opt.SortBy == "fixed" then
 		frameAssignments[1] = 1;
 		frameAssignments[2] = 2;
@@ -1209,13 +1214,17 @@ function sRaidFrames:Sort(force_sort)
 	end
 
 	-- Hide group frames which contain no children
-	for k,v in pairs(counter) do
-		if v == 0 then
-			self.groupframes[k]:Hide()
+	if not force_sort then	
+		for k,v in pairs(counter) do
+			if v == 0 then
+				self.groupframes[k]:Hide()
+			end
 		end
-	end
 
-	self:UpdateAll()
+		self:UpdateAll()
+	else
+		self:UpdateUnit(self.visible, true)
+	end	
 end
 
 function sRaidFrames:OnUnitClick()

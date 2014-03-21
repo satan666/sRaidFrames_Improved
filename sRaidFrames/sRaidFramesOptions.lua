@@ -82,7 +82,7 @@ sRaidFrames.options = {
 						sRaidFrames:S("dynamic_sort", sort)
 						
 						if not sort then
-							sRaidFrames.opt.dynamicrange_sort = sort
+							sRaidFrames.opt.dynamic_range_sort = sort
 						end	
 						
 					end,
@@ -93,21 +93,15 @@ sRaidFrames.options = {
 					type = "toggle",
 					desc = L["Dynamic range sort lvl2"],
 					get = function()
-						return sRaidFrames.opt.dynamicrange_sort
+						return sRaidFrames.opt.dynamic_range_sort
 					end,
 					set = function(sort)
-						sRaidFrames:S("dynamicrange_sort", sort)
-						
+						sRaidFrames:S("dynamic_range_sort", sort)
 						if sort  then
 							sRaidFrames.opt.dynamic_sort = sort
-						end	
-						
-						
+						end		
 					end,
 				},
-				
-				
-				
 
 			}
 			
