@@ -72,9 +72,9 @@ sRaidFrames.options = {
 				},
 				
 				sort_focus_hp = {
-					name = L["Dynamic HP sort lvl1"],
+					name = L["Dynamic health sort lvl1"],
 					type = "toggle",
-					desc = L["Dynamic HP sort lvl1"],
+					desc = L["Dynamic health sort lvl1"],
 					get = function()
 						return sRaidFrames.opt.dynamic_sort
 					end,
