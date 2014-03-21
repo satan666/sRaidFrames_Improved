@@ -3,7 +3,7 @@
 ## X-Email: saroz@random-guild.com
 ## X-Category: Raid
 ## Dependencies: Zorlen
-## Title: sRaidFrames Improved 0.61
+## Title: sRaidFrames Improved 0.62
 ## Version: 0.61
 ## Notes: 40y range check added by Ogrisch
 ## Notes-zhCN: CT_RaidAssist 风格的团队框架

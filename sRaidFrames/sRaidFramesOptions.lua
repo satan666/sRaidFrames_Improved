@@ -71,7 +71,18 @@ sRaidFrames.options = {
 					disabled = function() return not sRaidFrames.opt.lock_focus end,
 				},
 				
-				
+				sort_focus = {
+					name = L["Dynamic HP sort"],
+					type = "toggle",
+					desc = L["Dynamic HP sort"],
+					get = function()
+						return sRaidFrames.opt.dynamic_sort
+					end,
+					set = function(sort)
+						sRaidFrames:S("dynamic_sort", sort)
+						
+					end,
+				},
 				
 				
 				
@@ -307,7 +318,7 @@ sRaidFrames.options = {
 				return sRaidFrames.opt.SortBy
 			end,
 			set = "chatSortBy",
-			validate = {["group"] = L["By group"], ["class"] = L["By class"]},
+			validate = {["group"] = L["By group"], ["class"] = L["By class"], ["fixed"] = L["Fixed group"]},
 		},
 
 		bufftype = {

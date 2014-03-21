@@ -19,8 +19,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Clear and compact raid frames"] = true,
 	
 	["_Focus frames"] = true,
-	["Use keybinding to add/remove unit - UNDER DEVELOPMENT"] = true,
-	
+	["Dynamic HP sort"] = true,
 
 	["Requires UI reload"] = true,
 	
@@ -58,6 +57,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Select how you wish to sort the members of each group"] = true,
 	["By name"] = true,
 	["By class"] = true,
+	["Fixed group"] = true,
 	["Blizzard default"] = true,
 	["Group by"] = true,
 	["Select how you wish to show the groups"] = true,

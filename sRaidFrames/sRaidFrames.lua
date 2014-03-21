@@ -167,6 +167,8 @@ function sRaidFrames:JoinedRaid()
 	self.enabled = true
 
 	self:RegisterBucketEvent("UNIT_HEALTH", 0.2, "UpdateUnit")
+	self:RegisterBucketEvent("UNIT_HEALTH", 0.5, "Sort_Force")
+	
 	self:RegisterBucketEvent("UNIT_AURA", 0.2, "UpdateBuffs")
 	
 	self:RegisterBucketEvent("ZONE_CHANGED_NEW_AREA", 0.5, "ZoneCheck")
@@ -1052,14 +1054,30 @@ function sRaidFrames:SetWHP(frame, width, height, p1, relative, p2, x, y)
 	end
 end
 
-function sRaidFrames:Sort()
+function sRaidFrames:Sort_Force()
+	if self.opt.dynamic_sort then 
+		self:Sort(true)
+	end	
+end
+
+function sRaidFrames:UnitModHP(unit)
+	local percent = nil
+	if UnitIsDeadOrGhost(unit) then
+		percent = 150
+	else
+		percent = math.floor(Zorlen_HealthPercent(unit))
+	end	
+	return percent
+end
+
+function sRaidFrames:Sort(force_sort)
 	local self = sRaidFrames
 	local frameAssignments = {}
 	local sort = {}
 	local counter={0,0,0,0,0,0,0,0,0}
 
 	for id = 1, MAX_RAID_MEMBERS do
-		if self.visible["raid" .. id] then
+		if self.visible["raid" .. id] and (not force_sort or force_sort and self:CheckFocusUnit("raid"..id)) then
 			table.insert(sort, id)
 		end
 	end
@@ -1089,7 +1107,7 @@ function sRaidFrames:Sort()
 		self.groupframes[6].title:SetText(L["Rogue"]);
 		self.groupframes[7].title:SetText(L["Warlock"]);
 		self.groupframes[8].title:SetText(L["Priest"]);
-	elseif self.opt.SortBy == "group" then
+	elseif self.opt.SortBy == "group" or self.opt.SortBy == "fixed" then
 		frameAssignments[1] = 1;
 		frameAssignments[2] = 2;
 		frameAssignments[3] = 3;
@@ -1114,6 +1132,19 @@ function sRaidFrames:Sort()
 
 	-- -- -- Do the sorting -- -- --
 
+	local focus_units1 = {}
+	local focus_units2 = {}
+	for _,id in pairs(sort) do
+		if self:CheckFocusUnit("raid"..id) then
+			table.insert(focus_units1, id)
+		end
+	end
+	table.sort(focus_units1, function(a,b) return self:UnitModHP("raid".. a) < self:UnitModHP("raid"..b) end)
+	--table.sort(focus_units1, function(a,b) return Zorlen_HealthPercent("raid".. a) < Zorlen_HealthPercent("raid"..b) end)
+	for i,id in pairs(focus_units1) do
+		focus_units2[id] = i-1
+	end
+
 	for _,id in pairs(sort) do
 		local frameAssignee = nil
 		if self.opt.SortBy == "class" then
@@ -1126,6 +1157,12 @@ function sRaidFrames:Sort()
 			if name and subgroup then
 				frameAssignee = frameAssignments[subgroup]
 			end
+		else
+			for k=8,1,-1 do
+				if counter[k] < 5 then
+					frameAssignee = k
+				end
+			end
 		end
 
 		local growth = self.opt.Growth
@@ -1137,15 +1174,20 @@ function sRaidFrames:Sort()
 		if frameAssignee then
 			local f = self.frames["raid" .. id]
 			local groupframe = self.groupframes[frameAssignee]
-
+			
+			local count = counter[frameAssignee]
+			if focus_units2[id] then
+				count = focus_units2[id]
+			end
+			
 			if growth == "up" then
-				a1, a2, yMod, xMod = "BOTTOM", "TOP", (counter[frameAssignee]*(f:GetHeight()+self.opt.Spacing)), 0
+				a1, a2, yMod, xMod = "BOTTOM", "TOP", (count*(f:GetHeight()+self.opt.Spacing)), 0
 			elseif growth == "right" then
-				a1, a2, yMod, xMod = "TOP", "BOTTOM", 0, (counter[frameAssignee]*(f:GetWidth()+self.opt.Spacing))
+				a1, a2, yMod, xMod = "TOP", "BOTTOM", 0, (count*(f:GetWidth()+self.opt.Spacing))
 			elseif growth == "left" then
-				a1, a2, yMod, xMod = "TOP", "BOTTOM", 0, -1*(counter[frameAssignee]*(f:GetWidth()+self.opt.Spacing))
+				a1, a2, yMod, xMod = "TOP", "BOTTOM", 0, -1*(count*(f:GetWidth()+self.opt.Spacing))
 			else
-				a1, a2, yMod, xMod = "TOP", "BOTTOM", -1*(counter[frameAssignee]*(f:GetHeight()+self.opt.Spacing)), 0
+				a1, a2, yMod, xMod = "TOP", "BOTTOM", -1*(count*(f:GetHeight()+self.opt.Spacing)), 0
 			end
 
 			f:ClearAllPoints()
