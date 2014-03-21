@@ -71,20 +71,40 @@ sRaidFrames.options = {
 					disabled = function() return not sRaidFrames.opt.lock_focus end,
 				},
 				
-				sort_focus = {
-					name = L["Dynamic HP sort"],
+				sort_focus_hp = {
+					name = L["Dynamic HP sort lvl1"],
 					type = "toggle",
-					desc = L["Dynamic HP sort"],
+					desc = L["Dynamic HP sort lvl1"],
 					get = function()
 						return sRaidFrames.opt.dynamic_sort
 					end,
 					set = function(sort)
 						sRaidFrames:S("dynamic_sort", sort)
 						
+						if not sort then
+							sRaidFrames.opt.dynamicrange_sort = sort
+						end	
+						
 					end,
 				},
 				
-				
+				sort_focus_range = {
+					name = L["Dynamic range sort lvl2"],
+					type = "toggle",
+					desc = L["Dynamic range sort lvl2"],
+					get = function()
+						return sRaidFrames.opt.dynamicrange_sort
+					end,
+					set = function(sort)
+						sRaidFrames:S("dynamicrange_sort", sort)
+						
+						if sort  then
+							sRaidFrames.opt.dynamic_sort = sort
+						end	
+						
+						
+					end,
+				},
 				
 				
 				

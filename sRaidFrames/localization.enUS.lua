@@ -19,8 +19,9 @@ L:RegisterTranslations("enUS", function() return {
 	["Clear and compact raid frames"] = true,
 	
 	["_Focus frames"] = true,
-	["Dynamic HP sort"] = true,
-
+	["Dynamic HP sort lvl1"] = true,
+	["Dynamic range sort lvl2"] = true,
+	
 	["Requires UI reload"] = true,
 	
 	["_Healing indicators"] = true,

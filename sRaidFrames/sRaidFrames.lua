@@ -167,8 +167,6 @@ function sRaidFrames:JoinedRaid()
 	self.enabled = true
 
 	self:RegisterBucketEvent("UNIT_HEALTH", 0.2, "UpdateUnit")
-	self:RegisterBucketEvent("UNIT_HEALTH", 0.5, "Sort_Force")
-	
 	self:RegisterBucketEvent("UNIT_AURA", 0.2, "UpdateBuffs")
 	
 	self:RegisterBucketEvent("ZONE_CHANGED_NEW_AREA", 0.5, "ZoneCheck")
@@ -184,6 +182,7 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterEvent("oRA_PlayerNotResurrected")
 
 	-- TODO: only updateunit
+	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.5, self)
 	self:ScheduleRepeatingEvent("sRaidFramesUpdateAll", self.UpdateAll, 1.5, self)
 	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, 0.5, self)
 
@@ -390,6 +389,7 @@ function sRaidFrames:RangeCheck()
 			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) and UnitHealth(unit) > 0
 			if unitcheck and UnitIsUnit("player", unit) then
 				self.frames[unit]:SetAlpha(1)
+				self.UnitRangeArray[unit] = " 28Y"
 			elseif unitcheck and CheckInteractDistance(unit, 4) then
 				self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = " 28Y"
@@ -1062,10 +1062,15 @@ end
 
 function sRaidFrames:UnitModHP(unit)
 	local percent = nil
-	if UnitIsDeadOrGhost(unit) then
-		percent = 150
+	if UnitHealth(unit) <= 1 then
+		percent = 300
 	else
-		percent = math.floor(Zorlen_HealthPercent(unit))
+		local health = math.floor(Zorlen_HealthPercent(unit))
+		percent = health + 100
+		
+		if self.opt.dynamicrange_sort and self.UnitRangeArray[unit] ~= "" then
+			percent = health
+		end
 	end	
 	return percent
 end
