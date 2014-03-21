@@ -1140,7 +1140,6 @@ function sRaidFrames:Sort(force_sort)
 		end
 	end
 	table.sort(focus_units1, function(a,b) return self:UnitModHP("raid".. a) < self:UnitModHP("raid"..b) end)
-	--table.sort(focus_units1, function(a,b) return Zorlen_HealthPercent("raid".. a) < Zorlen_HealthPercent("raid"..b) end)
 	for i,id in pairs(focus_units1) do
 		focus_units2[id] = i-1
 	end

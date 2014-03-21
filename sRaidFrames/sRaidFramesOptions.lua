@@ -124,6 +124,8 @@ sRaidFrames.options = {
 								sRaidFrames.opt.TooltipMethod = "never"
 								sRaidFrames:chatToggleBorder(not value)
 								sRaidFrames:chatTexture("BantoBar")
+								sRaidFrames:chatSortBy("fixed")
+								sRaidFrames.opt.dynamic_sort = value
 								
 								sRaidFrames.opt.PowerFilter[0] = false
 								sRaidFrames.opt.PowerFilter[1] = false
@@ -162,6 +164,8 @@ sRaidFrames.options = {
 								sRaidFrames.opt.TooltipMethod = "never"
 								sRaidFrames:chatToggleBorder(not value)
 								sRaidFrames:chatTexture("BantoBar")
+								sRaidFrames:chatSortBy("fixed")
+								sRaidFrames.opt.dynamic_sort = value
 								
 								sRaidFrames.opt.PowerFilter[0] = false
 								sRaidFrames.opt.PowerFilter[1] = false
@@ -929,11 +933,6 @@ function sRaidFrames:chatSetLayout(layout)
 end
 
 function sRaidFrames:chatToggleBorder(value)
-	for key,value in pairs(self.indicator) do
-		self.indicator[key]:Hide()
-		self.indicator[key] = nil
-	end
-	
 	self:S("Border", value)
 
 	for k,f in pairs(self.frames) do
