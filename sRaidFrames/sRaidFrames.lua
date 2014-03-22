@@ -209,8 +209,7 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterEvent("oRA_PlayerNotResurrected")
 
 	-- TODO: only updateunit
-	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.75, self)
-	--self:RegisterBucketEvent("UNIT_HEALTH", 0.2, "Sort_Force")
+	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.5, self)
 	
 	self:ScheduleRepeatingEvent("sRaidFramesUpdateAll", self.UpdateAll, 1.5, self)
 	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, 0.5, self)
@@ -300,8 +299,8 @@ function sRaidFrames:UpdateRoster()
 			self:JoinedRaid()
 	end
 
-	self:UpdateVisibility()
 	self:LoadStyle()
+	self:UpdateVisibility()
 end
 
 function sRaidFrames:QueryVisibility(id)
