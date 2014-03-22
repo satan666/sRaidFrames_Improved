@@ -19,12 +19,16 @@ L:RegisterTranslations("enUS", function() return {
 	["Clear and compact raid frames"] = true,
 	
 	["_Focus frames"] = true,
-	["Dynamic health sort lvl1"] = true,
-	["Dynamic range sort lvl2"] = true,
+	["Dynamic sort lvl1 - health"] = true,
+	["Dynamic sort lvl2 - range"] = true,
+	["Dynamic sort lvl3 - overheal"] = true,
+	
 	["Target special aura"] = true,
 	["Change background color of targeted unit"] = true,
-	["Exclude target from sorting"] = true,
-	["Target unit always on top"] = true,
+	["Exclude target unit from sorting"] = true,
+	["Target on top"] = true,
+	["Extra width"] = true,
+	["Focus frame extra width"] = true,
 	
 	
 	["Requires UI reload"] = true,

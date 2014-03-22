@@ -41,6 +41,7 @@ sRaidFrames.MapEnable = false
 sRaidFrames.NextScan = 0
 sRaidFrames.MapScale = 0
 
+sRaidFrames.UnitFocusHPArray = {}
 sRaidFrames.UnitFocusArray = {}
 sRaidFrames.UnitRangeArray = {}
 sRaidFrames.ExtendedRangeScan = {}
@@ -97,7 +98,7 @@ function sRaidFrames:OnInitialize()
 
 	self.master:Hide()
 	
-	self:LoadStyle()
+	self:LoadProfile()
 
 	for i = 1, MAX_RAID_MEMBERS do
 		self:CreateUnitFrame(i)
@@ -146,18 +147,46 @@ function sRaidFrames:OnDisable()
 	self.master:Hide()
 end
 
-function sRaidFrames:LoadStyle()
-	if sRaidFrames.opt.style then
-		sRaidFrames.unit_debuff_aura = nil
-		sRaidFrames.unitframe_width = 60
-		sRaidFrames.unit_name_lenght = 3
-		sRaidFrames.show_txt_buff = nil
+function sRaidFrames:LoadProfile()
+	if self.opt.style then
+		self.unit_debuff_aura = nil
+		self.unitframe_width = 60
+		if self.opt.extra_width then
+			self.unitframe_focus_extra_width = 75
+		else
+			self.unitframe_focus_extra_width = 60
+		end
+		self.unit_name_lenght = 3
+		self.show_txt_buff = nil
 	else
-		sRaidFrames.unit_debuff_aura = true
-		sRaidFrames.unitframe_width = 90
-		sRaidFrames.unit_name_lenght = nil
-		sRaidFrames.show_txt_buff = true
+		self.unit_debuff_aura = true
+		self.unitframe_width = 90
+		self.unitframe_focus_extra_width = 90
+		self.unit_name_lenght = nil
+		self.show_txt_buff = true
 	end
+end
+
+function sRaidFrames:LoadStyle()
+	--[[
+	for i = 1, MAX_RAID_MEMBERS do
+		local unit = "raid"..i
+		if self:CheckFocusUnit(unit) then
+			self:SetStyle(self.frames[unit], self.unitframe_focus_extra_width)
+		else
+			self:SetStyle(self.frames[unit], self.unitframe_width)
+		end
+	end
+	--]]
+	
+	for unit in pairs(self.visible) do
+		if self:CheckFocusUnit(unit) then
+			self:SetStyle(self.frames[unit], self.unitframe_focus_extra_width)
+		else
+			self:SetStyle(self.frames[unit], self.unitframe_width)
+		end
+	end
+	
 end
 
 function sRaidFrames:JoinedRaid()
@@ -180,7 +209,7 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterEvent("oRA_PlayerNotResurrected")
 
 	-- TODO: only updateunit
-	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 1.0, self)
+	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.75, self)
 	--self:RegisterBucketEvent("UNIT_HEALTH", 0.2, "Sort_Force")
 	
 	self:ScheduleRepeatingEvent("sRaidFramesUpdateAll", self.UpdateAll, 1.5, self)
@@ -257,6 +286,7 @@ function sRaidFrames:Variables()
 end
 
 function sRaidFrames:UpdateRoster()
+	
 	local num = GetNumRaidMembers()
 
 	if num == 0 then
@@ -271,6 +301,7 @@ function sRaidFrames:UpdateRoster()
 	end
 
 	self:UpdateVisibility()
+	self:LoadStyle()
 end
 
 function sRaidFrames:QueryVisibility(id)
@@ -526,7 +557,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 	local red_nickname = self.opt.red
 	for unit in pairs(units) do
 		local focus_unit = self:CheckFocusUnit(unit)
-		if self.visible[unit] and UnitExists(unit) and (not focus_unit and not force_focus or focus_unit and force_focus) then
+		if self.visible[unit] and UnitExists(unit) and (not self.opt.dynamic_sort or not focus_unit and not force_focus or focus_unit and force_focus) then
 			local f = self.frames[unit]
 			local range = ""
 			if self.opt.Debug then
@@ -1028,17 +1059,20 @@ function sRaidFrames:SetBackdrop(f)
 	f:SetBackdropBorderColor(self.opt.BorderColor.r, self.opt.BorderColor.g, self.opt.BorderColor.b, self.opt.BorderColor.a)
 end
 
-function sRaidFrames:SetStyle(f)
-	self:SetWHP(f, self.unitframe_width, 40)
-	self:SetWHP(f.title, self.unitframe_width - 10, 16, "TOPLEFT", f, "TOPLEFT",  5, -4)
+function sRaidFrames:SetStyle(f, width)
+	
+	local frame_width = width or self.unitframe_width
+	
+	self:SetWHP(f, frame_width, 40)
+	self:SetWHP(f.title, frame_width - 10, 16, "TOPLEFT", f, "TOPLEFT",  5, -4)
 	self:SetWHP(f.aura1, 13, 13, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
 	self:SetWHP(f.aura2, 13, 13, "RIGHT", f.aura1, "LEFT", 0, 0)
 	self:SetWHP(f.buff1, 10, 10, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
 	self:SetWHP(f.buff2, 10, 10, "RIGHT", f.buff1, "LEFT", 0, 0)
 	self:SetWHP(f.buff3, 10, 10, "RIGHT", f.buff2, "LEFT", 0, 0)
 	self:SetWHP(f.buff4, 10, 10, "RIGHT", f.buff3, "LEFT", 0, 0)
-	self:SetWHP(f.hpbar, self.unitframe_width - 10, 13, "TOPLEFT", f.title, "BOTTOMLEFT", 0, 0)
-	self:SetWHP(f.mpbar, self.unitframe_width - 10, 4, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
+	self:SetWHP(f.hpbar, frame_width - 10, 13, "TOPLEFT", f.title, "BOTTOMLEFT", 0, 0)
+	self:SetWHP(f.mpbar, frame_width - 10, 4, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
 
 	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f.hpbar, "CENTER", 0, 0)
 	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f.mpbar, "CENTER", 0, 0)
@@ -1062,18 +1096,46 @@ function sRaidFrames:Sort_Force()
 	end	
 end
 
+
 function sRaidFrames:UnitModHP(unit)
+
 	local percent = nil
-	if self.opt.exclude and UnitExists("target") and UnitIsUnit(unit, "target") then
+	local treshhold = 3
+	
+	if UnitExists("target") and UnitIsUnit(unit, "target") and self.opt.exclude then
 		percent = 0
-	elseif UnitHealth(unit) <= 1 then
-		percent = 300
+	elseif UnitHealth(unit) <= 1 or not UnitIsConnected(unit) then
+		percent = 1000
 	else
 		local health = math.floor(Zorlen_HealthPercent(unit))
-		percent = health + 100
+		local health_old = self.UnitFocusHPArray[unit]
+		if health and health ~= 100 and health >= (100 - treshhold) then
+			health = 100
+			--DEFAULT_CHAT_FRAME:AddMessage("xx1 - "..UnitName(unit).." - "..health)
+		elseif health_old and health and health_old ~= health and math.abs(health - health_old) <= treshhold then
+			--DEFAULT_CHAT_FRAME:AddMessage("xx2 - "..UnitName(unit).." - "..health.." - "..health_old.." abs - "..math.abs(health - health_old))
+			health = health_old
+		else
+			self.UnitFocusHPArray[unit] = health
+		end
+		
+		percent = health + 800
 		
 		if self.opt.dynamic_range_sort and self.UnitRangeArray[unit] ~= "" then
 			percent = health
+			--[[
+			if self.opt.dynamic_overheal_sort and health < 95 then
+				local indicator = self.indicator[unit].active
+
+				if indicator > 0 then
+					percent = health + 15*indicator
+				end
+
+				if percent > 100 then
+					percent = 100
+				end
+			end
+			--]]
 		end
 	end	
 	return percent
@@ -1255,7 +1317,6 @@ function sRaidFrames:SavePosition()
 	local s = self.master:GetEffectiveScale()
 
 	for k,f in pairs(self.groupframes) do
-
 		aryPos[k] = {x = f:GetLeft()*s, y = f:GetTop()*s}
 	end
 
@@ -1399,6 +1460,12 @@ function sRaidFrames:SetHealIndicator(unit)
 		end
 		
 		self.indicator[unit]:Show()
+		
+		--[[
+		if self.opt.dynamic_overheal_sort then
+			self:Sort_Force()
+		end
+		--]]
 	end	
 
 end
@@ -1439,7 +1506,9 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 		self.UnitFocusArray[name] = nil
 		UIErrorsFrame:Clear()
 		UIErrorsFrame:AddMessage("Remove Focus: "..name, color.r, color.g, color.b)
+		self:LoadStyle()
 		self:UpdateVisibility()
+		
 		return
 	end
 	
@@ -1449,7 +1518,9 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 		self.UnitFocusArray[name] = true
 		UIErrorsFrame:Clear()
 		UIErrorsFrame:AddMessage("Add Focus : "..name, color.r, color.g, color.b)
+		self:LoadStyle()
 		self:UpdateVisibility()
+		
 	else
 		UIErrorsFrame:Clear()
 		UIErrorsFrame:AddMessage("Unit not in Group: "..name)

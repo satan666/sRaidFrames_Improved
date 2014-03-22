@@ -72,9 +72,9 @@ sRaidFrames.options = {
 				},
 				
 				sort_focus_hp = {
-					name = L["Dynamic health sort lvl1"],
+					name = L["Dynamic sort lvl1 - health"],
 					type = "toggle",
-					desc = L["Dynamic health sort lvl1"],
+					desc = L["Dynamic sort lvl1 - health"],
 					get = function()
 						return sRaidFrames.opt.dynamic_sort
 					end,
@@ -83,15 +83,16 @@ sRaidFrames.options = {
 						
 						if not sort then
 							sRaidFrames.opt.dynamic_range_sort = sort
+							--sRaidFrames.opt.dynamic_overheal_sort = sort
 						end	
 						
 					end,
 				},
 				
 				sort_focus_range = {
-					name = L["Dynamic range sort lvl2"],
+					name = L["Dynamic sort lvl2 - range"],
 					type = "toggle",
-					desc = L["Dynamic range sort lvl2"],
+					desc = L["Dynamic sort lvl2 - range"],
 					get = function()
 						return sRaidFrames.opt.dynamic_range_sort
 					end,
@@ -99,10 +100,30 @@ sRaidFrames.options = {
 						sRaidFrames:S("dynamic_range_sort", sort)
 						if sort  then
 							sRaidFrames.opt.dynamic_sort = sort
+						else
+							--sRaidFrames.opt.dynamic_overheal_sort = sort
 						end		
 					end,
 				},
 				
+				--[[
+				sort_focus_overheal = {
+					name = L["Dynamic sort lvl3 - overheal"],
+					type = "toggle",
+					desc = L["Dynamic sort lvl3 - overheal"],
+					get = function()
+						return sRaidFrames.opt.dynamic_overheal_sort
+					end,
+					set = function(sort)
+						sRaidFrames:S("dynamic_overheal_sort", sort)
+						if sort  then
+							sRaidFrames.opt.dynamic_sort = sort
+							sRaidFrames.opt.dynamic_range_sort = sort
+						end		
+					end,
+				},
+				--]]
+	
 				
 				aura_target_focus = {
 					name = L["Target special aura"],
@@ -118,15 +139,31 @@ sRaidFrames.options = {
 				},
 				
 				exclude_target_focus = {
-					name = L["Exclude target from sorting"],
+					name = L["Target on top"],
 					type = "toggle",
-					desc = L["Target unit always on top"],
+					desc = L["Exclude target unit from sorting"],
 					get = function()
 						return sRaidFrames.opt.exclude
 					end,
 					set = function(exclude)
 						sRaidFrames:S("exclude", exclude)
-						
+						if exclude then
+							sRaidFrames.opt.dynamic_sort = exclude
+						end
+					end,
+				},
+				
+				extra_width_focus = {
+					name = L["Extra width"],
+					type = "toggle",
+					desc = L["Focus frame extra width"],
+					get = function()
+						return sRaidFrames.opt.extra_width
+					end,
+					set = function(set)
+						sRaidFrames:S("extra_width", set)
+						sRaidFrames:LoadProfile()
+						sRaidFrames:LoadStyle()
 					end,
 				},
 
@@ -142,12 +179,16 @@ sRaidFrames.options = {
 				style = {
 					name = L["Compact style"],
 					type = "toggle",
-					desc = L["Requires UI reload"],
+					desc = L["Compact style"],
 					get = function()
 						return sRaidFrames.opt.style
 					end,
 					set = function(style)
 						sRaidFrames:S("style", style)
+						
+						sRaidFrames:LoadProfile()
+						sRaidFrames:LoadStyle()
+						sRaidFrames:UpdateVisibility()
 					end,
 				},
 			
@@ -167,6 +208,7 @@ sRaidFrames.options = {
 								sRaidFrames:chatTexture("BantoBar")
 								sRaidFrames:chatSortBy("fixed")
 								sRaidFrames.opt.dynamic_sort = value
+								sRaidFrames.opt.Spacing = 0
 								
 								sRaidFrames.opt.PowerFilter[0] = false
 								sRaidFrames.opt.PowerFilter[1] = false
@@ -185,6 +227,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.Invert = not value
 
 								sRaidFrames:UpdateAll()
+								sRaidFrames:Sort()
 
 							end
 							sRaidFrames:S("profile1", value)
@@ -207,6 +250,7 @@ sRaidFrames.options = {
 								sRaidFrames:chatTexture("BantoBar")
 								sRaidFrames:chatSortBy("fixed")
 								sRaidFrames.opt.dynamic_sort = value
+								sRaidFrames.opt.Spacing = 0
 								
 								sRaidFrames.opt.PowerFilter[0] = false
 								sRaidFrames.opt.PowerFilter[1] = false
@@ -225,6 +269,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.Invert = value
 								
 								sRaidFrames:UpdateAll()
+								sRaidFrames:Sort()
 
 							end
 							sRaidFrames:S("profile2", value)
