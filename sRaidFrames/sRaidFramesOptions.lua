@@ -11,7 +11,7 @@ sRaidFrames.options = {
 		focus = {
 			name = L["_Focus frame"],
 			type = "group",
-			desc = L["Custom frames"],
+			desc = L["Use keybinding to add/remove units"],
 			args = {
 
 				growth_focus = {
@@ -126,14 +126,27 @@ sRaidFrames.options = {
 	
 				
 				aura_target_focus = {
-					name = L["Target special aura"],
+					name = L["Special aura - Target"],
 					type = "toggle",
-					desc = L["Change background color of targeted unit"],
+					desc = L["Change background color to blue of target unit"],
 					get = function()
 						return sRaidFrames.opt.aura
 					end,
 					set = function(aura)
 						sRaidFrames:S("aura", aura)
+						
+					end,
+				},
+				
+				aura_targettarget_focus = {
+					name = L["Special aura - Enemy target"],
+					type = "toggle",
+					desc = L["Change background color to red of enemy target unit"],
+					get = function()
+						return sRaidFrames.opt.aurax
+					end,
+					set = function(aurax)
+						sRaidFrames:S("aurax", aurax)
 						
 					end,
 				},
@@ -653,7 +666,7 @@ sRaidFrames.options = {
 					get = function() return sRaidFrames.opt.RangeFrequency end,
 					set = function(value)
 						sRaidFrames.opt.RangeFrequency = value
-						sRaidFrames:UpdateRangeFrequency()
+						sRaidFrames:UpdateRangeFrequency(value)
 					end,
 					min  = 0.25,
 					max  = 1,

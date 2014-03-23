@@ -41,6 +41,7 @@ sRaidFrames.MapEnable = false
 sRaidFrames.NextScan = 0
 sRaidFrames.MapScale = 0
 
+sRaidFrames.UnitSortOrder = {}
 sRaidFrames.UnitFocusHPArray = {}
 sRaidFrames.UnitFocusArray = {}
 sRaidFrames.UnitRangeArray = {}
@@ -76,7 +77,7 @@ function sRaidFrames:OnInitialize()
 		PowerFilter			= {[0] = true,[1] = true,[2] = true,[3] = true},
 		aggro				= false,
 		RangeCheck 			= false,
-		RangeFrequency 		= 1.5,
+		RangeFrequency 		= 0.75,
 		RangeAlpha 			= 0.2,
 	})
 
@@ -107,6 +108,11 @@ function sRaidFrames:OnInitialize()
 	for i = 1, 9 do
 		self:CreateGroupFrame(i)
 	end
+	
+	for i = 1, MAX_RAID_MEMBERS do
+		self.UnitSortOrder[i] = 0
+	end
+	
 
 	if WatchDog_OnClick then
 		sRaidFramesCustomOnClickFunction = WatchDog_OnClick
@@ -211,10 +217,12 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterEvent("oRA_PlayerNotResurrected")
 
 	-- TODO: only updateunit
-	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.5, self)
+	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.75, self)
+	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, self.opt.RangeFrequency, self)
+	
 	
 	self:ScheduleRepeatingEvent("sRaidFramesUpdateAll", self.UpdateAll, 1.5, self)
-	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, 0.5, self)
+	
 
 	self:UpdateRoster()
 	self:UpdateAll()
@@ -409,9 +417,9 @@ function sRaidFrames:RangeCheck()
 		self.SpellCheck = self.ClassSpellArray[self.ClassCheck]
 	end
 	
-	if not UnitIsDeadOrGhost("player") and (now > self.NextScan or self.MapEnable and self.MapScale == 0 or not self.MapEnable) and table.getn(self.ExtendedRangeScan) == 0 then
-		local freq = self.opt.RangeFrequency or 1
-		self.NextScan = now + freq 
+	if not UnitIsDeadOrGhost("player") and (self.MapEnable and self.MapScale == 0 or not self.MapEnable) and table.getn(self.ExtendedRangeScan) == 0 then --now > self.NextScan or 
+		--local freq = self.opt.RangeFrequency or 1
+		--self.NextScan = now + freq 
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		
 		--self.ExtendedRangeScan = {} 
@@ -421,10 +429,10 @@ function sRaidFrames:RangeCheck()
 		for unit in pairs(self.visible) do	
 			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) and UnitHealth(unit) > 0
 			if unitcheck and UnitIsUnit("player", unit) then
-				self.frames[unit]:SetAlpha(1)
+				--self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = " 28Y"
 			elseif unitcheck and CheckInteractDistance(unit, 4) then
-				self.frames[unit]:SetAlpha(1)
+				--self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = " 28Y"
 				if self.MapEnable then
 					local _tx, _ty = GetPlayerMapPosition(unit)
@@ -446,18 +454,18 @@ function sRaidFrames:RangeCheck()
 				local _tx, _ty = GetPlayerMapPosition(unit)
 				local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
 				if _tx > 0 and _ty > 0 and self:VerifyUnitRange(unit, dist) then
-					self.frames[unit]:SetAlpha(1)
+					--self.frames[unit]:SetAlpha(1)
 					self.UnitRangeArray[unit] = " 40Y"
 				else
 					self.UnitRangeArray[unit] = ""
-					self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
+					--self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
 				end
 			elseif unitcheck and self.SpellCheck and self.opt.ExtendedRangeCheck then
 				self.ExtendedRangeScan[counter] = unit
 				counter = counter + 1
 			else
 				self.UnitRangeArray[unit] = ""
-				self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
+				--self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
 			end
 		end	
 		if counter > 1 then 
@@ -495,7 +503,7 @@ function sRaidFrames:ExtendedRangeCheck()
 			TargetUnit(j)
 		end
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
-			self.frames[j]:SetAlpha(1)
+			--self.frames[j]:SetAlpha(1)
 			if not self.MapEnable then self.UnitRangeArray[j] = " 40Y" else self.UnitRangeArray[j] = " 40Y*"	end
 			self:Debug("RC "..GetUnitName(j).."_40y - " .."|cff00FF00 PASS")
 			jumpnext = nil
@@ -505,7 +513,7 @@ function sRaidFrames:ExtendedRangeCheck()
 			self.TargetMonitor = nil
 		end
 		if jumpnext then
-			self.frames[j]:SetAlpha(self.opt.RangeAlpha)
+			--self.frames[j]:SetAlpha(self.opt.RangeAlpha)
 			self.UnitRangeArray[j] = ""
 			self:Debug("RC "..GetUnitName(j).."_40y - " .."|cffFF0000 NOT PASS")
 		end
@@ -550,9 +558,9 @@ function sRaidFrames:Debug(msg)
 	end
 end
 
-function sRaidFrames:UpdateRangeFrequency()
+function sRaidFrames:UpdateRangeFrequency(value)
 	self:CancelScheduledEvent("sRaidFramesRangeCheck")
-	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, 0.5, self)
+	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, value, self)
 end
 
 function sRaidFrames:UpdateUnit(units, force_focus)
@@ -725,8 +733,12 @@ function sRaidFrames:UpdateBuffs(units)
 			self.debuffColors["Red"]    = { ["r"] = 1, ["g"] = 0, ["b"] = 0, ["a"] = 1, ["priority"] = 4 }
 			
 			
-			if self.opt.aura and sRaidFrames.opt.style and UnitExists("target") and UnitIsUnit("target", unit) and UnitHealth(unit) > 1 and self:CheckFocusUnit(unit) then
-				cAura = self.debuffColors["Blue"]
+			if sRaidFrames.opt.style and UnitExists("target") and self:CheckFocusUnit(unit) and UnitHealth(unit) > 1 then
+				if self.opt.aura and UnitIsUnit("target", unit) then
+					cAura = self.debuffColors["Blue"]
+				elseif self.opt.aurax and Zorlen_isEnemy("target") and UnitExists("targettarget") and UnitIsUnit("targettarget", unit) then
+					cAura = self.debuffColors["Red"]
+				end	
 			end	
 			
 			if cAura then
@@ -1095,13 +1107,28 @@ end
 function sRaidFrames:Sort_Force()
 	if self.opt.dynamic_sort then 
 		self:Sort(true)
-	end	
+	end
+	for id = 1, MAX_RAID_MEMBERS do
+		if self.visible["raid" .. id] then
+			if self.UnitRangeArray["raid" .. id] ~= "" then
+				self.frames["raid" .. id]:SetAlpha(1)
+			else
+				self.frames["raid" .. id]:SetAlpha(self.opt.RangeAlpha)
+			end
+		end
+	end
 end
 
 function sRaidFrames:UnitModHP(unit)
-
 	local percent = nil
 	local treshhold = 3
+	local overheal_treshold = 15
+	
+	local id_str = string.gsub(unit,"raid","")
+	local id_fix = tonumber(id_str)
+	local order = self.UnitSortOrder[id_fix]/100
+	
+	--DEFAULT_CHAT_FRAME:AddMessage("TEST")
 	
 	if UnitExists("target") and UnitIsUnit(unit, "target") and self.opt.exclude then
 		percent = 0
@@ -1110,31 +1137,29 @@ function sRaidFrames:UnitModHP(unit)
 	else
 		local health = math.floor(Zorlen_HealthPercent(unit))
 		local health_old = self.UnitFocusHPArray[unit]
-		if health and health ~= 100 and health >= (100 - treshhold) then
-			health = 100
-			--DEFAULT_CHAT_FRAME:AddMessage("xx1 - "..UnitName(unit).." - "..health)
-		elseif health_old and health and health_old ~= health and math.abs(health - health_old) <= treshhold then
-			--DEFAULT_CHAT_FRAME:AddMessage("xx2 - "..UnitName(unit).." - "..health.." - "..health_old.." abs - "..math.abs(health - health_old))
+
+		if health_old and health and health_old ~= health and math.abs(health - health_old) <= treshhold then
 			health = health_old
 		else
 			self.UnitFocusHPArray[unit] = health
 		end
 		
-		percent = health + 800
+		percent = health + order + 800
 		
 		if self.opt.dynamic_range_sort and self.UnitRangeArray[unit] ~= "" then
-			percent = health
+			percent = health + order
 			--[[
-			if self.opt.dynamic_overheal_sort and health < 95 then
-				local indicator = self.indicator[unit].active
-
-				if indicator > 0 then
-					percent = health + 15*indicator
-				end
-
-				if percent > 100 then
-					percent = 100
-				end
+			if (100 - percent) > treshhold then --self.opt.dynamic_overheal_sort and 
+				if self.indicator[unit] then
+					local indicator = self.indicator[unit].active
+					if indicator > 0 then
+						DEFAULT_CHAT_FRAME:AddMessage("TEST - "..UnitName(unit))
+						percent = health + overheal_treshold*indicator + order
+						if percent >= 100 then
+							percent = 99 + order
+						end
+					end		
+				end	
 			end
 			--]]
 		end
@@ -1149,8 +1174,10 @@ function sRaidFrames:Sort(force_sort)
 	local counter={0,0,0,0,0,0,0,0,0}
 
 	for id = 1, MAX_RAID_MEMBERS do
-		if self.visible["raid" .. id] and (not force_sort or force_sort and self:CheckFocusUnit("raid"..id)) then
-			table.insert(sort, id)
+		if self.visible["raid" .. id] then
+			if not force_sort or force_sort and self:CheckFocusUnit("raid"..id) then
+				table.insert(sort, id)
+			end
 		end
 	end
 
@@ -1216,6 +1243,7 @@ function sRaidFrames:Sort(force_sort)
 	table.sort(focus_units1, function(a,b) return self:UnitModHP("raid".. a) < self:UnitModHP("raid"..b) end)
 	for i,id in pairs(focus_units1) do
 		focus_units2[id] = i-1
+		self.UnitSortOrder[id] = i
 	end
 
 	for _,id in pairs(sort) do

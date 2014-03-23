@@ -9,7 +9,7 @@ L:RegisterTranslations("enUS", function() return {
 	["shown"] = true,
 	
 	["_Focus frame"] = true,
-	["Custom frames"] = true,
+	["Use keybinding to add/remove units"] = true,
 	
 	["Load predefined settings"] = true,
 	["Load profile - Normal"] = true,
@@ -23,8 +23,12 @@ L:RegisterTranslations("enUS", function() return {
 	["Dynamic sort lvl2 - range"] = true,
 	["Dynamic sort lvl3 - overheal"] = true,
 	
-	["Target special aura"] = true,
-	["Change background color of targeted unit"] = true,
+	["Special aura - Target"] = true,
+	["Change background color to blue of target unit"] = true,
+	
+	["Special aura - Enemy target"] = true,
+	["Change background color to red of enemy target unit"] = true,
+	
 	["Exclude target unit from sorting"] = true,
 	["Target on top"] = true,
 	["Extra width"] = true,
