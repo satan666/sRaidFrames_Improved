@@ -79,6 +79,8 @@ function sRaidFrames:OnInitialize()
 		RangeCheck 			= false,
 		RangeFrequency 		= 0.75,
 		RangeAlpha 			= 0.2,
+		lock_focus			= false,
+		ShowGroupTitles_Focus = true,
 	})
 
 	self:RegisterChatCommand({"/srf", "/sraidframes"}, self.options)
@@ -403,7 +405,7 @@ function sRaidFrames:RangeCheck()
 	local moving = Zorlen_isMoving()
 	local _px, _py = GetPlayerMapPosition("player")
 	
-	--DEFAULT_CHAT_FRAME:AddMessage("|cff00eeeeDebug: |cffffffffRange Check") 
+	
 	
 	if _px > 0 and _py > 0 and not self.MapEnable then
 		self.MapEnable = true
@@ -417,20 +419,22 @@ function sRaidFrames:RangeCheck()
 		self.SpellCheck = self.ClassSpellArray[self.ClassCheck]
 	end
 	
-	if not UnitIsDeadOrGhost("player") and (self.MapEnable and self.MapScale == 0 or not self.MapEnable) and table.getn(self.ExtendedRangeScan) == 0 then --now > self.NextScan or 
+	if not UnitIsDeadOrGhost("player") and table.getn(self.ExtendedRangeScan) == 0 then --now > self.NextScan or and (self.MapEnable and self.MapScale == 0 or not self.MapEnable)
+		
 		--local freq = self.opt.RangeFrequency or 1
 		--self.NextScan = now + freq 
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		
 		--self.ExtendedRangeScan = {} 
 		self.ExtendedRangeScan = Compost and Compost:Acquire() or {}
-		
+
 		local counter = 1		
 		for unit in pairs(self.visible) do	
+		--DEFAULT_CHAT_FRAME:AddMessage("|cff00eeeeDebug: |cffffffffRange Check") 
 			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) and UnitHealth(unit) > 0
 			if unitcheck and UnitIsUnit("player", unit) then
 				--self.frames[unit]:SetAlpha(1)
-				self.UnitRangeArray[unit] = " 28Y"
+				self.UnitRangeArray[unit] = " 11Y"
 			elseif unitcheck and CheckInteractDistance(unit, 4) then
 				--self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = " 28Y"
