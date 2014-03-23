@@ -186,9 +186,10 @@ sRaidFrames.options = {
 					set = function(style)
 						sRaidFrames:S("style", style)
 						
+						sRaidFrames:UpdateVisibility()
 						sRaidFrames:LoadProfile()
 						sRaidFrames:LoadStyle()
-						sRaidFrames:UpdateVisibility()
+						
 					end,
 				},
 			

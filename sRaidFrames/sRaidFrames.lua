@@ -179,6 +179,7 @@ function sRaidFrames:LoadStyle()
 	end
 	--]]
 	
+	
 	for unit in pairs(self.visible) do
 		if self:CheckFocusUnit(unit) then
 			self:SetStyle(self.frames[unit], self.unitframe_focus_extra_width)
@@ -187,6 +188,7 @@ function sRaidFrames:LoadStyle()
 		end
 	end
 	
+	self:Sort();
 end
 
 function sRaidFrames:JoinedRaid()
@@ -298,9 +300,10 @@ function sRaidFrames:UpdateRoster()
 	if not self.enabled then
 			self:JoinedRaid()
 	end
-
-	self:LoadStyle()
+	
 	self:UpdateVisibility()
+	self:LoadStyle()
+	
 end
 
 function sRaidFrames:QueryVisibility(id)
@@ -1095,7 +1098,6 @@ function sRaidFrames:Sort_Force()
 	end	
 end
 
-
 function sRaidFrames:UnitModHP(unit)
 
 	local percent = nil
@@ -1505,8 +1507,9 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 		self.UnitFocusArray[name] = nil
 		UIErrorsFrame:Clear()
 		UIErrorsFrame:AddMessage("Remove Focus: "..name, color.r, color.g, color.b)
-		self:LoadStyle()
+		
 		self:UpdateVisibility()
+		self:LoadStyle()
 		
 		return
 	end
@@ -1517,9 +1520,9 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 		self.UnitFocusArray[name] = true
 		UIErrorsFrame:Clear()
 		UIErrorsFrame:AddMessage("Add Focus : "..name, color.r, color.g, color.b)
-		self:LoadStyle()
+
 		self:UpdateVisibility()
-		
+		self:LoadStyle()
 	else
 		UIErrorsFrame:Clear()
 		UIErrorsFrame:AddMessage("Unit not in Group: "..name)
