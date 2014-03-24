@@ -625,7 +625,7 @@ sRaidFrames.options = {
 				enable40y = {
 					name = L["Enable dungeon range check"],
 					type = "toggle",
-					desc = L["Enable 40y range check in Dungeons, requires certain spells to be on actionbar and Blizzard target frame"],
+					desc = L["Enable 40y range check in Dungeons, requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames"],
 					get = function() return sRaidFrames.opt.ExtendedRangeCheck end,
 					set = function(value)
 						if value  then
