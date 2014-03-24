@@ -207,7 +207,8 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterBucketEvent("UNIT_AURA", 0.2, "UpdateBuffs")
 	
 	self:RegisterBucketEvent("ZONE_CHANGED_NEW_AREA", 0.5, "ZoneCheck")
-	
+	self:RegisterBucketEvent("PLAYER_UNGHOST", 0.5, "ZoneCheck")
+		
 	self:RegisterBucketEvent("PLAYER_REGEN_ENABLED", 2, "ResetHealIndicators")
 	self:RegisterBucketEvent("PLAYER_REGEN_DISABLED", 2, "ResetHealIndicators")
 
@@ -1527,10 +1528,17 @@ function sRaidFrames:CheckFocusUnit(unit)
 end
 
 function sRaidFrames:AddRemoveFocusUnit(unit)
-	local name = UnitName(unit)
-	if not name then 
-		return 
+	local err_txt = "Unit not in group"
+	if UnitExists(unit) then	
+		if Zorlen_isEnemy(unit)  then
+			err_txt = "Unit has no target"
+			if UnitExists(unit.."target") and UnitIsFriend(unit.."target", "player") then
+				unit = unit.."target"
+			end	
+		end
 	end
+	
+	local name = UnitName(unit)
 
 	local class, classFileName = UnitClass(unit)
 	local color = RAID_CLASS_COLORS[classFileName]
@@ -1557,7 +1565,7 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 		self:LoadStyle()
 	else
 		UIErrorsFrame:Clear()
-		UIErrorsFrame:AddMessage("Unit not in Group: "..name)
+		UIErrorsFrame:AddMessage(err_txt)
 	end
 	return
 end
