@@ -6,7 +6,83 @@ local surface = AceLibrary("Surface-1.0")
 sRaidFrames.options = {
 	type = "group",
 	args = {
+
+		
+		aggro_notification = {
+			name = L["_Aggro notification"],
+			type = "group",
+			desc = L["Use keybinding to add/remove units"],
+			args = {
+		
+				highlight = {
+				name = L["Highlight units with aggro"],
+				type = "toggle",
+				desc = L["Turn the border of units who have aggro red"],
+				get = function() return sRaidFrames.opt.aggro end,
+				set = function(value)
+					sRaidFrames:S("aggro", value)
+				end,
+				disabled = function() return not sRaidFrames.opt.Border end,
+				},
 	
+			
+				redname = {
+					name = L["Red names on aggro"],
+					type = "toggle",
+					desc = L["Enable/Disable name color change on aggro"],
+					get = function()
+						return sRaidFrames.opt.red
+					end,
+					set = function(red)
+						sRaidFrames:S("red", red)
+						
+					end,
+				},	
+			
+				
+				redbar = {
+					name = L["Red status bar"],
+					type = "toggle",
+					desc = L["Enable/Disable name color change on aggro"],
+					get = function()
+						return sRaidFrames.opt.redbar
+					end,
+					set = function(red)
+						sRaidFrames:S("redbar", red)
+						
+					end,
+				},	
+				
+				
+			
+			
+			}
+			
+
+			
+			
+			
+		},
+		
+		
+		
+
+		
+		
+		
+		
+		
+		class_color = {
+					name = L["_Class colors"],
+					type = "toggle",
+					desc = L["Status Bar - Class colors"],
+					get = function()
+						return sRaidFrames.opt.class_color
+					end,
+					set = function(class_color)
+						sRaidFrames:S("class_color", class_color)
+					end,
+				},
 
 		focus = {
 			name = L["_Focus frame"],
@@ -29,7 +105,7 @@ sRaidFrames.options = {
 				},
 				
 				lock_focus = {
-					name = L["Lock"],
+					name = L["1) Lock"],
 					type = "toggle",
 					desc = L["Lock/Unlock the raid frames"],
 					get = function()
@@ -52,7 +128,7 @@ sRaidFrames.options = {
 				},
 				
 				titles_focus = {
-					name = L["Show group titles"],
+					name = L["2) Show group titles"],
 					type = "toggle",
 					desc = L["Toggle display of titles above each group frame"],
 					get = function()
@@ -71,103 +147,213 @@ sRaidFrames.options = {
 					disabled = function() return not sRaidFrames.opt.lock_focus end,
 				},
 				
-				sort_focus_hp = {
-					name = L["Dynamic sort lvl1 - health"],
-					type = "toggle",
-					desc = L["Dynamic sort lvl1 - health"],
-					get = function()
-						return sRaidFrames.opt.dynamic_sort
-					end,
-					set = function(sort)
-						sRaidFrames:S("dynamic_sort", sort)
-						
-						if not sort then
-							sRaidFrames.opt.dynamic_range_sort = sort
-							--sRaidFrames.opt.dynamic_overheal_sort = sort
-						end	
-						
-					end,
-				},
 				
-				sort_focus_range = {
-					name = L["Dynamic sort lvl2 - range"],
-					type = "toggle",
-					desc = L["Dynamic sort lvl2 - range"],
-					get = function()
-						return sRaidFrames.opt.dynamic_range_sort
-					end,
-					set = function(sort)
-						sRaidFrames:S("dynamic_range_sort", sort)
-						if sort  then
-							sRaidFrames.opt.dynamic_sort = sort
-						else
-							--sRaidFrames.opt.dynamic_overheal_sort = sort
-						end		
-					end,
-				},
 				
-				--[[
-				sort_focus_overheal = {
-					name = L["Dynamic sort lvl3 - overheal"],
-					type = "toggle",
-					desc = L["Dynamic sort lvl3 - overheal"],
-					get = function()
-						return sRaidFrames.opt.dynamic_overheal_sort
-					end,
-					set = function(sort)
-						sRaidFrames:S("dynamic_overheal_sort", sort)
-						if sort  then
-							sRaidFrames.opt.dynamic_sort = sort
-							sRaidFrames.opt.dynamic_range_sort = sort
-						end		
-					end,
-				},
-				--]]
+				sort_focus = {
+				name = L["Sort focus"],
+				type = "group",
+				desc = L["Use keybinding to add/remove units"],
+				args = {	
+					
+					
+					
+					
+					sort_focus_hp = {
+						name = L["Dynamic sort lvl1 - health"],
+						type = "toggle",
+						desc = L["Dynamic sort lvl1 - health"],
+						get = function()
+							return sRaidFrames.opt.dynamic_sort
+						end,
+						set = function(sort)
+							sRaidFrames:S("dynamic_sort", sort)
+							
+							if not sort then
+								sRaidFrames.opt.dynamic_range_sort = sort
+								sRaidFrames.opt.dynamic_class_sort = sort
+								sRaidFrames.opt.dynamic_group_sort = sort
+								--sRaidFrames.opt.dynamic_aggro_sort = sort
+							end	
+							
+						end,
+					},
+					
+					sort_focus_range = {
+						name = L["Dynamic sort lvl2 - range"],
+						type = "toggle",
+						desc = L["Dynamic sort lvl2 - range"],
+						get = function()
+							return sRaidFrames.opt.dynamic_range_sort
+						end,
+						set = function(sort)
+							sRaidFrames:S("dynamic_range_sort", sort)
+							if sort  then
+								sRaidFrames.opt.dynamic_sort = sort
+							else
+								sRaidFrames.opt.dynamic_class_sort = sort
+								sRaidFrames.opt.dynamic_group_sort = sort
+								--sRaidFrames.opt.dynamic_aggro_sort = sort
+							end		
+						end,
+					},
+					
+					
+					sort_focus_class = {
+						name = L["Dynamic sort lvl3 - class"],
+						type = "toggle",
+						desc = L["Dynamic sort lvl3 - class"],
+						get = function()
+							return sRaidFrames.opt.dynamic_class_sort
+						end,
+						set = function(sort)
+							sRaidFrames:S("dynamic_class_sort", sort)
+							if sort  then
+								sRaidFrames.opt.dynamic_sort = sort
+								sRaidFrames.opt.dynamic_range_sort = sort
+								sRaidFrames.opt.dynamic_group_sort = not sort
+								--sRaidFrames.opt.dynamic_aggro_sort = not sort
+							end		
+						end,
+					},
+					
+					
+					sort_focus_group = {
+						name = L["Dynamic sort lvl3 - group"],
+						type = "toggle",
+						desc = L["Dynamic sort lvl3 - group"],
+						get = function()
+							return sRaidFrames.opt.dynamic_group_sort
+						end,
+						set = function(sort)
+							sRaidFrames:S("dynamic_group_sort", sort)
+							if sort  then
+								sRaidFrames.opt.dynamic_sort = sort
+								sRaidFrames.opt.dynamic_range_sort = sort
+								sRaidFrames.opt.dynamic_class_sort = not sort
+								--sRaidFrames.opt.dynamic_aggro_sort = not sort
+							end		
+						end,
+					},
+					
+					
+					sort_focus_aggro = {
+						name = L["Aggro units on top"],
+						type = "toggle",
+						desc = L["Aggro units on top"],
+						get = function()
+							return sRaidFrames.opt.dynamic_aggro_sort
+						end,
+						set = function(sort)
+							sRaidFrames:S("dynamic_aggro_sort", sort)
+							--if sort  then
+								--sRaidFrames.opt.dynamic_sort = sort
+								--sRaidFrames.opt.dynamic_range_sort = sort
+								--sRaidFrames.opt.dynamic_class_sort = not sort
+								--sRaidFrames.opt.dynamic_group_sort = not sort
+							--end		
+						end,
+					},
+					
+					
+				}
+			},
+	
+			--[[
+			focus_aura = {
+				name = L["Focus aura"],
+				type = "group",
+				desc = L["Use keybinding to add/remove units"],
+				args = {	
 	
 				
-				aura_target_focus = {
-					name = L["Special aura - Target"],
-					type = "toggle",
-					desc = L["Change background color to blue of target unit"],
-					get = function()
-						return sRaidFrames.opt.aura
-					end,
-					set = function(aura)
-						sRaidFrames:S("aura", aura)
-						
-					end,
+					aura_target_focus = {
+						name = L["Special aura - Target"],
+						type = "toggle",
+						desc = L["Change background color to blue of target unit"],
+						get = function()
+							return sRaidFrames.opt.aura
+						end,
+						set = function(aura)
+							sRaidFrames:S("aura", aura)
+							
+						end,
+					},
+					
+					aura_targettarget_focus = {
+						name = L["Special aura - Enemy target"],
+						type = "toggle",
+						desc = L["Change background color to red of enemy target unit"],
+						get = function()
+							return sRaidFrames.opt.aurax
+						end,
+						set = function(aurax)
+							sRaidFrames:S("aurax", aurax)
+							
+						end,
+					},
+					}
 				},
+				--]]
 				
-				aura_targettarget_focus = {
-					name = L["Special aura - Enemy target"],
-					type = "toggle",
-					desc = L["Change background color to red of enemy target unit"],
-					get = function()
-						return sRaidFrames.opt.aurax
-					end,
-					set = function(aurax)
-						sRaidFrames:S("aurax", aurax)
-						
-					end,
-				},
+				range_populate = {
+				name = L["Populate with range"],
+				type = "group",
+				desc = L["Automatically populate focus frame with units in range"],
+				args = {
+					
+					
+					fill_range = {
+						name = L["Populate with range"],
+						type = "toggle",
+						desc = L["Automatically populate focus frame with units in range"],
+						get = function()
+							return sRaidFrames.opt.fill_range
+						end,
+						set = function(set)
+							sRaidFrames:S("fill_range", set)
+							sRaidFrames:UpdateVisibility()
+							sRaidFrames:LoadStyle()
+						end,
+					},
+					
+					
+					hp_limit = {
+						name = L["Set unit HP filter"],
+						type = "range",
+						desc = L["Unit filtering treshold"],
+						min = 1,
+						max = 100,
+						step = 1,
+						get = function()
+							return sRaidFrames.opt.hp_limit
+						end,
+						set = function(set)
+							sRaidFrames:S("hp_limit", set)
+						end,
+					},
+					
+					fill_range_limit = {
+						name = L["Units limit number"],
+						type = "range",
+						desc = L["Units limit number"],
+						min = 1,
+						max = 40,
+						step = 1,
+						get = function()
+							return sRaidFrames.opt.units_limit 
+						end,
+						set = function(set)
+							sRaidFrames:S("units_limit", set)
+						end,
+					},
 				
-				exclude_target_focus = {
-					name = L["Target on top"],
-					type = "toggle",
-					desc = L["Exclude target unit from sorting"],
-					get = function()
-						return sRaidFrames.opt.exclude
-					end,
-					set = function(exclude)
-						sRaidFrames:S("exclude", exclude)
-						if exclude then
-							sRaidFrames.opt.dynamic_sort = exclude
-						end
-					end,
+				}
 				},
+					
+				
 				
 				extra_width_focus = {
-					name = L["Extra width"],
+					name = L["3) Extra width"],
 					type = "toggle",
 					desc = L["Focus frame extra width"],
 					get = function()
@@ -179,7 +365,6 @@ sRaidFrames.options = {
 						sRaidFrames:LoadStyle()
 					end,
 				},
-
 			}
 			
 		},	
@@ -221,6 +406,8 @@ sRaidFrames.options = {
 								sRaidFrames:chatToggleBorder(not value)
 								sRaidFrames:chatTexture("BantoBar")
 								sRaidFrames:chatSortBy("fixed")
+								sRaidFrames.opt.SubSort = "class"
+								sRaidFrames.opt.class_color = value
 								sRaidFrames.opt.dynamic_sort = value
 								sRaidFrames.opt.Spacing = 0
 								
@@ -248,6 +435,7 @@ sRaidFrames.options = {
 						end,
 					},
 				
+				--[[
 				profile2 = {
 						name = L["Load profile - Inverted"],
 						type = "toggle",
@@ -263,6 +451,7 @@ sRaidFrames.options = {
 								sRaidFrames:chatToggleBorder(not value)
 								sRaidFrames:chatTexture("BantoBar")
 								sRaidFrames:chatSortBy("fixed")
+								sRaidFrames.opt.SubSort = "class"
 								sRaidFrames.opt.dynamic_sort = value
 								sRaidFrames.opt.Spacing = 0
 								
@@ -289,8 +478,12 @@ sRaidFrames.options = {
 							sRaidFrames:S("profile2", value)
 						end,
 					},
+					
+						--]]
 			}
+			
 		},
+	
 	
 		heal = {
 			name = L["_Healing indicators"],
@@ -305,18 +498,7 @@ sRaidFrames.options = {
 			end,
 		},
 		
-		redname = {
-			name = L["_Red names on aggro"],
-			type = "toggle",
-			desc = L["Enable/Disable name color change on aggro"],
-			get = function()
-				return sRaidFrames.opt.red
-			end,
-			set = function(red)
-				sRaidFrames:S("red", red)
-				
-			end,
-		},
+		
 		
 		lock = {
 			name = L["Lock"],
@@ -590,17 +772,6 @@ sRaidFrames.options = {
 			validate = {["never"] = L["Never"], ["notincombat"] = L["Only when not in combat"], ["always"] = L["Always"]},
 		},
 
-		aggro = {
-				name = L["Highlight units with aggro"],
-				type = "toggle",
-				desc = L["Turn the border of units who have aggro red"],
-				get = function() return sRaidFrames.opt.aggro end,
-				set = function(value)
-					sRaidFrames:S("aggro", value)
-				end,
-				disabled = function() return not sRaidFrames.opt.Border end,
-		},
-
 		range = {
 			name = L["_Range"],
 			type = "group",
@@ -617,6 +788,7 @@ sRaidFrames.options = {
 							sRaidFrames.opt.ExtendedRangeCheck = value
 							for unit in pairs(sRaidFrames.frames) do
 								sRaidFrames.frames[unit]:SetAlpha(1)
+								sRaidFrames.UnitRangeArray[unit] = ""
 							end
 						end
 					end,

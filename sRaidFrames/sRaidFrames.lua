@@ -33,6 +33,7 @@ sRaidFrames.hideWithoutStandby = true
 sRaidFrames.independentProfile = true
 sRaidFrames.TargetMonitor = nil
 
+sRaidFrames.FocusWithRange = false
 sRaidFrames.ClassCheck = false
 sRaidFrames.SpellCheck = false
 sRaidFrames.MenuOpen = false
@@ -41,11 +42,12 @@ sRaidFrames.MapEnable = false
 sRaidFrames.NextScan = 0
 sRaidFrames.MapScale = 0
 
+
 sRaidFrames.UnitSortOrder = {}
 sRaidFrames.UnitFocusHPArray = {}
 sRaidFrames.UnitFocusArray = {}
 sRaidFrames.UnitRangeArray = {}
-sRaidFrames.ExtendedRangeScan = {}
+
 sRaidFrames.ClassSpellArray = {Paladin = "Holy Light", Priest = "Flash Heal", Druid = "Healing Touch", Shaman = "Healing Wave"}
 
 
@@ -53,6 +55,9 @@ function sRaidFrames:OnInitialize()
 
 	self:RegisterDB("sRaidFramesDB")
 	self:Variables()
+	
+	sRaidFrames.UnitRangeFocus = Compost and Compost:Acquire() or {}
+	sRaidFrames.ExtendedRangeScan = Compost and Compost:Acquire() or {}
 
 	self:RegisterDefaults("profile", {
 		lock				= false,
@@ -81,6 +86,12 @@ function sRaidFrames:OnInitialize()
 		RangeAlpha 			= 0.2,
 		lock_focus			= false,
 		ShowGroupTitles_Focus = true,
+		fill_range_perma = false,
+		fill_range = false,
+		hp_limit = 100,
+		units_limit = 10,
+		aurax = false,
+		aura = false,
 	})
 
 	self:RegisterChatCommand({"/srf", "/sraidframes"}, self.options)
@@ -155,49 +166,6 @@ function sRaidFrames:OnDisable()
 	self.master:Hide()
 end
 
-function sRaidFrames:LoadProfile()
-	if self.opt.style then
-		self.unit_debuff_aura = nil
-		self.unitframe_width = 60
-		if self.opt.extra_width then
-			self.unitframe_focus_extra_width = 75
-		else
-			self.unitframe_focus_extra_width = 60
-		end
-		self.unit_name_lenght = 3
-		self.show_txt_buff = nil
-	else
-		self.unit_debuff_aura = true
-		self.unitframe_width = 90
-		self.unitframe_focus_extra_width = 90
-		self.unit_name_lenght = nil
-		self.show_txt_buff = true
-	end
-end
-
-function sRaidFrames:LoadStyle()
-	--[[
-	for i = 1, MAX_RAID_MEMBERS do
-		local unit = "raid"..i
-		if self:CheckFocusUnit(unit) then
-			self:SetStyle(self.frames[unit], self.unitframe_focus_extra_width)
-		else
-			self:SetStyle(self.frames[unit], self.unitframe_width)
-		end
-	end
-	--]]
-	
-	
-	for unit in pairs(self.visible) do
-		if self:CheckFocusUnit(unit) then
-			self:SetStyle(self.frames[unit], self.unitframe_focus_extra_width)
-		else
-			self:SetStyle(self.frames[unit], self.unitframe_width)
-		end
-	end
-	
-	self:Sort();
-end
 
 function sRaidFrames:JoinedRaid()
 	--self:Print("Joined a raid, enabling raid frames")
@@ -206,8 +174,8 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterBucketEvent("UNIT_HEALTH", 0.2, "UpdateUnit")
 	self:RegisterBucketEvent("UNIT_AURA", 0.2, "UpdateBuffs")
 	
-	self:RegisterBucketEvent("ZONE_CHANGED_NEW_AREA", 0.5, "ZoneCheck")
-	self:RegisterBucketEvent("PLAYER_UNGHOST", 0.5, "ZoneCheck")
+	self:RegisterBucketEvent("ZONE_CHANGED_NEW_AREA", 1, "ZoneCheck")
+	self:RegisterBucketEvent("PLAYER_UNGHOST", 1, "ZoneCheck")
 		
 	self:RegisterBucketEvent("PLAYER_REGEN_ENABLED", 2, "ResetHealIndicators")
 	self:RegisterBucketEvent("PLAYER_REGEN_DISABLED", 2, "ResetHealIndicators")
@@ -285,6 +253,31 @@ function sRaidFrames:Variables()
 	self.classColors["MAGE"]      = "|cFF68CCEF"
 	self.classColors["ROGUE"]     = "|cFFFFF468"
 	self.classColors["HUNTER"]    = "|cFFAAD372"
+	
+	
+	self.RAID_CLASS_COLORS = {
+	  ["HUNTER"] = { r = 0.67, g = 0.83, b = 0.45, colorStr = "ffabd473" },
+	  ["WARLOCK"] = { r = 0.58, g = 0.51, b = 0.79, colorStr = "ff9482c9" },
+	  ["PRIEST"] = { r = 1.0, g = 1.0, b = 1.0, colorStr = "ffffffff" },
+	  ["PALADIN"] = { r = 0.96, g = 0.55, b = 0.73, colorStr = "fff58cba" },
+	  ["MAGE"] = { r = 0.41, g = 0.8, b = 0.94, colorStr = "ff69ccf0" },
+	  ["ROGUE"] = { r = 1.0, g = 0.96, b = 0.41, colorStr = "fffff569" },
+	  ["DRUID"] = { r = 1.0, g = 0.49, b = 0.04, colorStr = "ffff7d0a" },
+	  ["SHAMAN"] = { r = 0.0, g = 0.44, b = 0.87, colorStr = "ff0070de" },
+	  ["WARRIOR"] = { r = 0.78, g = 0.61, b = 0.43, colorStr = "ffc79c6e" },
+	};
+	
+	self.UnitClassSort = {}
+	self.UnitClassSort["MAGE"]      = 1
+	self.UnitClassSort["WARLOCK"]   = 2
+	self.UnitClassSort["WARRIOR"]   = 3
+	self.UnitClassSort["ROGUE"]     = 4
+	self.UnitClassSort["HUNTER"]    = 5
+	self.UnitClassSort["DRUID"]     = 6
+	self.UnitClassSort["PALADIN"]   = 7
+	self.UnitClassSort["SHAMAN"]    = 7
+
+	self.UnitClassSort["PRIEST"]    = 8
 
 	self.cooldownSpells = {}
 	self.cooldownSpells["WARLOCK"] = BS["Soulstone Resurrection"]
@@ -415,6 +408,7 @@ function sRaidFrames:RangeCheck()
 	if not self.opt.RangeCheck then 
 		return 
 	end	
+	--DEFAULT_CHAT_FRAME:AddMessage("|cff00eeeeDebug: |cffffffffRange Check")
 	if not self.ClassCheck then 
 		self.ClassCheck = UnitClass("player") 
 		self.SpellCheck = self.ClassSpellArray[self.ClassCheck]
@@ -431,7 +425,7 @@ function sRaidFrames:RangeCheck()
 
 		local counter = 1		
 		for unit in pairs(self.visible) do	
-		--DEFAULT_CHAT_FRAME:AddMessage("|cff00eeeeDebug: |cffffffffRange Check") 
+		 
 			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) and UnitHealth(unit) > 0
 			if unitcheck and UnitIsUnit("player", unit) then
 				--self.frames[unit]:SetAlpha(1)
@@ -570,127 +564,146 @@ end
 
 function sRaidFrames:UpdateUnit(units, force_focus)
 	local red_nickname = self.opt.red
+	local red_bar = self.opt.redbar
+	local class_color = self.opt.class_color
 	for unit in pairs(units) do
 		local focus_unit = self:CheckFocusUnit(unit)
-		if self.visible[unit] and UnitExists(unit) and (not self.opt.dynamic_sort or not focus_unit and not force_focus or focus_unit and force_focus) then
-			local f = self.frames[unit]
-			local range = ""
-			if self.opt.Debug then
-				range = self.UnitRangeArray[unit]
-				if not range then
-					range =  ""
+		if self.visible[unit] and UnitExists(unit) then
+			if (not self.opt.dynamic_sort or not focus_unit and not force_focus or focus_unit and force_focus) then
+				local f = self.frames[unit]
+				local range = ""
+				if self.opt.Debug then
+					range = self.UnitRangeArray[unit]
+					if not range then
+						range =  ""
+					end
 				end
-			end
-			
-			local _, class = UnitClass(unit)
+				
+				
+				local _, class = UnitClass(unit)
+				local unit_name = UnitName(unit)
+				
+				if self.unit_name_lenght then
+					unit_name = string.sub(UnitName(unit), 1, self.unit_name_lenght) --UnitName(unit)
+				end
+				
+				local unit_aggro = Banzai:GetUnitAggroByUnitId(unit)
+				if unit_aggro and red_nickname then
+					f.title:SetText("|cffff0000"..unit_name..range.."|r")	
+				elseif class then
+					--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:UpdateUnit "..unit.." - "..GetUnitName(unit))
+					f.title:SetText(self.classColors[class]..unit_name..range.."|r")
+				else
+					f.title:SetText(unit_name or L["Unknown"])
+				end
 
-			local unit_name = UnitName(unit)
-			if self.unit_name_lenght then
-				unit_name = string.sub(UnitName(unit), 1, self.unit_name_lenght) --UnitName(unit)
-			end
-			
-			if red_nickname and Banzai:GetUnitAggroByUnitId(unit) then
-				f.title:SetText("|cffff0000"..unit_name..range.."|r")	
-			elseif class then
-				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:UpdateUnit "..unit.." - "..GetUnitName(unit))
-				f.title:SetText(self.classColors[class]..unit_name..range.."|r")
-			else
-				f.title:SetText(unit_name or L["Unknown"])
-			end
-
-			self.feign[unit] = nil
-			
-			-- Silly hunters, why do you have to be so annoying
-			if class == "HUNTER" then
-				if UnitIsDead(unit) then
-					for i=1,32 do
-						local texture = UnitBuff(unit, i)
-						if not texture then break end
-						if texture == "Interface\\Icons\\Ability_Rogue_FeignDeath" then
-							self.feign[unit] = true
-							break
+				self.feign[unit] = nil
+				
+				-- Silly hunters, why do you have to be so annoying
+				if class == "HUNTER" then
+					if UnitIsDead(unit) then
+						for i=1,32 do
+							local texture = UnitBuff(unit, i)
+							if not texture then break end
+							if texture == "Interface\\Icons\\Ability_Rogue_FeignDeath" then
+								self.feign[unit] = true
+								break
+							end
 						end
 					end
 				end
-			end
-			
-			
-			if not self.feign[unit] then
-				local status, dead, ghost = nil, UnitIsDead(unit), UnitIsGhost(unit)
 				
-				--[[
-				if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
-				elseif self.res[unit] == 1 and dead then status = "|cfffff700"..L["Can Recover"].."|r"
-				elseif self.res[unit] == 2 and (dead or ghost) then status = "|cfffff700"..L["Resurrected"].."|r"
-				elseif ghost then status = "|cffff8c00"..L["Released"].."|r"
-				elseif dead then status = "|cffff8c00"..L["Dead"].."|r"
-				end
-				--]]
 				
-				if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
-				elseif self.res[unit] == 1 and dead then status = "|cffff8c00"..L["Can Recover"].."|r"
-				elseif self.res[unit] == 2 and (dead or ghost) then status = "|cffff8c00"..L["Resurrected"].."|r"
-				elseif ghost then status = "|cffff0000"..L["Released"].."|r"
-				elseif dead then status = "|cffff0000"..L["Dead"].."|r"
-				end
-				
-				if status then
-					self.unavail[unit] = true
-					f.hpbar.text:SetText(status)
-					f.hpbar:SetValue(0)
-					f.mpbar.text:SetText()
-					f.mpbar:SetValue(0)
-					f:SetBackdropColor(0.3, 0.3, 0.3, 1)
-				else
+				if not self.feign[unit] then
+					local status, dead, ghost = nil, UnitIsDead(unit), UnitIsGhost(unit)
 					
-					self:CreateHealIndicator(unit)
+					--[[
+					if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
+					elseif self.res[unit] == 1 and dead then status = "|cfffff700"..L["Can Recover"].."|r"
+					elseif self.res[unit] == 2 and (dead or ghost) then status = "|cfffff700"..L["Resurrected"].."|r"
+					elseif ghost then status = "|cffff8c00"..L["Released"].."|r"
+					elseif dead then status = "|cffff8c00"..L["Dead"].."|r"
+					end
+					--]]
 					
-					self.unavail[unit] = false
-					self.res[unit] = nil
-					local hp = UnitHealth(unit) or 0
-					local hpmax = UnitHealthMax(unit)
-					local hpp = (hpmax ~= 0) and ceil((hp / hpmax) * 100) or 0
-					local hptext, hpvalue = nil, nil
-
-					if self.opt.healthDisplayType == "percent" then
-						hptext = hpp .."%"
-					elseif self.opt.healthDisplayType == "deficit" then
-						hptext = (hp-hpmax) ~=  0 and (hp-hpmax) or nil
-					elseif self.opt.healthDisplayType == "current" then
-						hptext = hp
-					elseif self.opt.healthDisplayType == "curmax" then
-						hptext = hp .."/".. hpmax
+					if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
+					elseif self.res[unit] == 1 and dead then status = "|cffff8c00"..L["Can Recover"].."|r"
+					elseif self.res[unit] == 2 and (dead or ghost) then status = "|cffff8c00"..L["Resurrected"].."|r"
+					elseif ghost then status = "|cffff0000"..L["Released"].."|r"
+					elseif dead then status = "|cffff0000"..L["Dead"].."|r"
 					end
 					
-					if self.opt.Invert then
-						hpvalue = 100 - hpp
-					else
-						hpvalue = hpp
-					end
-
-					f.hpbar.text:SetText(hptext)
-					f.hpbar:SetValue(hpvalue)
-					f.hpbar:SetStatusBarColor(self:GetHPSeverity(hpp/100))
-
-					local mp = UnitMana(unit) or 0
-					local mpmax = UnitManaMax(unit)
-					local mpp = (mpmax ~= 0) and ceil((mp / mpmax) * 100) or 0
-
-					local powerType = UnitPowerType(unit)
-					if self.opt.PowerFilter[powerType] == false then
+					if status then
+						self.unavail[unit] = true
+						f.hpbar.text:SetText(status)
+						f.hpbar:SetValue(0)
+						f.mpbar.text:SetText()
 						f.mpbar:SetValue(0)
+						f:SetBackdropColor(0.3, 0.3, 0.3, 1)
 					else
-						local color = self.ManaBarColor[powerType]
-						f.mpbar:SetStatusBarColor(color.r, color.g, color.b)
-						f.mpbar:SetValue(mpp)
+						
+						self:CreateHealIndicator(unit)
+						
+						self.unavail[unit] = false
+						self.res[unit] = nil
+						local hp = UnitHealth(unit) or 0
+						local hpmax = UnitHealthMax(unit)
+						local hpp = (hpmax ~= 0) and ceil((hp / hpmax) * 100) or 0
+						local hptext, hpvalue = nil, nil
+
+						if self.opt.healthDisplayType == "percent" then
+							hptext = hpp .."%"
+						elseif self.opt.healthDisplayType == "deficit" then
+							hptext = (hp-hpmax) ~=  0 and (hp-hpmax) or nil
+						elseif self.opt.healthDisplayType == "current" then
+							hptext = hp
+						elseif self.opt.healthDisplayType == "curmax" then
+							hptext = hp .."/".. hpmax
+						end
+						
+						if self.opt.Invert then
+							hpvalue = 100 - hpp
+						else
+							hpvalue = hpp
+						end
+
+						f.hpbar.text:SetText(hptext)
+						f.hpbar:SetValue(hpvalue)			
+						
+
+						
+						if unit_aggro and red_bar then
+							f.hpbar:SetStatusBarColor(1,0,0)
+						elseif class_color then
+							local class, fileName = UnitClass(unit)
+							local color = self.RAID_CLASS_COLORS[fileName]
+							if color then
+								f.hpbar:SetStatusBarColor(color.r, color.g, color.b)
+							end	
+						else
+							f.hpbar:SetStatusBarColor(self:GetHPSeverity(hpp/100))
+						end
+
+						local mp = UnitMana(unit) or 0
+						local mpmax = UnitManaMax(unit)
+						local mpp = (mpmax ~= 0) and ceil((mp / mpmax) * 100) or 0
+
+						local powerType = UnitPowerType(unit)
+						if self.opt.PowerFilter[powerType] == false then
+							f.mpbar:SetValue(0)
+						else
+							local color = self.ManaBarColor[powerType]
+							f.mpbar:SetStatusBarColor(color.r, color.g, color.b)
+							f.mpbar:SetValue(mpp)
+						end
 					end
+				else
+					f.hpbar.text:SetText("|cff00ff00"..L["Feign Death"].."|r")
+					f.hpbar:SetValue(100)
+					f.hpbar:SetStatusBarColor(0, 0.9, 0.5)
+					f.mpbar:SetValue(0)
 				end
-			else
-				f.hpbar.text:SetText("|cff00ff00"..L["Feign Death"].."|r")
-				f.hpbar:SetValue(100)
-				f.hpbar:SetStatusBarColor(0, 0.9, 0.5)
-				f.mpbar:SetValue(0)
-			end
+			end	
 		end
 	end
 end
@@ -1113,37 +1126,52 @@ function sRaidFrames:Sort_Force()
 	if self.opt.dynamic_sort then 
 		self:Sort(true)
 	end
-	for id = 1, MAX_RAID_MEMBERS do
-		if self.visible["raid" .. id] then
-			if self.UnitRangeArray["raid" .. id] ~= "" then
-				self.frames["raid" .. id]:SetAlpha(1)
-			else
-				self.frames["raid" .. id]:SetAlpha(self.opt.RangeAlpha)
+	
+	if self.opt.RangeCheck  then
+		for id = 1, MAX_RAID_MEMBERS do
+			if self.visible["raid" .. id] then
+				if self.UnitRangeArray["raid" .. id] ~= "" then
+					self.frames["raid" .. id]:SetAlpha(1)
+				else
+					self.frames["raid" .. id]:SetAlpha(self.opt.RangeAlpha)
+				end
 			end
 		end
-	end
+	end	
 end
+
+
 
 function sRaidFrames:UnitModHP(unit)
 	local percent = nil
 	local treshhold = 3
-	local overheal_treshold = 15
+	
+	local order = 0
+	
+	local _, classFileName = UnitClass(unit)
+	local class_order = self.UnitClassSort[classFileName]
 	
 	local id_str = string.gsub(unit,"raid","")
 	local id_fix = tonumber(id_str)
-	local order = self.UnitSortOrder[id_fix]/100
+	local group_order = self.UnitSortOrder[id_fix]
 	
-	--DEFAULT_CHAT_FRAME:AddMessage("TEST")
+	if self.opt.dynamic_class_sort then
+		order = class_order/100 + group_order/10000
+	elseif self.opt.dynamic_group_sort then
+		order = group_order/1000
+	end
 	
-	if UnitExists("target") and UnitIsUnit(unit, "target") and self.opt.exclude then
-		percent = 0
-	elseif UnitHealth(unit) <= 1 or not UnitIsConnected(unit) then
+	if self.opt.dynamic_aggro_sort and not Banzai:GetUnitAggroByUnitId(unit) then
+		order = order + 100
+	end
+	
+	if UnitHealth(unit) <= 1 or not UnitIsConnected(unit) then
 		percent = 1000
 	else
-		local health = math.floor(Zorlen_HealthPercent(unit))
+		local health = math.ceil(Zorlen_HealthPercent(unit))
 		local health_old = self.UnitFocusHPArray[unit]
 
-		if health_old and health and health_old ~= health and math.abs(health - health_old) <= treshhold then
+		if self.opt.dynamic_group_sort and health_old and health and health_old ~= health and health ~= 100 and math.abs(health - health_old) <= treshhold then
 			health = health_old
 		else
 			self.UnitFocusHPArray[unit] = health
@@ -1153,22 +1181,10 @@ function sRaidFrames:UnitModHP(unit)
 		
 		if self.opt.dynamic_range_sort and self.UnitRangeArray[unit] ~= "" then
 			percent = health + order
-			--[[
-			if (100 - percent) > treshhold then --self.opt.dynamic_overheal_sort and 
-				if self.indicator[unit] then
-					local indicator = self.indicator[unit].active
-					if indicator > 0 then
-						DEFAULT_CHAT_FRAME:AddMessage("TEST - "..UnitName(unit))
-						percent = health + overheal_treshold*indicator + order
-						if percent >= 100 then
-							percent = 99 + order
-						end
-					end		
-				end	
-			end
-			--]]
 		end
+		--DEFAULT_CHAT_FRAME:AddMessage(UnitClass(unit).." - health: "..health.." - order: "..order)
 	end	
+
 	return percent
 end
 
@@ -1178,11 +1194,14 @@ function sRaidFrames:Sort(force_sort)
 	local sort = {}
 	local counter={0,0,0,0,0,0,0,0,0}
 
+	self:RefreshFocusWithRange()
+
+
 	for id = 1, MAX_RAID_MEMBERS do
 		if self.visible["raid" .. id] then
-			if not force_sort or force_sort and self:CheckFocusUnit("raid"..id) then
+			--if not force_sort or force_sort and self:CheckFocusUnit("raid"..id) then
 				table.insert(sort, id)
-			end
+			--end
 		end
 	end
 
@@ -1246,6 +1265,10 @@ function sRaidFrames:Sort(force_sort)
 		end
 	end
 	table.sort(focus_units1, function(a,b) return self:UnitModHP("raid".. a) < self:UnitModHP("raid"..b) end)
+	
+	
+	--limit units in focus here
+	
 	for i,id in pairs(focus_units1) do
 		focus_units2[id] = i-1
 		self.UnitSortOrder[id] = i
@@ -1322,6 +1345,7 @@ function sRaidFrames:Sort(force_sort)
 	else
 		self:UpdateUnit(self.visible, true)
 	end	
+	
 end
 
 function sRaidFrames:OnUnitClick()
@@ -1494,22 +1518,137 @@ function sRaidFrames:SetHealIndicator(unit)
 		end
 		
 		self.indicator[unit]:Show()
-		
-		--[[
-		if self.opt.dynamic_overheal_sort then
-			self:Sort_Force()
-		end
-		--]]
-	end	
 
+	end	
 end
 
+
+function sRaidFrames:LoadProfile()
+	if self.opt.style then
+		self.unit_debuff_aura = nil
+		self.unitframe_width = 60
+		if self.opt.extra_width then
+			self.unitframe_focus_extra_width = 75
+		else
+			self.unitframe_focus_extra_width = 60
+		end
+		self.unit_name_lenght = 3
+		self.show_txt_buff = nil
+	else
+		self.unit_debuff_aura = true
+		self.unitframe_width = 90
+		self.unitframe_focus_extra_width = 90
+		self.unit_name_lenght = nil
+		self.show_txt_buff = true
+	end
+end
 
 function sRaidFrames:ResetHealIndicators()
 	for key,value in pairs(self.indicator) do
 		self.indicator[key].active = 0
 		self:SetHealIndicator(key)
 	end
+end
+
+function sRaidFrames:LoadStyle()
+	for unit in pairs(self.visible) do
+		if self:CheckFocusUnit(unit) then
+			self:SetStyle(self.frames[unit], self.unitframe_focus_extra_width)
+		else
+			self:SetStyle(self.frames[unit], self.unitframe_width)
+		end
+	end
+	
+	self:Sort();
+end
+
+
+function sRaidFrames:RefreshFocusWithRange()
+	self:CheckRangeFocus(nil, "reset")
+	for id = 1, MAX_RAID_MEMBERS do
+		if self:QueryVisibility(id) then
+			self:CheckRangeFocus("raid" .. id, "add")
+			if not self.visible["raid" .. id] then
+				self.frames["raid" .. id]:Show()
+				self.visible["raid" .. id] = true;
+			end
+		else
+			if self.visible["raid" .. id] then
+				self.frames["raid" .. id]:Hide()
+				self.visible["raid" .. id] = nil;
+			end
+		end
+	end
+	
+	self:CheckRangeFocus(nil, "sort")
+		
+	if self.opt.fill_range then
+		for unit in pairs(self.visible) do
+			if self:CheckFocusUnit(unit) then
+				self:SetStyle(self.frames[unit], self.unitframe_focus_extra_width)
+			else
+				self:SetStyle(self.frames[unit], self.unitframe_width)
+			end
+		end
+	end
+	
+	
+end
+
+	--if self.opt.dynamic_aggro_sort and not Banzai:GetUnitAggroByUnitId(unit) then
+		--order = order + 100
+	--end
+
+function sRaidFrames:CheckRangeHpCalc(unit)
+	if self.opt.dynamic_aggro_sort and Banzai:GetUnitAggroByUnitId(unit) then
+		return Zorlen_HealthPercent(unit)
+	else
+		return Zorlen_HealthPercent(unit) + 100
+	end
+end
+
+function sRaidFrames:CheckRangeFocus(unit, mode)
+	if not self.opt.fill_range then
+		return nil
+	end
+	
+	if mode == "sort" then
+		table.sort(self.UnitRangeFocus, function(a,b) return self:CheckRangeHpCalc(a) < self:CheckRangeHpCalc(b) end)
+		return
+	elseif mode == "reset" then
+		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:CheckRangeFocus - Reset")
+		Compost:Reclaim(self.UnitRangeFocus)
+		self.UnitRangeFocus = Compost and Compost:Acquire() or {}
+		return
+	end
+	
+	local hplimit = self.opt.hp_limit or 100
+	local check1 = hplimit >= Zorlen_HealthPercent(unit) or self.opt.dynamic_aggro_sort and Banzai:GetUnitAggroByUnitId(unit)
+	local check2 = self.UnitRangeArray[unit] ~= ""
+
+	if mode == "add" then
+		if check1 and check2 and not self:CheckFocusUnit(unit) then
+			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:CheckRangeFocus - Add - "..UnitName(unit))
+			table.insert(self.UnitRangeFocus, unit)
+				
+		end
+		
+	elseif mode == "check" then
+		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:CheckRangeFocus - Check")
+		if check1 and check2 then
+			--return true
+
+			local units_limit = self.opt.units_limit or 5
+			for blockindex,blockmatch in pairs(self.UnitRangeFocus) do
+				--DEFAULT_CHAT_FRAME:AddMessage(blockmatch.." - "..blockindex)
+				if blockmatch == unit and blockindex <= units_limit then
+					return true
+				end
+			end
+
+		end
+		return nil
+	end	
 end
 
 function sRaidFrames:CheckFocusUnit(unit)
@@ -1520,18 +1659,21 @@ function sRaidFrames:CheckFocusUnit(unit)
 	if not name then 
 		return
 	end	
-	local focus = self.UnitFocusArray[name]
-	if focus then
+	
+	if self.UnitFocusArray[name] or self:CheckRangeFocus(unit, "check") then
 		return true	
 	end
+	
 	return nil
 end
 
+
+
 function sRaidFrames:AddRemoveFocusUnit(unit)
-	local err_txt = "Unit not in group"
+	local err_txt = "Unit not in Group"
 	if UnitExists(unit) then	
 		if Zorlen_isEnemy(unit)  then
-			err_txt = "Unit has no target"
+			err_txt = "Unit Has no Target"
 			if UnitExists(unit.."target") and UnitIsFriend(unit.."target", "player") then
 				unit = unit.."target"
 			end	
@@ -1540,13 +1682,13 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 	
 	local name = UnitName(unit)
 
-	local class, classFileName = UnitClass(unit)
-	local color = RAID_CLASS_COLORS[classFileName]
+	local _, classFileName = UnitClass(unit)
+	local color = self.classColors[classFileName]
 	
 	if self.UnitFocusArray[name] then
 		self.UnitFocusArray[name] = nil
 		UIErrorsFrame:Clear()
-		UIErrorsFrame:AddMessage("Remove Focus: "..name, color.r, color.g, color.b)
+		UIErrorsFrame:AddMessage(color.."Remove Focus: "..name)
 		
 		self:UpdateVisibility()
 		self:LoadStyle()
@@ -1559,15 +1701,17 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 	if unit then 
 		self.UnitFocusArray[name] = true
 		UIErrorsFrame:Clear()
-		UIErrorsFrame:AddMessage("Add Focus : "..name, color.r, color.g, color.b)
+		UIErrorsFrame:AddMessage(color.."Add Focus : "..name)
 
 		self:UpdateVisibility()
 		self:LoadStyle()
 	else
 		UIErrorsFrame:Clear()
-		UIErrorsFrame:AddMessage(err_txt)
+		UIErrorsFrame:AddMessage("|cFFFF0000"..err_txt)
 	end
 	return
 end
+
+
 
 

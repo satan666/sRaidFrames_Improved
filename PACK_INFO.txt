@@ -15,9 +15,11 @@ patch_0.58 - grid like healing Indicators
 patch 0.61 - focus frame
 - focus frame is independable frame that can be modified by adding/removing units
 - to add/remove unit, bind key in keybinding menu then target unit and use the function
-- if you are using older version of SRF than 0.61 it's mandatory to delete sRaidFrames files from SavedVariables folder.
 - added new group sorting method "Fixed Group" it helps to avoid gaps in raid frames when you move unit to focus
 - to enable multidrag(moving all frames at once) press alt key
+
+--== IF YOU'RE USING SRF 0.61 AND OLDER IT'S MANDATORY TO DELETE SRF FILES FROM SAVEDVARIABLES FOLDER !!!
+
 
 >> ag_UnitFrames
  - this version of ag_UnitFrames is modified to be compatible with sRaidFrames 40 yard check

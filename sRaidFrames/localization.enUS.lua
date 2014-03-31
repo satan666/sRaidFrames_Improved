@@ -8,20 +8,33 @@ L:RegisterTranslations("enUS", function() return {
 	["hidden"] = true,
 	["shown"] = true,
 	
+	["_Aggro notification"] = true,
+	
+	
+	["_Class colors"] = true,
+	["Status Bar - Class colors"] = true,
+	["Red status bar"] = true,
+	
 	["_Focus frame"] = true,
 	["Use keybinding to add/remove units"] = true,
 	
 	["Load predefined settings"] = true,
 	["Load profile - Normal"] = true,
 	["Load profile - Inverted"] = true,
+	
 	["_Pure view"] = true,
 	["Compact style"] = true,
 	["Clear and compact raid frames"] = true,
 	
 	["_Focus frames"] = true,
+	["Sort focus"] = true,
 	["Dynamic sort lvl1 - health"] = true,
 	["Dynamic sort lvl2 - range"] = true,
-	["Dynamic sort lvl3 - overheal"] = true,
+	["Dynamic sort lvl3 - class"] = true,
+	["Dynamic sort lvl3 - group"] = true,
+	["Aggro units on top"] = true,
+	
+	["Focus aura"] = true,
 	
 	["Special aura - Target"] = true,
 	["Change background color to blue of target unit"] = true,
@@ -31,16 +44,29 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["Exclude target unit from sorting"] = true,
 	["Target on top"] = true,
-	["Extra width"] = true,
-	["Focus frame extra width"] = true,
 	
+
+	
+	["1) Lock"] = true;
+	["2) Show group titles"] = true,
+	["3) Extra width"] = true,
+	["Focus frame extra width"] = true,
+	["4) Units limit number"] = true,
+	["Units limit number"] = true,
+	
+
+	["Populate with range"] = true,
+	["Automatically populate focus frame with units in range"] = true,
+	
+	["Set unit HP filter"] = true,
+	["Unit filtering treshold"] = true,
 	
 	["Requires UI reload"] = true,
 	
 	["_Healing indicators"] = true,
 	["Show/Hide incoming heal indicators"] = true,
 	
-	["_Red names on aggro"] = true,
+	["Red names on aggro"] = true,
 	["Enable/Disable name color change on aggro"] = true,
 
 	["Lock"] = true,
