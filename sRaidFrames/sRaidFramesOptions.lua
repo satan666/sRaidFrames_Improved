@@ -172,7 +172,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.dynamic_range_sort = sort
 								sRaidFrames.opt.dynamic_class_sort = sort
 								sRaidFrames.opt.dynamic_group_sort = sort
-								--sRaidFrames.opt.dynamic_aggro_sort = sort
+								sRaidFrames.opt.dynamic_aggro_sort = sort
 							end	
 							
 						end,
@@ -245,12 +245,12 @@ sRaidFrames.options = {
 						end,
 						set = function(sort)
 							sRaidFrames:S("dynamic_aggro_sort", sort)
-							--if sort  then
-								--sRaidFrames.opt.dynamic_sort = sort
+							if sort  then
+								sRaidFrames.opt.dynamic_sort = sort
 								--sRaidFrames.opt.dynamic_range_sort = sort
 								--sRaidFrames.opt.dynamic_class_sort = not sort
 								--sRaidFrames.opt.dynamic_group_sort = not sort
-							--end		
+							end		
 						end,
 					},
 					
