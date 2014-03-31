@@ -268,16 +268,17 @@ function sRaidFrames:Variables()
 	};
 	
 	self.UnitClassSort = {}
-	self.UnitClassSort["MAGE"]      = 1
-	self.UnitClassSort["WARLOCK"]   = 2
+	self.UnitClassSort["WARLOCK"]   = 1
+	self.UnitClassSort["MAGE"]      = 2
 	self.UnitClassSort["WARRIOR"]   = 3
 	self.UnitClassSort["ROGUE"]     = 4
-	self.UnitClassSort["HUNTER"]    = 5
+	self.UnitClassSort["PRIEST"]    = 5
 	self.UnitClassSort["DRUID"]     = 6
-	self.UnitClassSort["PALADIN"]   = 7
-	self.UnitClassSort["SHAMAN"]    = 7
+	self.UnitClassSort["HUNTER"]    = 7
+	self.UnitClassSort["PALADIN"]   = 8
+	self.UnitClassSort["SHAMAN"]    = 8
 
-	self.UnitClassSort["PRIEST"]    = 8
+	
 
 	self.cooldownSpells = {}
 	self.cooldownSpells["WARLOCK"] = BS["Soulstone Resurrection"]
@@ -1140,54 +1141,6 @@ function sRaidFrames:Sort_Force()
 	end	
 end
 
-
-
-function sRaidFrames:UnitModHP(unit)
-	local percent = nil
-	local treshhold = 3
-	
-	local order = 0
-	
-	local _, classFileName = UnitClass(unit)
-	local class_order = self.UnitClassSort[classFileName]
-	
-	local id_str = string.gsub(unit,"raid","")
-	local id_fix = tonumber(id_str)
-	local group_order = self.UnitSortOrder[id_fix]
-	
-	if self.opt.dynamic_class_sort then
-		order = class_order/100 + group_order/10000
-	elseif self.opt.dynamic_group_sort then
-		order = group_order/1000
-	end
-	
-	if self.opt.dynamic_aggro_sort and not Banzai:GetUnitAggroByUnitId(unit) then
-		order = order + 100
-	end
-	
-	if UnitHealth(unit) <= 1 or not UnitIsConnected(unit) then
-		percent = 1000
-	else
-		local health = math.ceil(Zorlen_HealthPercent(unit))
-		local health_old = self.UnitFocusHPArray[unit]
-
-		if self.opt.dynamic_group_sort and health_old and health and health_old ~= health and health ~= 100 and math.abs(health - health_old) <= treshhold then
-			health = health_old
-		else
-			self.UnitFocusHPArray[unit] = health
-		end
-		
-		percent = health + order + 800
-		
-		if self.opt.dynamic_range_sort and self.UnitRangeArray[unit] ~= "" then
-			percent = health + order
-		end
-		--DEFAULT_CHAT_FRAME:AddMessage(UnitClass(unit).." - health: "..health.." - order: "..order)
-	end	
-
-	return percent
-end
-
 function sRaidFrames:Sort(force_sort)
 	local self = sRaidFrames
 	local frameAssignments = {}
@@ -1595,16 +1548,64 @@ function sRaidFrames:RefreshFocusWithRange()
 	
 end
 
-	--if self.opt.dynamic_aggro_sort and not Banzai:GetUnitAggroByUnitId(unit) then
-		--order = order + 100
-	--end
+
+function sRaidFrames:OrderCalc(unit)
+	local order = 0
+	
+	local _, classFileName = UnitClass(unit)
+	local class_order = self.UnitClassSort[classFileName]
+	
+	local id_str = string.gsub(unit,"raid","")
+	local id_fix = tonumber(id_str)
+	local group_order = self.UnitSortOrder[id_fix]
+	
+	if self.opt.dynamic_class_sort then
+		order = class_order/100 + group_order/10000
+	elseif self.opt.dynamic_group_sort then
+		order = group_order/1000
+	end
+	
+	if self.opt.dynamic_aggro_sort and not Banzai:GetUnitAggroByUnitId(unit) then
+		order = order + 100
+	end
+	
+	return order
+
+end
+
+function sRaidFrames:UnitModHP(unit)
+	local percent = nil
+	local treshhold = 3
+	
+	local order = self:OrderCalc(unit)
+	
+	if UnitHealth(unit) <= 1 or not UnitIsConnected(unit) then
+		percent = 1000
+	else
+		local health = math.ceil(Zorlen_HealthPercent(unit))
+		local health_old = self.UnitFocusHPArray[unit]
+
+		if self.opt.dynamic_group_sort and health_old and health and health_old ~= health and health ~= 100 and math.abs(health - health_old) <= treshhold then
+			health = health_old
+		else
+			self.UnitFocusHPArray[unit] = health
+		end
+		
+		percent = health + order + 800
+		
+		if self.opt.dynamic_range_sort and self.UnitRangeArray[unit] ~= "" then
+			percent = health + order
+		end
+		--DEFAULT_CHAT_FRAME:AddMessage(UnitClass(unit).." - health: "..health.." - order: "..order)
+	end	
+
+	return percent
+end
 
 function sRaidFrames:CheckRangeHpCalc(unit)
-	if self.opt.dynamic_aggro_sort and Banzai:GetUnitAggroByUnitId(unit) then
-		return Zorlen_HealthPercent(unit)
-	else
-		return Zorlen_HealthPercent(unit) + 100
-	end
+	local order = self:OrderCalc(unit)
+	
+	return Zorlen_HealthPercent(unit) + order
 end
 
 function sRaidFrames:CheckRangeFocus(unit, mode)
