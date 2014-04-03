@@ -470,7 +470,7 @@ function sRaidFrames:RangeCheck()
 		end	
 		if counter > 1 then 
 			self:Debug("RC_TOTAL: "..table.getn(self.ExtendedRangeScan).." COUNTER: "..counter)
-			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, 2.5/table.getn(self.ExtendedRangeScan), self) 
+			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, 2/table.getn(self.ExtendedRangeScan), self) 
 		end
 	end
 end
@@ -590,7 +590,9 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				
 				local unit_aggro = Banzai:GetUnitAggroByUnitId(unit)
 				if unit_aggro and red_nickname then
-					f.title:SetText("|cffff0000"..unit_name..range.."|r")	
+					if not self.opt.dynamic_aggro_sort or self.opt.dynamic_aggro_sort and focus_unit then
+						f.title:SetText("|cffff0000"..unit_name..range.."|r")
+					end
 				elseif class then
 					--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:UpdateUnit "..unit.." - "..GetUnitName(unit))
 					f.title:SetText(self.classColors[class]..unit_name..range.."|r")
@@ -672,9 +674,10 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 						f.hpbar:SetValue(hpvalue)			
 						
 
-						
 						if unit_aggro and red_bar then
-							f.hpbar:SetStatusBarColor(1,0,0)
+							if not self.opt.dynamic_aggro_sort or self.opt.dynamic_aggro_sort and focus_unit then
+								f.hpbar:SetStatusBarColor(1,0,0)
+							end	
 						elseif class_color then
 							local class, fileName = UnitClass(unit)
 							local color = self.RAID_CLASS_COLORS[fileName]
@@ -1217,10 +1220,8 @@ function sRaidFrames:Sort(force_sort)
 			table.insert(focus_units1, id)
 		end
 	end
+	
 	table.sort(focus_units1, function(a,b) return self:UnitModHP("raid".. a) < self:UnitModHP("raid"..b) end)
-	
-	
-	--limit units in focus here
 	
 	for i,id in pairs(focus_units1) do
 		focus_units2[id] = i-1
@@ -1296,7 +1297,7 @@ function sRaidFrames:Sort(force_sort)
 
 		self:UpdateAll()
 	else
-		self:UpdateUnit(self.visible, true)
+		self:UpdateUnit(self.visible, force_sort)
 	end	
 	
 end
@@ -1475,6 +1476,12 @@ function sRaidFrames:SetHealIndicator(unit)
 	end	
 end
 
+function sRaidFrames:ResetHealIndicators()
+	for key,value in pairs(self.indicator) do
+		self.indicator[key].active = 0
+		self:SetHealIndicator(key)
+	end
+end
 
 function sRaidFrames:LoadProfile()
 	if self.opt.style then
@@ -1493,13 +1500,6 @@ function sRaidFrames:LoadProfile()
 		self.unitframe_focus_extra_width = 90
 		self.unit_name_lenght = nil
 		self.show_txt_buff = true
-	end
-end
-
-function sRaidFrames:ResetHealIndicators()
-	for key,value in pairs(self.indicator) do
-		self.indicator[key].active = 0
-		self:SetHealIndicator(key)
 	end
 end
 
@@ -1543,9 +1543,7 @@ function sRaidFrames:RefreshFocusWithRange()
 				self:SetStyle(self.frames[unit], self.unitframe_width)
 			end
 		end
-	end
-	
-	
+	end	
 end
 
 
@@ -1561,8 +1559,9 @@ function sRaidFrames:OrderCalc(unit)
 	
 	if self.opt.dynamic_class_sort then
 		order = class_order/100 + group_order/10000
-	elseif self.opt.dynamic_group_sort then
-		order = group_order/1000
+	--elseif self.opt.dynamic_group_sort then
+	else
+		order = group_order/10000
 	end
 	
 	if self.opt.dynamic_aggro_sort and not Banzai:GetUnitAggroByUnitId(unit) then
@@ -1603,9 +1602,7 @@ function sRaidFrames:UnitModHP(unit)
 end
 
 function sRaidFrames:CheckRangeHpCalc(unit)
-	local order = self:OrderCalc(unit)
-	
-	return Zorlen_HealthPercent(unit) + order
+	return Zorlen_HealthPercent(unit) + self:OrderCalc(unit)
 end
 
 function sRaidFrames:CheckRangeFocus(unit, mode)

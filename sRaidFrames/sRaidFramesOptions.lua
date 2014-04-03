@@ -216,7 +216,7 @@ sRaidFrames.options = {
 						end,
 					},
 					
-					
+					--[[
 					sort_focus_group = {
 						name = L["Dynamic sort lvl3 - group"],
 						type = "toggle",
@@ -234,6 +234,7 @@ sRaidFrames.options = {
 							end		
 						end,
 					},
+					--]]
 					
 					
 					sort_focus_aggro = {
@@ -407,6 +408,10 @@ sRaidFrames.options = {
 								sRaidFrames:chatTexture("BantoBar")
 								sRaidFrames:chatSortBy("fixed")
 								sRaidFrames.opt.SubSort = "class"
+								
+								sRaidFrames.opt.redbar = value
+								sRaidFrames.opt.red = value
+								
 								sRaidFrames.opt.class_color = value
 								sRaidFrames.opt.dynamic_sort = value
 								sRaidFrames.opt.Spacing = 0
