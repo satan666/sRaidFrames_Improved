@@ -43,7 +43,7 @@ sRaidFrames.NextScan = 0
 sRaidFrames.MapScale = 0
 
 
-sRaidFrames.UnitAggro = {}
+--sRaidFrames.UnitAggro = {}
 sRaidFrames.UnitSortOrder = {}
 sRaidFrames.UnitFocusHPArray = {}
 sRaidFrames.UnitFocusArray = {}
@@ -350,7 +350,7 @@ function sRaidFrames:UpdateVisibility()
 end
 
 function sRaidFrames:Banzai_UnitGainedAggro(unit, unitTable)
-	self.UnitAggro[unit] = true
+	--self.UnitAggro[unit] = true
 	if self.opt.dynamic_aggro_sort then
 		sRaidFrames:Sort_Force()
 	end
@@ -360,7 +360,7 @@ function sRaidFrames:Banzai_UnitGainedAggro(unit, unitTable)
 end
 
 function sRaidFrames:Banzai_UnitLostAggro(unit)
-	self.UnitAggro[unit] = nil
+	--self.UnitAggro[unit] = nil
 	if self.opt.dynamic_aggro_sort then
 		sRaidFrames:Sort_Force()
 		local units = {}
@@ -600,7 +600,8 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 					unit_name = string.sub(UnitName(unit), 1, self.unit_name_lenght) --UnitName(unit)
 				end
 				
-				local unit_aggro = self.UnitAggro[unit]
+				local unit_aggro = Banzai:GetUnitAggroByUnitId(unit)
+				
 				if unit_aggro and red_nickname then
 					--if not self.opt.dynamic_aggro_sort or self.opt.dynamic_aggro_sort and focus_unit then
 						f.title:SetText("|cffff0000"..unit_name..range.."|r")
@@ -1576,7 +1577,9 @@ function sRaidFrames:OrderCalc(unit)
 		order = group_order/10000
 	end
 	
-	if self.opt.dynamic_aggro_sort and not self.UnitAggro[unit] then
+	--if self.opt.dynamic_aggro_sort and not self.UnitAggro[unit] then
+	local unit_aggro = Banzai:GetUnitAggroByUnitId(unit)
+	if self.opt.dynamic_aggro_sort and not unit_aggro then
 		order = order + 100
 	end
 	
@@ -1633,7 +1636,7 @@ function sRaidFrames:CheckRangeFocus(unit, mode)
 	end
 	
 	local hplimit = self.opt.hp_limit or 100
-	local check1 = hplimit >= Zorlen_HealthPercent(unit) or self.opt.dynamic_aggro_sort and self.UnitAggro[unit]
+	local check1 = hplimit >= Zorlen_HealthPercent(unit) or self.opt.dynamic_aggro_sort and Banzai:GetUnitAggroByUnitId(unit)
 	local check2 = self.UnitRangeArray[unit] ~= ""
 
 	if mode == "add" then
