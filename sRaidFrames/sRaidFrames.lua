@@ -43,6 +43,7 @@ sRaidFrames.NextScan = 0
 sRaidFrames.MapScale = 0
 
 
+sRaidFrames.UnitAggro = {}
 sRaidFrames.UnitSortOrder = {}
 sRaidFrames.UnitFocusHPArray = {}
 sRaidFrames.UnitFocusArray = {}
@@ -349,14 +350,25 @@ function sRaidFrames:UpdateVisibility()
 end
 
 function sRaidFrames:Banzai_UnitGainedAggro(unit, unitTable)
+	self.UnitAggro[unit] = true
+	if self.opt.dynamic_aggro_sort then
+		sRaidFrames:Sort_Force()
+	end
+	
 	if not unit or not self.visible[unit] or not self.opt.aggro then return end
-
 	self.frames[unit]:SetBackdropBorderColor(1, 0, 0, self.opt.BorderColor.a)
 end
 
 function sRaidFrames:Banzai_UnitLostAggro(unit)
-	if not unit or not self.visible[unit] or not self.opt.aggro then return end
+	self.UnitAggro[unit] = nil
+	if self.opt.dynamic_aggro_sort then
+		sRaidFrames:Sort_Force()
+		local units = {}
+		units[unit] = true
+		self:UpdateUnit(units)
+	end	
 
+	if not unit or not self.visible[unit] or not self.opt.aggro then return end
 	self.frames[unit]:SetBackdropBorderColor(self.opt.BorderColor.r, self.opt.BorderColor.g, self.opt.BorderColor.b, self.opt.BorderColor.a)
 end
 
@@ -588,11 +600,11 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 					unit_name = string.sub(UnitName(unit), 1, self.unit_name_lenght) --UnitName(unit)
 				end
 				
-				local unit_aggro = Banzai:GetUnitAggroByUnitId(unit)
+				local unit_aggro = self.UnitAggro[unit]
 				if unit_aggro and red_nickname then
-					if not self.opt.dynamic_aggro_sort or self.opt.dynamic_aggro_sort and focus_unit then
+					--if not self.opt.dynamic_aggro_sort or self.opt.dynamic_aggro_sort and focus_unit then
 						f.title:SetText("|cffff0000"..unit_name..range.."|r")
-					end
+					--end
 				elseif class then
 					--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:UpdateUnit "..unit.." - "..GetUnitName(unit))
 					f.title:SetText(self.classColors[class]..unit_name..range.."|r")
@@ -675,9 +687,9 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 						
 
 						if unit_aggro and red_bar then
-							if not self.opt.dynamic_aggro_sort or self.opt.dynamic_aggro_sort and focus_unit then
+							--if not self.opt.dynamic_aggro_sort or self.opt.dynamic_aggro_sort and focus_unit then
 								f.hpbar:SetStatusBarColor(1,0,0)
-							end	
+							--end	
 						elseif class_color then
 							local class, fileName = UnitClass(unit)
 							local color = self.RAID_CLASS_COLORS[fileName]
@@ -1564,7 +1576,7 @@ function sRaidFrames:OrderCalc(unit)
 		order = group_order/10000
 	end
 	
-	if self.opt.dynamic_aggro_sort and not Banzai:GetUnitAggroByUnitId(unit) then
+	if self.opt.dynamic_aggro_sort and not self.UnitAggro[unit] then
 		order = order + 100
 	end
 	
@@ -1621,7 +1633,7 @@ function sRaidFrames:CheckRangeFocus(unit, mode)
 	end
 	
 	local hplimit = self.opt.hp_limit or 100
-	local check1 = hplimit >= Zorlen_HealthPercent(unit) or self.opt.dynamic_aggro_sort and Banzai:GetUnitAggroByUnitId(unit)
+	local check1 = hplimit >= Zorlen_HealthPercent(unit) or self.opt.dynamic_aggro_sort and self.UnitAggro[unit]
 	local check2 = self.UnitRangeArray[unit] ~= ""
 
 	if mode == "add" then
