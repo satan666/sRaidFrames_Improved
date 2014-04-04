@@ -393,7 +393,7 @@ sRaidFrames.options = {
 				},
 			
 				profile1 = {
-						name = L["Load profile - Normal"],
+						name = L["Load profile1 - Common"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -401,48 +401,21 @@ sRaidFrames.options = {
 						end,
 						set = function(value)
 							if value then
-								sRaidFrames.opt.profile2 = not value
-								sRaidFrames.opt.healthDisplayType = "none"
-								sRaidFrames.opt.TooltipMethod = "never"
-								sRaidFrames:chatToggleBorder(not value)
-								sRaidFrames:chatTexture("BantoBar")
-								sRaidFrames:chatSortBy("fixed")
-								sRaidFrames.opt.SubSort = "class"
+								sRaidFrames.opt.dynamic_aggro_sort = not value
+								sRaidFrames.opt.fill_range = not value
 								
-								sRaidFrames.opt.redbar = value
-								sRaidFrames.opt.red = value
-								
-								sRaidFrames.opt.class_color = value
-								sRaidFrames.opt.dynamic_sort = value
-								sRaidFrames.opt.Spacing = 0
-								
-								sRaidFrames.opt.PowerFilter[0] = false
-								sRaidFrames.opt.PowerFilter[1] = false
-								sRaidFrames.opt.PowerFilter[2] = false
-								sRaidFrames.opt.PowerFilter[3] = false
-								
-								sRaidFrames.opt.BackgroundColor.r = 0
-								sRaidFrames.opt.BackgroundColor.g = 0
-								sRaidFrames.opt.BackgroundColor.b = 0
-								sRaidFrames.opt.BackgroundColor.a = 1
-								
-								sRaidFrames.opt.RangeCheck = value
-								sRaidFrames.opt.ExtendedRangeCheck = value
-								sRaidFrames.opt.RangeAlpha = 0.3
-								sRaidFrames.opt.BuffType = "debuffs"
-								sRaidFrames.opt.Invert = not value
-
+								sRaidFrames:ProfileFeed(value)
 								sRaidFrames:UpdateAll()
 								sRaidFrames:Sort()
-
+								sRaidFrames.opt.profile2 = not value
+								sRaidFrames.opt.profile3 = not value
 							end
 							sRaidFrames:S("profile1", value)
 						end,
 					},
 				
-				--[[
 				profile2 = {
-						name = L["Load profile - Inverted"],
+						name = L["Load profile2 - Aggro"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -450,41 +423,51 @@ sRaidFrames.options = {
 						end,
 						set = function(value)
 							if value then
-								sRaidFrames.opt.profile1 = not value
-								sRaidFrames.opt.healthDisplayType = "none"
-								sRaidFrames.opt.TooltipMethod = "never"
-								sRaidFrames:chatToggleBorder(not value)
-								sRaidFrames:chatTexture("BantoBar")
-								sRaidFrames:chatSortBy("fixed")
-								sRaidFrames.opt.SubSort = "class"
-								sRaidFrames.opt.dynamic_sort = value
-								sRaidFrames.opt.Spacing = 0
+								sRaidFrames.opt.dynamic_aggro_sort = value
+								sRaidFrames.opt.fill_range = value
 								
-								sRaidFrames.opt.PowerFilter[0] = false
-								sRaidFrames.opt.PowerFilter[1] = false
-								sRaidFrames.opt.PowerFilter[2] = false
-								sRaidFrames.opt.PowerFilter[3] = false
+								sRaidFrames.opt.hp_limit = 1
+								sRaidFrames.opt.units_limit = 5
 								
-								sRaidFrames.opt.BackgroundColor.r = 0
-								sRaidFrames.opt.BackgroundColor.g = 0
-								sRaidFrames.opt.BackgroundColor.b = 0
-								sRaidFrames.opt.BackgroundColor.a = 1
-								
-								sRaidFrames.opt.RangeCheck = value
-								sRaidFrames.opt.ExtendedRangeCheck = value
-								sRaidFrames.opt.RangeAlpha = 0.3
-								sRaidFrames.opt.BuffType = "debuffs"
-								sRaidFrames.opt.Invert = value
-								
+								sRaidFrames:ProfileFeed(value)
 								sRaidFrames:UpdateAll()
 								sRaidFrames:Sort()
-
+								
+								sRaidFrames.opt.profile1 = not value
+								sRaidFrames.opt.profile3 = not value
 							end
 							sRaidFrames:S("profile2", value)
 						end,
 					},
 					
-						--]]
+				profile3 = {
+						name = L["Load profile3 - Healer"],
+						type = "toggle",
+						desc = L["Load predefined settings"],
+						get = function()
+							return sRaidFrames.opt.profile3
+						end,
+						set = function(value)
+							if value then
+								sRaidFrames.opt.dynamic_aggro_sort = not value
+								sRaidFrames.opt.fill_range = value
+								
+								sRaidFrames.opt.hp_limit = 85
+								sRaidFrames.opt.units_limit = 5
+								
+								sRaidFrames:ProfileFeed(value)
+								sRaidFrames:UpdateAll()
+								sRaidFrames:Sort()
+								
+								sRaidFrames.opt.profile1 = not value
+								sRaidFrames.opt.profile2 = not value
+
+							end
+							sRaidFrames:S("profile3", value)
+						end,
+					},	
+					
+					
 			}
 			
 		},
@@ -1217,4 +1200,39 @@ function sRaidFrames:chatToggleBorder(value)
 	end
 
 	self:UpdateBuffs(self.visible)
+end
+
+function sRaidFrames:ProfileFeed(value)
+	sRaidFrames.opt.profile2 = not value
+	sRaidFrames.opt.healthDisplayType = "none"
+	sRaidFrames.opt.TooltipMethod = "never"
+	sRaidFrames:chatToggleBorder(not value)
+	sRaidFrames:chatTexture("BantoBar")
+	sRaidFrames:chatSortBy("fixed")
+	sRaidFrames.opt.SubSort = "class"
+								
+	sRaidFrames.opt.redbar = value
+	sRaidFrames.opt.red = value
+						
+	sRaidFrames.opt.class_color = value
+	sRaidFrames.opt.dynamic_sort = value
+	sRaidFrames.opt.Spacing = 0
+								
+	sRaidFrames.opt.PowerFilter[0] = false
+	sRaidFrames.opt.PowerFilter[1] = false
+	sRaidFrames.opt.PowerFilter[2] = false
+	sRaidFrames.opt.PowerFilter[3] = false
+								
+	sRaidFrames.opt.BackgroundColor.r = 0
+	sRaidFrames.opt.BackgroundColor.g = 0
+	sRaidFrames.opt.BackgroundColor.b = 0
+	sRaidFrames.opt.BackgroundColor.a = 1
+			
+	sRaidFrames.opt.RangeCheck = value
+	sRaidFrames.opt.ExtendedRangeCheck = value
+	sRaidFrames.opt.RangeAlpha = 0.3
+	sRaidFrames.opt.BuffType = "debuffs"
+	sRaidFrames.opt.Invert = not value
+
+
 end
