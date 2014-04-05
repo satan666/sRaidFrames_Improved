@@ -1203,6 +1203,7 @@ function sRaidFrames:chatToggleBorder(value)
 end
 
 function sRaidFrames:ProfileFeed(value)
+	sRaidFrames.opt.heal = value
 	sRaidFrames.opt.profile2 = not value
 	sRaidFrames.opt.healthDisplayType = "none"
 	sRaidFrames.opt.TooltipMethod = "never"
