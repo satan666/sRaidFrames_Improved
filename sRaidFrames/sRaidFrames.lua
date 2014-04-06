@@ -93,6 +93,8 @@ function sRaidFrames:OnInitialize()
 		units_limit = 10,
 		aurax = false,
 		aura = false,
+		ScaleFocus = 1,
+		WidthFocus = 90,
 	})
 
 	self:RegisterChatCommand({"/srf", "/sraidframes"}, self.options)
@@ -767,7 +769,7 @@ function sRaidFrames:UpdateBuffs(units)
 			self.debuffColors["Blue"]    = { ["r"] = 0, ["g"] = 0, ["b"] = 1, ["a"] = 1, ["priority"] = 4 }
 			self.debuffColors["Red"]    = { ["r"] = 1, ["g"] = 0, ["b"] = 0, ["a"] = 1, ["priority"] = 4 }
 			
-			
+			--[[
 			if sRaidFrames.opt.style and UnitExists("target") and self:CheckFocusUnit(unit) and UnitHealth(unit) > 1 then
 				if self.opt.aura and UnitIsUnit("target", unit) then
 					cAura = self.debuffColors["Blue"]
@@ -775,7 +777,8 @@ function sRaidFrames:UpdateBuffs(units)
 					cAura = self.debuffColors["Red"]
 				end	
 			end	
-			
+			--]]
+
 			if cAura then
 				f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
 			elseif not self.unavail[unit] then
@@ -1506,17 +1509,11 @@ function sRaidFrames:LoadProfile()
 	if self.opt.style then
 		self.unit_debuff_aura = nil
 		self.unitframe_width = 60
-		if self.opt.extra_width then
-			self.unitframe_focus_extra_width = 75
-		else
-			self.unitframe_focus_extra_width = 60
-		end
 		self.unit_name_lenght = 3
 		self.show_txt_buff = nil
 	else
 		self.unit_debuff_aura = true
 		self.unitframe_width = 90
-		self.unitframe_focus_extra_width = 90
 		self.unit_name_lenght = nil
 		self.show_txt_buff = true
 	end
@@ -1525,9 +1522,11 @@ end
 function sRaidFrames:LoadStyle()
 	for unit in pairs(self.visible) do
 		if self:CheckFocusUnit(unit) then
-			self:SetStyle(self.frames[unit], self.unitframe_focus_extra_width)
+			self:SetStyle(self.frames[unit], self.opt.WidthFocus)
+			self.frames[unit]:SetScale(self.opt.ScaleFocus)
 		else
 			self:SetStyle(self.frames[unit], self.unitframe_width)
+			self.frames[unit]:SetScale(self.opt.Scale)
 		end
 	end
 	
@@ -1557,9 +1556,11 @@ function sRaidFrames:RefreshFocusWithRange()
 	if self.opt.fill_range then
 		for unit in pairs(self.visible) do
 			if self:CheckFocusUnit(unit) then
-				self:SetStyle(self.frames[unit], self.unitframe_focus_extra_width)
+				self:SetStyle(self.frames[unit], self.opt.WidthFocus)
+				self.frames[unit]:SetScale(self.opt.ScaleFocus)
 			else
 				self:SetStyle(self.frames[unit], self.unitframe_width)
+				self.frames[unit]:SetScale(self.opt.Scale)
 			end
 		end
 	end	

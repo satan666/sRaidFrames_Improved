@@ -353,19 +353,48 @@ sRaidFrames.options = {
 					
 				
 				
-				extra_width_focus = {
-					name = L["3) Extra width"],
-					type = "toggle",
-					desc = L["Focus frame extra width"],
-					get = function()
-						return sRaidFrames.opt.extra_width
-					end,
-					set = function(set)
-						sRaidFrames:S("extra_width", set)
-						sRaidFrames:LoadProfile()
-						sRaidFrames:LoadStyle()
-					end,
+				
+				focus = {
+				name = L["Dimensions"],
+				type = "group",
+				desc = L["Use keybinding to add/remove units"],
+				args = {
+			
+					width_focus = {
+						name = L["Width"],
+						type = "range",
+						desc = L["Set the scale of the raid frames"],
+						min = 50,
+						max = 150,
+						step = 1,
+						get = function()
+							return sRaidFrames.opt.WidthFocus
+						end,
+						set = function(set)
+							sRaidFrames:S("WidthFocus", set)
+							sRaidFrames:LoadStyle()
+						end,
+					},
+					
+					height_focus = {
+						name = L["Scale"],
+						type = "range",
+						desc = L["Set the scale of the raid frames"],
+						min = 0.5,
+						max = 3,
+						step = 0.1,
+						get = function()
+							return sRaidFrames.opt.ScaleFocus
+						end,
+						set = function(set)
+							sRaidFrames:S("ScaleFocus", set)
+							sRaidFrames:LoadStyle()
+						end,
+					},
+
+				}
 				},
+					
 			}
 			
 		},	
@@ -452,7 +481,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.dynamic_aggro_sort = not value
 								sRaidFrames.opt.fill_range = value
 								
-								sRaidFrames.opt.hp_limit = 85
+								sRaidFrames.opt.hp_limit = 100
 								sRaidFrames.opt.units_limit = 5
 								
 								sRaidFrames:ProfileFeed(value)
@@ -466,8 +495,7 @@ sRaidFrames.options = {
 							sRaidFrames:S("profile3", value)
 						end,
 					},	
-					
-					
+						
 			}
 			
 		},

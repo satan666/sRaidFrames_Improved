@@ -37,6 +37,11 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["Focus aura"] = true,
 	
+	["Dimensions"] = true,
+	["Scale"] = true,
+	["Width"] = true,
+	
+	
 	["Special aura - Target"] = true,
 	["Change background color to blue of target unit"] = true,
 	
