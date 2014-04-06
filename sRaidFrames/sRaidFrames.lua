@@ -1236,6 +1236,12 @@ function sRaidFrames:Sort(force_sort)
 	
 	table.sort(focus_units1, function(a,b) return self:UnitModHP("raid".. a) < self:UnitModHP("raid"..b) end)
 	
+	local index = 40
+	for id in pairs(self.UnitSortOrder) do
+		index = index + 1
+		self.UnitSortOrder[id] = index 
+	end
+	
 	for i,id in pairs(focus_units1) do
 		focus_units2[id] = i-1
 		self.UnitSortOrder[id] = i
