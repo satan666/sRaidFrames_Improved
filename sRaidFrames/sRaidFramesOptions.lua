@@ -354,17 +354,17 @@ sRaidFrames.options = {
 				
 				
 				
-				focus = {
-				name = L["Dimensions"],
+				focus_size = {
+				name = L["Size"],
 				type = "group",
-				desc = L["Use keybinding to add/remove units"],
+				desc = L["Size"],
 				args = {
 			
 					width_focus = {
 						name = L["Width"],
 						type = "range",
-						desc = L["Set the scale of the raid frames"],
-						min = 50,
+						desc = L["Width"],
+						min = 40,
 						max = 150,
 						step = 1,
 						get = function()
@@ -379,7 +379,7 @@ sRaidFrames.options = {
 					height_focus = {
 						name = L["Scale"],
 						type = "range",
-						desc = L["Set the scale of the raid frames"],
+						desc = L["Scale"],
 						min = 0.5,
 						max = 3,
 						step = 0.1,
@@ -481,8 +481,8 @@ sRaidFrames.options = {
 								sRaidFrames.opt.dynamic_aggro_sort = not value
 								sRaidFrames.opt.fill_range = value
 								
-								sRaidFrames.opt.hp_limit = 100
-								sRaidFrames.opt.units_limit = 5
+								sRaidFrames.opt.hp_limit = 85
+								sRaidFrames.opt.units_limit = 6
 								
 								sRaidFrames:ProfileFeed(value)
 								sRaidFrames:UpdateAll()
@@ -717,17 +717,45 @@ sRaidFrames.options = {
 			validate = surface:List(),
 		},
 
-		scale = {
-			name = L["Scale"],
-			type = "range",
-			desc = L["Set the scale of the raid frames"],
-			min = 0.1,
-			max = 3.0,
-			step = 0.05,
-			get = function()
-				return sRaidFrames.opt.Scale
-			end,
-			set = "chatScale",
+		
+		size = {
+				name = L["_Size"],
+				type = "group",
+				desc = L["Size"],
+				args = {
+		
+			width = {
+				name = L["Width"],
+				type = "range",
+				desc = L["Width"],
+				min = 40,
+				max = 150,
+				step = 1,
+				get = function()
+					return sRaidFrames.opt.Width
+				end,
+				set = function(set)
+					sRaidFrames:S("Width", set)
+					sRaidFrames:LoadStyle()
+				end,
+			},
+		
+		
+			scale = {
+				name = L["Scale"],
+				type = "range",
+				desc = L["Set the scale of the raid frames"],
+				min = 0.1,
+				max = 3.0,
+				step = 0.05,
+				get = function()
+					return sRaidFrames.opt.Scale
+				end,
+				set = "chatScale",
+			},
+			
+			
+		}
 		},
 
 		layout = {
@@ -794,32 +822,30 @@ sRaidFrames.options = {
 			desc = L["Set about range"],
 			args = {
 				enable = {
-					name = L["Enable range check"],
+					name = L["Enable light range check"],
 					type = "toggle",
-					desc = L["Enable 40y range check - Outdoors and BGs"],
+					desc = L["Enable 28y range check - Instances and 40y coordinates dependant range check - Outdoors and Bgs"],
 					get = function() return sRaidFrames.opt.RangeCheck end,
 					set = function(value)
+						sRaidFrames:DisableRangeCheck()
 						sRaidFrames.opt.RangeCheck = value
-						if not value then
-							sRaidFrames.opt.ExtendedRangeCheck = value
-							for unit in pairs(sRaidFrames.frames) do
-								sRaidFrames.frames[unit]:SetAlpha(1)
-								sRaidFrames.UnitRangeArray[unit] = ""
-							end
+						if value then
+							sRaidFrames.opt.ExtendedRangeCheck = not value
 						end
 					end,
 					order = 1,
 				},
 				enable40y = {
-					name = L["Enable dungeon range check"],
+					name = L["Enable accurate range check"],
 					type = "toggle",
-					desc = L["Enable 40y range check in Dungeons, requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames"],
+					desc = L["Enable 40y range check that requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames to be present"],
 					get = function() return sRaidFrames.opt.ExtendedRangeCheck end,
 					set = function(value)
-						if value  then
-							sRaidFrames.opt.RangeCheck = value
-						end	
+						sRaidFrames:DisableRangeCheck()
 						sRaidFrames.opt.ExtendedRangeCheck = value
+						if value  then
+							sRaidFrames.opt.RangeCheck = not value
+						end	
 					end,
 					order = 2,
 				},
@@ -845,7 +871,7 @@ sRaidFrames.options = {
 					min  = 0,
 					max  = 1,
 					step = 0.1,
-					disabled = function() return not sRaidFrames.opt.RangeCheck end,
+					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
 				},
 				frequency = {
 					name = L["Frequency"],
@@ -856,10 +882,10 @@ sRaidFrames.options = {
 						sRaidFrames.opt.RangeFrequency = value
 						sRaidFrames:UpdateRangeFrequency(value)
 					end,
-					min  = 0.25,
+					min  = 0.35,
 					max  = 1,
 					step = 0.25,
-					disabled = function() return not sRaidFrames.opt.RangeCheck end,
+					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
 				},
 			},
 		},
@@ -1235,7 +1261,7 @@ function sRaidFrames:ProfileFeed(value)
 	sRaidFrames.opt.profile2 = not value
 	sRaidFrames.opt.healthDisplayType = "none"
 	sRaidFrames.opt.TooltipMethod = "never"
-	sRaidFrames:chatToggleBorder(not value)
+	sRaidFrames:chatToggleBorder()
 	sRaidFrames:chatTexture("BantoBar")
 	sRaidFrames:chatSortBy("fixed")
 	sRaidFrames.opt.SubSort = "class"
@@ -1263,5 +1289,14 @@ function sRaidFrames:ProfileFeed(value)
 	sRaidFrames.opt.BuffType = "debuffs"
 	sRaidFrames.opt.Invert = not value
 
-
+	sRaidFrames:LoadStyle()
 end
+
+function sRaidFrames:DisableRangeCheck()
+	--if not sRaidFrames.opt.ExtendedRangeCheck and not sRaidFrames.opt.RangeCheck then
+		for unit in pairs(sRaidFrames.frames) do
+			sRaidFrames.frames[unit]:SetAlpha(1)
+			sRaidFrames.UnitRangeArray[unit] = ""
+		end	
+	--end					
+end							

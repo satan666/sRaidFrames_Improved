@@ -37,7 +37,8 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["Focus aura"] = true,
 	
-	["Dimensions"] = true,
+	["_Size"] = true,
+	["Size"] = true,
 	["Scale"] = true,
 	["Width"] = true,
 	
@@ -155,11 +156,12 @@ L:RegisterTranslations("enUS", function() return {
 	["Turn the border of units who have aggro red"] = true,
 	["_Range"] = true,
 	["Set about range"] = true,
-	["Enable range check"] = true,
-	["Enable 40y range check - Outdoors and BGs"] = true,
 	
-	["Enable dungeon range check"] = true,
-	["Enable 40y range check in Dungeons, requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames"] = true,
+	["Enable light range check"] = true,
+	["Enable 28y range check - Instances and 40y coordinates dependant range check - Outdoors and Bgs"] = true,
+	
+	["Enable accurate range check"] = true,
+	["Enable 40y range check that requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames to be present"] = true,
 	
 	["Enable debug"] = true,
 	["Range accuracy calculation, only for testing"] = true,

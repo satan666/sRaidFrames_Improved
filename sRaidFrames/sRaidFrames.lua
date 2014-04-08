@@ -65,7 +65,8 @@ function sRaidFrames:OnInitialize()
 		SortBy				= "class",
 		healthDisplayType	= 'percent',
 		Invert = false,
-		Scale				= 1,
+		Scale				= 0.8,
+		Width				= 82,
 		Border				= true,
 		Texture				= "Otravi",
 		BuffType			= "debuffs",
@@ -83,7 +84,7 @@ function sRaidFrames:OnInitialize()
 		PowerFilter			= {[0] = true,[1] = true,[2] = true,[3] = true},
 		aggro				= false,
 		RangeCheck 			= false,
-		RangeFrequency 		= 0.75,
+		RangeFrequency 		= 0.35,
 		RangeAlpha 			= 0.2,
 		lock_focus			= false,
 		ShowGroupTitles_Focus = true,
@@ -91,10 +92,10 @@ function sRaidFrames:OnInitialize()
 		fill_range = false,
 		hp_limit = 100,
 		units_limit = 10,
-		aurax = false,
-		aura = false,
-		ScaleFocus = 1,
-		WidthFocus = 90,
+		--aurax = false,
+		--aura = false,
+		ScaleFocus = 1.3,
+		WidthFocus = 85,
 	})
 
 	self:RegisterChatCommand({"/srf", "/sraidframes"}, self.options)
@@ -357,6 +358,7 @@ function sRaidFrames:Banzai_UnitGainedAggro(unit, unitTable)
 		sRaidFrames:Sort_Force()
 	end
 	
+	
 	if not unit or not self.visible[unit] or not self.opt.aggro then return end
 	self.frames[unit]:SetBackdropBorderColor(1, 0, 0, self.opt.BorderColor.a)
 end
@@ -420,7 +422,7 @@ function sRaidFrames:RangeCheck()
 		self.MapEnable = true
 		self:Debug("RC_MAP_ENABLE")
 	end
-	if not self.opt.RangeCheck then 
+	if not self.opt.RangeCheck and not self.opt.ExtendedRangeCheck then 
 		return 
 	end	
 	--DEFAULT_CHAT_FRAME:AddMessage("|cff00eeeeDebug: |cffffffffRange Check")
@@ -448,7 +450,7 @@ function sRaidFrames:RangeCheck()
 			elseif unitcheck and CheckInteractDistance(unit, 4) then
 				--self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = " 28Y"
-				if self.MapEnable then
+				if self.MapEnable and self.opt.RangeCheck then
 					local _tx, _ty = GetPlayerMapPosition(unit)
 					local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
 					if _tx > 0 and _ty > 0 then
@@ -464,12 +466,12 @@ function sRaidFrames:RangeCheck()
 						end
 					end	
 				end
-			elseif unitcheck and self.MapEnable then
+			elseif unitcheck and self.MapEnable and self.opt.RangeCheck then
 				local _tx, _ty = GetPlayerMapPosition(unit)
 				local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
 				if _tx > 0 and _ty > 0 and self:VerifyUnitRange(unit, dist) then
 					--self.frames[unit]:SetAlpha(1)
-					self.UnitRangeArray[unit] = " 40Y"
+					self.UnitRangeArray[unit] = " 40Y*"
 				else
 					self.UnitRangeArray[unit] = ""
 					--self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
@@ -483,7 +485,11 @@ function sRaidFrames:RangeCheck()
 			end
 		end	
 		if counter > 1 then 
-			self:Debug("RC_TOTAL: "..table.getn(self.ExtendedRangeScan).." COUNTER: "..counter)
+			local status = "INACTIVE"
+			if not self.MenuOpen or self.MenuOpen < GetTime() then 
+				status = "ACTIVE" 
+			end
+			self:Debug("RC_TOTAL: "..table.getn(self.ExtendedRangeScan).." STATUS: "..status)
 			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, 2/table.getn(self.ExtendedRangeScan), self) 
 		end
 	end
@@ -498,7 +504,7 @@ function sRaidFrames:ExtendedRangeCheck()
 		j = blockmatch;
 	end
 	
-	if not self.opt.RangeCheck or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or IsShiftKeyDown() or Zorlen_isEnemy("target") and isShootActive() then 
+	if not self.opt.ExtendedRangeCheck or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or IsShiftKeyDown() or Zorlen_isEnemy("target") and isShootActive() then 
 		
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		Compost:Reclaim(self.ExtendedRangeScan)
@@ -518,7 +524,7 @@ function sRaidFrames:ExtendedRangeCheck()
 		end
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			--self.frames[j]:SetAlpha(1)
-			if not self.MapEnable then self.UnitRangeArray[j] = " 40Y" else self.UnitRangeArray[j] = " 40Y*"	end
+			if self.MapEnable and self.opt.RangeCheck then self.UnitRangeArray[j] = " 40Y*" else self.UnitRangeArray[j] = " 40Y"	end
 			self:Debug("RC "..GetUnitName(j).."_40y - " .."|cff00FF00 PASS")
 			jumpnext = nil
 		end
@@ -552,7 +558,7 @@ function sRaidFrames:VerifyUnitRange(unit, dist)
 		else
 			return nil
 		end
-	elseif dist < (self.MapScale*40*0.925) then
+	elseif dist < (self.MapScale*40*0.85) then
 		return true
 	else
 		return nil
@@ -1091,7 +1097,7 @@ function sRaidFrames:SortGroupFrames(frame, id)
 	DEFAULT_CHAT_FRAME:AddMessage(id)
 end
 
-function sRaidFrames:SetBackdrop(f)
+function sRaidFrames:SetBackdrop(f, aggro)
 	if self.opt.Border then
 		f:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 										tile = true,
@@ -1108,12 +1114,17 @@ function sRaidFrames:SetBackdrop(f)
 	end
 
 	f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
-	f:SetBackdropBorderColor(self.opt.BorderColor.r, self.opt.BorderColor.g, self.opt.BorderColor.b, self.opt.BorderColor.a)
+	
+	if aggro and self.opt.aggro then
+		f:SetBackdropBorderColor(1, 0, 0, self.opt.BorderColor.a)
+	else
+		f:SetBackdropBorderColor(self.opt.BorderColor.r, self.opt.BorderColor.g, self.opt.BorderColor.b, self.opt.BorderColor.a)
+	end	
 end
 
-function sRaidFrames:SetStyle(f, width)
+function sRaidFrames:SetStyle(f, width, aggro)
 	
-	local frame_width = width or self.unitframe_width
+	local frame_width = width or self.opt.Width
 	
 	self:SetWHP(f, frame_width, 40)
 	self:SetWHP(f.title, frame_width - 10, 16, "TOPLEFT", f, "TOPLEFT",  5, -4)
@@ -1129,7 +1140,7 @@ function sRaidFrames:SetStyle(f, width)
 	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f.hpbar, "CENTER", 0, 0)
 	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f.mpbar, "CENTER", 0, 0)
 
-	self:SetBackdrop(f)
+	self:SetBackdrop(f, aggro)
 end
 
 function sRaidFrames:SetWHP(frame, width, height, p1, relative, p2, x, y)
@@ -1147,7 +1158,7 @@ function sRaidFrames:Sort_Force()
 		self:Sort(true)
 	end
 	
-	if self.opt.RangeCheck  then
+	if self.opt.RangeCheck or self.opt.ExtendedRangeCheck  then
 		for id = 1, MAX_RAID_MEMBERS do
 			if self.visible["raid" .. id] then
 				if self.UnitRangeArray["raid" .. id] ~= "" then
@@ -1508,12 +1519,10 @@ end
 function sRaidFrames:LoadProfile()
 	if self.opt.style then
 		self.unit_debuff_aura = nil
-		self.unitframe_width = 60
 		self.unit_name_lenght = 3
 		self.show_txt_buff = nil
 	else
 		self.unit_debuff_aura = true
-		self.unitframe_width = 90
 		self.unit_name_lenght = nil
 		self.show_txt_buff = true
 	end
@@ -1521,11 +1530,12 @@ end
 
 function sRaidFrames:LoadStyle()
 	for unit in pairs(self.visible) do
+		local aggro = Banzai:GetUnitAggroByUnitId(unit)
 		if self:CheckFocusUnit(unit) then
-			self:SetStyle(self.frames[unit], self.opt.WidthFocus)
+			self:SetStyle(self.frames[unit], self.opt.WidthFocus, aggro)
 			self.frames[unit]:SetScale(self.opt.ScaleFocus)
 		else
-			self:SetStyle(self.frames[unit], self.unitframe_width)
+			self:SetStyle(self.frames[unit], self.opt.Width, aggro)
 			self.frames[unit]:SetScale(self.opt.Scale)
 		end
 	end
@@ -1555,11 +1565,12 @@ function sRaidFrames:RefreshFocusWithRange()
 		
 	if self.opt.fill_range then
 		for unit in pairs(self.visible) do
+			local aggro = Banzai:GetUnitAggroByUnitId(unit)
 			if self:CheckFocusUnit(unit) then
-				self:SetStyle(self.frames[unit], self.opt.WidthFocus)
+				self:SetStyle(self.frames[unit], self.opt.WidthFocus, aggro)
 				self.frames[unit]:SetScale(self.opt.ScaleFocus)
 			else
-				self:SetStyle(self.frames[unit], self.unitframe_width)
+				self:SetStyle(self.frames[unit], self.opt.Width, aggro)
 				self.frames[unit]:SetScale(self.opt.Scale)
 			end
 		end

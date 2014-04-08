@@ -834,7 +834,7 @@ function FuBarPlugin:CloseMenu()
 end
 
 function FuBarPlugin:OpenMenu(frame)
-	sRaidFrames.MenuOpen = GetTime() + 15
+	sRaidFrames.MenuOpen = GetTime() + 10
 	
 	if not frame then
 		frame = self:GetFrame()
