@@ -158,7 +158,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Set about range"] = true,
 	
 	["Enable light range check"] = true,
-	["Enable 28y range check - Instances and 40y coordinates dependant range check - Outdoors and Bgs"] = true,
+	["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - suggested when you don't use Blizzard target frame of modified agUnitFrames"] = true,
 	
 	["Enable accurate range check"] = true,
 	["Enable 40y range check that requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames to be present"] = true,

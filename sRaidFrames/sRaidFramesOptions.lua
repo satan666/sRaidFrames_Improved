@@ -510,7 +510,7 @@ sRaidFrames.options = {
 			end,
 			set = function(heal)
 				sRaidFrames:S("heal", heal)
-				
+				sRaidFrames:ResetHealIndicators()
 			end,
 		},
 		
@@ -824,7 +824,7 @@ sRaidFrames.options = {
 				enable = {
 					name = L["Enable light range check"],
 					type = "toggle",
-					desc = L["Enable 28y range check - Instances and 40y coordinates dependant range check - Outdoors and Bgs"],
+					desc = L["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - suggested when you don't use Blizzard target frame of modified agUnitFrames"],
 					get = function() return sRaidFrames.opt.RangeCheck end,
 					set = function(value)
 						sRaidFrames:DisableRangeCheck()
