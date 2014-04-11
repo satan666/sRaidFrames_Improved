@@ -19,9 +19,10 @@ L:RegisterTranslations("enUS", function() return {
 	["Use keybinding to add/remove units"] = true,
 	
 	["Load predefined settings"] = true,
-	["Load profile1 - Common"] = true,
-	["Load profile2 - Aggro"] = true,
-	["Load profile3 - Healer"] = true,
+	["Load profile - Common"] = true,
+	["Load profile - Aggro"] = true,
+	["Load profile - Healer1"] = true,
+	["Load profile - Healer2"] = true,
 	
 	["_Pure view"] = true,
 	["Compact style"] = true,

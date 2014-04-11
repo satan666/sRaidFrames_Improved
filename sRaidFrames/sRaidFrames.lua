@@ -89,7 +89,6 @@ function sRaidFrames:OnInitialize()
 		RangeAlpha 			= 0.2,
 		lock_focus			= false,
 		ShowGroupTitles_Focus = true,
-		fill_range_perma = false,
 		fill_range = false,
 		hp_limit = 100,
 		units_limit = 10,
@@ -1654,7 +1653,7 @@ function sRaidFrames:CheckRangeFocus(unit, mode)
 	end
 	
 	local hplimit = self.opt.hp_limit or 100
-	local check1 = hplimit >= Zorlen_HealthPercent(unit) or self.opt.dynamic_aggro_sort and Banzai:GetUnitAggroByUnitId(unit)
+	local check1 = hplimit >= Zorlen_HealthPercent(unit) and UnitHealth(unit) > 1 or self.opt.dynamic_aggro_sort and Banzai:GetUnitAggroByUnitId(unit)
 	local check2 = self.UnitRangeArray[unit] ~= ""
 
 	if mode == "add" then

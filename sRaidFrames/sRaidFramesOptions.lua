@@ -419,10 +419,11 @@ sRaidFrames.options = {
 						sRaidFrames:LoadStyle()
 						
 					end,
+					order = 1,
 				},
 			
 				profile1 = {
-						name = L["Load profile1 - Common"],
+						name = L["Load profile - Common"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -438,13 +439,15 @@ sRaidFrames.options = {
 								sRaidFrames:Sort()
 								sRaidFrames.opt.profile2 = not value
 								sRaidFrames.opt.profile3 = not value
+								sRaidFrames.opt.profile4 = not value
 							end
 							sRaidFrames:S("profile1", value)
 						end,
+						order = 2,
 					},
 				
 				profile2 = {
-						name = L["Load profile2 - Aggro"],
+						name = L["Load profile - Aggro"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -464,13 +467,15 @@ sRaidFrames.options = {
 								
 								sRaidFrames.opt.profile1 = not value
 								sRaidFrames.opt.profile3 = not value
+								sRaidFrames.opt.profile4 = not value
 							end
 							sRaidFrames:S("profile2", value)
 						end,
+						order = 3,
 					},
 					
 				profile3 = {
-						name = L["Load profile3 - Healer"],
+						name = L["Load profile - Healer1"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -490,11 +495,41 @@ sRaidFrames.options = {
 								
 								sRaidFrames.opt.profile1 = not value
 								sRaidFrames.opt.profile2 = not value
-
+								sRaidFrames.opt.profile4 = not value
 							end
 							sRaidFrames:S("profile3", value)
 						end,
+						order = 4,
 					},	
+					
+				profile4 = {
+						name = L["Load profile - Healer2"],
+						type = "toggle",
+						desc = L["Load predefined settings"],
+						get = function()
+							return sRaidFrames.opt.profile4
+						end,
+						set = function(value)
+							if value then
+								sRaidFrames.opt.dynamic_aggro_sort = not value
+								sRaidFrames.opt.fill_range = value
+								
+								sRaidFrames.opt.hp_limit = 100
+								sRaidFrames.opt.units_limit = 6
+								
+								sRaidFrames:ProfileFeed(value)
+								sRaidFrames:UpdateAll()
+								sRaidFrames:Sort()
+								
+								sRaidFrames.opt.profile1 = not value
+								sRaidFrames.opt.profile2 = not value
+								sRaidFrames.opt.profile3 = not value
+							end
+							sRaidFrames:S("profile4", value)
+						end,
+						order = 5,
+					},		
+					
 						
 			}
 			
@@ -1261,7 +1296,7 @@ function sRaidFrames:ProfileFeed(value)
 	sRaidFrames.opt.profile2 = not value
 	sRaidFrames.opt.healthDisplayType = "none"
 	sRaidFrames.opt.TooltipMethod = "never"
-	sRaidFrames:chatToggleBorder()
+	--sRaidFrames:chatToggleBorder()
 	sRaidFrames:chatTexture("BantoBar")
 	sRaidFrames:chatSortBy("fixed")
 	sRaidFrames.opt.SubSort = "class"
@@ -1283,8 +1318,6 @@ function sRaidFrames:ProfileFeed(value)
 	sRaidFrames.opt.BackgroundColor.b = 0
 	sRaidFrames.opt.BackgroundColor.a = 1
 			
-	sRaidFrames.opt.RangeCheck = value
-	sRaidFrames.opt.ExtendedRangeCheck = value
 	sRaidFrames.opt.RangeAlpha = 0.3
 	sRaidFrames.opt.BuffType = "debuffs"
 	sRaidFrames.opt.Invert = not value
