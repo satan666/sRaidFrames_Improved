@@ -1,4 +1,4 @@
-local L = AceLibrary("AceLocale-2.0"):new("ag_UnitFrames")
+local L = AceLibrary("AceLocale-2.2"):new("ag_UnitFrames")
 
 aUF.Layouts.Raid = {
 		Name = "Raid",
@@ -22,7 +22,7 @@ aUF.Layouts.Raid = {
 									HeightAdd = 0,									
 									Width = 10,
 								},
-				ComboText = 	{ 	Font = "Fonts\\FRIZQT__.TTF",
+				ComboText = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"],
 									FontSize = 9.5,
 									Hidden = true,
 								},
@@ -72,7 +72,7 @@ aUF.Layouts.Raid = {
 									Visibility = {"Happiness",},	
 								},
 								
-				NameLabel = 	{ 	Font = L"Fonts\\FRIZQT__.TTF", 
+				NameLabel = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 9, 
 									Width = 80, 
 									Point = "TOPLEFT", 
@@ -81,7 +81,7 @@ aUF.Layouts.Raid = {
 									y =-9,
 								},
 					
-				ClassText =	 	{ 	Font = L"Fonts\\FRIZQT__.TTF",
+				ClassText =	 	{ 	Font = L["Fonts\\FRIZQT__.TTF"],
 									FontSize = 8,
 									Justify = "RIGHT",
 									Width = 60, 
@@ -91,7 +91,7 @@ aUF.Layouts.Raid = {
 									y =-9,
 								},
 				
-				HealthText = 	{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				HealthText = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									Point = "TOPRIGHT",
 									RelativePoint = "TOPRIGHT",
@@ -100,7 +100,7 @@ aUF.Layouts.Raid = {
 									Width = 60,									
 								},
 				
-				ManaText = 		{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				ManaText = 		{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									Point = "TOPRIGHT",
 									RelativePoint = "TOPRIGHT",
@@ -109,7 +109,7 @@ aUF.Layouts.Raid = {
 									Width = 60,									
 								},
 								
-				BarHealthText = { 	Font = "Fonts\\FRIZQT__.TTF", 
+				BarHealthText = { 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									RelativeTo = "HealthBar_BG",
 									Point = "CENTER",
@@ -119,7 +119,7 @@ aUF.Layouts.Raid = {
 									Width = 60,									
 								},
 									
-				BarManaText = 	{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				BarManaText = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									RelativeTo = "ManaBar_BG",
 									Point = "CENTER",
@@ -158,7 +158,7 @@ aUF.Layouts.Raid = {
 									x = 70, 
 									y = -4,
 								},
-				StatusText =	{	Font = "Fonts\\FRIZQT__.TTF", 
+				StatusText =	{	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 9.5, 
 									Point = "CENTER", 
 									RelativeTo = "HealthBar_BG", 

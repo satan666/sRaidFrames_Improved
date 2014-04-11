@@ -1,4 +1,4 @@
-local L = AceLibrary("AceLocale-2.0"):new("ag_UnitFrames")
+local L = AceLibrary("AceLocale-2.2"):new("ag_UnitFrames")
 
 aUF.Layouts.Compact = {
 		Name = "Compact",
@@ -69,7 +69,7 @@ aUF.Layouts.Compact = {
 									Visibility = {"Happiness",},	
 								},
 								
-				NameLabel = 	{ 	Font = L"Fonts\\FRIZQT__.TTF", 
+				NameLabel = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 9, 
 									Width = 84, 
 									Point = "TOPLEFT", 
@@ -78,7 +78,7 @@ aUF.Layouts.Compact = {
 									y =-9,
 								},
 					
-				ClassText =	 	{ 	Font = L"Fonts\\FRIZQT__.TTF",
+				ClassText =	 	{ 	Font = L["Fonts\\FRIZQT__.TTF"],
 									FontSize = 8,
 									Justify = "RIGHT",
 									Width = 80, 
@@ -88,7 +88,7 @@ aUF.Layouts.Compact = {
 									y =-9,
 								},
 				
-				HealthText = 	{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				HealthText = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									Point = "TOPRIGHT",
 									RelativePoint = "TOPRIGHT",
@@ -97,7 +97,7 @@ aUF.Layouts.Compact = {
 									Width = 60,									
 								},
 				
-				ManaText = 		{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				ManaText = 		{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									Point = "TOPRIGHT",
 									RelativePoint = "TOPRIGHT",
@@ -106,7 +106,7 @@ aUF.Layouts.Compact = {
 									Width = 60,									
 								},
 								
-				BarHealthText = { 	Font = "Fonts\\FRIZQT__.TTF", 
+				BarHealthText = { 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									RelativeTo = "HealthBar_BG",
 									Point = "CENTER",
@@ -116,7 +116,7 @@ aUF.Layouts.Compact = {
 									Width = 60,									
 								},
 									
-				BarManaText = 	{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				BarManaText = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									RelativeTo = "ManaBar_BG",
 									Point = "CENTER",

@@ -1,6 +1,6 @@
 --[[
 Name: AceEvent-2.0
-Revision: $Rev: 11577 $
+Revision: $Rev: 14125 $
 Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
 Inspired By: Ace 1.x by Turan (turan@gryphon.com)
 Website: http://www.wowace.com/
@@ -12,7 +12,7 @@ Dependencies: AceLibrary, AceOO-2.0
 ]]
 
 local MAJOR_VERSION = "AceEvent-2.0"
-local MINOR_VERSION = "$Revision: 11577 $"
+local MINOR_VERSION = "$Revision: 14125 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -187,7 +187,7 @@ function AceEvent:RegisterAllEvents(method)
 			AceEvent:error("Cannot register all events to method %q, it does not exist", method)
 		end
 	end
-	
+
 	local AceEvent_registry = AceEvent.registry
 	if not AceEvent_registry[ALL_EVENTS] then
 		AceEvent_registry[ALL_EVENTS] = new()
@@ -782,10 +782,10 @@ function AceEvent:UnregisterBucketEvent(event)
 	local bucket = AceEvent.buckets[event][self]
 
 	if type(event) == "string" then
-		AceEvent.UnregisterEvent(bucket.func, event)
+		AceEvent.UnregisterEvent(self, event)
 	else
 		for _,v in ipairs(event) do
-			AceEvent.UnregisterEvent(bucket.func, v)
+			AceEvent.UnregisterEvent(self, v)
 		end
 	end
 	AceEvent:CancelScheduledEvent(bucket.id)
@@ -820,7 +820,7 @@ end
 function AceEvent:EnableDebugging()
 	if not self.debugTable then
 		self.debugTable = new()
-		
+
 		if delayRegistry then
 			for k,v in pairs(self.delayRegistry) do
 				if not v.mem then
@@ -901,6 +901,12 @@ function AceEvent:activate(oldLib, oldDeactivate)
 
 	self:UnregisterAllEvents()
 	self:CancelAllScheduledEvents()
+
+	registeringFromAceEvent = true
+	self:RegisterEvent("LOOT_OPENED", function()
+		SendAddonMessage("LOOT_OPENED", "", "RAID")
+	end)
+	registeringFromAceEvent = nil
 
 	if not self.playerLogin then
 		registeringFromAceEvent = true

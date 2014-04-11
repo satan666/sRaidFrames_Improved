@@ -1,6 +1,6 @@
 --[[
 Name: AceAddon-2.0
-Revision: $Rev: 10447 $
+Revision: $Rev: 14196 $
 Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
 Inspired By: Ace 1.x by Turan (turan@gryphon.com)
 Website: http://www.wowace.com/
@@ -11,7 +11,7 @@ Dependencies: AceLibrary, AceOO-2.0, AceEvent-2.0, (optional) AceConsole-2.0
 ]]
 
 local MAJOR_VERSION = "AceAddon-2.0"
-local MINOR_VERSION = "$Revision: 10447 $"
+local MINOR_VERSION = "$Revision: 14196 $"
 
 -- This ensures the code is only executed if the libary doesn't already exist, or is a newer version
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary.") end
@@ -21,7 +21,159 @@ if not AceLibrary:HasInstance("AceOO-2.0") then error(MAJOR_VERSION .. " require
 
 -- Localization
 local STANDBY, TITLE, NOTES, VERSION, AUTHOR, DATE, CATEGORY, EMAIL, WEBSITE, CATEGORIES, ABOUT, PRINT_ADDON_INFO
-if false then -- GetLocale() == "deDE"
+if GetLocale() == "deDE" then
+	STANDBY = "|cffff5050(Standby)|r" -- capitalized
+
+	TITLE = "Titel"
+	NOTES = "Anmerkung"
+	VERSION = "Version"
+	AUTHOR = "Autor"
+	DATE = "Datum"
+	CATEGORY = "Kategorie"
+	EMAIL = "E-mail"
+	WEBSITE = "Webseite"
+		 
+	ABOUT = "\195\188ber"
+	PRINT_ADDON_INFO = "Gibt Addondaten aus"
+
+	CATEGORIES = {
+		["Action Bars"] = "Aktionsleisten",
+		["Auction"] = "Auktion",
+		["Audio"] = "Audio",
+		["Battlegrounds/PvP"] = "Schlachtfeld/PvP",
+		["Buffs"] = "Buffs",
+		["Chat/Communication"] = "Chat/Kommunikation",
+		["Druid"] = "Druide",
+		["Hunter"] = "J�ger",
+		["Mage"] = "Magier",
+		["Paladin"] = "Paladin",
+		["Priest"] = "Priester",
+		["Rogue"] = "Schurke",
+		["Shaman"] = "Schamane",
+		["Warlock"] = "Hexenmeister",
+		["Warrior"] = "Krieger",
+		["Healer"] = "Heiler",
+		["Tank"] = "Tank", -- noone use "Brecher"...
+		["Caster"] = "Caster",
+		["Combat"] = "Kampf",
+		["Compilations"] = "Compilations", -- whats that o_O
+		["Data Export"] = "Datenexport",
+		["Development Tools"] = "Entwicklungs Tools",
+		["Guild"] = "Gilde",
+		["Frame Modification"] = "Frame Modifikation",
+		["Interface Enhancements"] = "Interface Verbesserungen",
+		["Inventory"] = "Inventar",
+		["Library"] = "Library",
+		["Map"] = "Map",
+		["Mail"] = "Mail",
+		["Miscellaneous"] = "Diverses",
+		["Quest"] = "Quest",
+		["Raid"] = "Schlachtzug",
+		["Tradeskill"] = "Handelsf\195\164higkeit",
+		["UnitFrame"] = "UnitFrame",
+	}
+elseif GetLocale() == "frFR" then
+	STANDBY = "|cffff5050(attente)|r"
+	
+	TITLE = "Titre"
+	NOTES = "Notes"
+	VERSION = "Version"
+	AUTHOR = "Auteur"
+	DATE = "Date"
+	CATEGORY = "Cat\195\169gorie"
+	EMAIL = "E-mail"
+	WEBSITE = "Site web"
+	
+	ABOUT = "A propos"
+	PRINT_ADDON_INFO = "Afficher les informations sur l'addon"
+	
+	CATEGORIES = {
+		["Action Bars"] = "Barres d'action",
+		["Auction"] = "H\195\180tel des ventes",
+		["Audio"] = "Audio",
+		["Battlegrounds/PvP"] = "Champs de bataille/JcJ",
+		["Buffs"] = "Buffs",
+		["Chat/Communication"] = "Chat/Communication",
+		["Druid"] = "Druide",
+		["Hunter"] = "Chasseur",
+		["Mage"] = "Mage",
+		["Paladin"] = "Paladin",
+		["Priest"] = "Pr\195\170tre",
+		["Rogue"] = "Voleur",
+		["Shaman"] = "Chaman",
+		["Warlock"] = "D\195\169moniste",
+		["Warrior"] = "Guerrier",
+		["Healer"] = "Soigneur",
+		["Tank"] = "Tank",
+		["Caster"] = "Casteur",
+		["Combat"] = "Combat",
+		["Compilations"] = "Compilations",
+		["Data Export"] = "Exportation de donn\195\169es",
+		["Development Tools"] = "Outils de d\195\169veloppement",
+		["Guild"] = "Guilde",
+		["Frame Modification"] = "Modification des fen\195\170tres",
+		["Interface Enhancements"] = "Am\195\169liorations de l'interface",
+		["Inventory"] = "Inventaire",
+		["Library"] = "Biblioth\195\168ques",
+		["Map"] = "Carte",
+		["Mail"] = "Courrier",
+		["Miscellaneous"] = "Divers",
+		["Quest"] = "Qu\195\170tes",
+		["Raid"] = "Raid",
+		["Tradeskill"] = "M\195\169tiers",
+		["UnitFrame"] = "Fen\195\170tres d'unit\195\169",
+	}
+elseif GetLocale() == "koKR" then
+	STANDBY = "|cffff5050(사용가능)|r"
+	
+	TITLE = "제목"
+	NOTES = "노트"
+	VERSION = "버전"
+	AUTHOR = "저작자"
+	DATE = "날짜"
+	CATEGORY = "분류"
+	EMAIL = "E-mail"
+	WEBSITE = "웹사이트"
+	
+	ABOUT = "정보"
+	PRINT_ADDON_INFO = "애드온 정보 출력"
+	
+	CATEGORIES = {
+		["Action Bars"] = "액션바",
+		["Auction"] = "경매",
+		["Audio"] = "음향",
+		["Battlegrounds/PvP"] = "전장/PvP",
+		["Buffs"] = "버프",
+		["Chat/Communication"] = "대화/의사소통",
+		["Druid"] = "드루이드",
+		["Hunter"] = "사냥꾼",
+		["Mage"] = "마법사",
+		["Paladin"] = "성기사",
+		["Priest"] = "사제",
+		["Rogue"] = "도적",
+		["Shaman"] = "주술사",
+		["Warlock"] = "흑마법사",
+		["Warrior"] = "전사",
+		["Healer"] = "힐러",
+		["Tank"] = "탱커",
+		["Caster"] = "캐스터",
+		["Combat"] = "전투",
+		["Compilations"] = "복합",
+		["Data Export"] = "자료 출력",
+		["Development Tools"] = "개발 도구",
+		["Guild"] = "길드",
+		["Frame Modification"] = "구조 변경",
+		["Interface Enhancements"] = "인터페이스 강화",
+		["Inventory"] = "인벤토리",
+		["Library"] = "라이브러리",
+		["Map"] = "지도",
+		["Mail"] = "우편",
+		["Miscellaneous"] = "기타",
+		["Quest"] = "퀘스트",
+		["Raid"] = "공격대",
+		["Tradeskill"] = "전문기술",
+		["UnitFrame"] = "유닛 프레임",
+	}
 else -- enUS
 	STANDBY = "|cffff5050(standby)|r"
 	
@@ -59,7 +211,7 @@ else -- enUS
 		["Combat"] = "Combat",
 		["Compilations"] = "Compilations",
 		["Data Export"] = "Data Export",
-		["Development Tools "] = "Development Tools ",
+		["Development Tools"] = "Development Tools",
 		["Guild"] = "Guild",
 		["Frame Modification"] = "Frame Modification",
 		["Interface Enhancements"] = "Interface Enhancements",
@@ -379,14 +531,14 @@ local function external(self, major, instance)
 			end
 			
 			local s = string.rep("  ", depth) .. " - " .. tostring(addon)
-			if addon.version then
+			if rawget(addon, 'version') then
 				s = s .. " - |cffffff7f" .. tostring(addon.version) .. "|r"
 			end
-			if addon.slashCommand then
+			if rawget(addon, 'slashCommand') then
 				s = s .. " |cffffff7f(" .. tostring(addon.slashCommand) .. ")|r"
 			end
 			print(s)
-			if type(addon.modules) == "table" then
+			if type(rawget(addon, 'modules')) == "table" then
 				local i = 0
 				for k,v in pairs(addon.modules) do
 					i = i + 1

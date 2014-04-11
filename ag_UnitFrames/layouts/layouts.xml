@@ -1,4 +1,4 @@
- <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Script file="ABF.lua"/>
 	<Script file="Classic.lua"/>
 	<Script file="Compact.lua"/>
@@ -7,4 +7,5 @@
 	<Script file="PerfectRaid.lua"/>
 	<Script file="CTRA.lua"/>
 	<Script file="yaABF.lua"/>
+	<Script file="Roartindon.lua"/>
 </Ui>

@@ -1,4 +1,262 @@
 ------------------------------------------------------------------------
+r14368 | rabbit | 2006-10-19 00:12:36 -0400 (Thu, 19 Oct 2006) | 1 line
+
+ag_UnitFrames: 2.0 -> 2.2
+------------------------------------------------------------------------
+r14335 | rabbit | 2006-10-18 22:18:08 -0400 (Wed, 18 Oct 2006) | 1 line
+
+ag_UnitFrames: AceLocale-2.2.
+------------------------------------------------------------------------
+r14319 | rabbit | 2006-10-18 21:23:15 -0400 (Wed, 18 Oct 2006) | 1 line
+
+ag_UnitFrames: L"" -> L[""] to make it AL-2.2-ready.
+------------------------------------------------------------------------
+r14252 | rabbit | 2006-10-18 14:50:48 -0400 (Wed, 18 Oct 2006) | 1 line
+
+ag_UnitFrames: string.gmatch doesn't work yet.
+------------------------------------------------------------------------
+r14239 | ag | 2006-10-18 12:40:44 -0400 (Wed, 18 Oct 2006) | 3 lines
+
+ag_UnitFrames
+ * Added french localization (probably needs to be updated to reflect newest menus)
+ * Added a couple of things to make the trunk compatible with Lua 5.1, taken from Miles' BC patch (the addon trunk is still for WoW vanilla)
+------------------------------------------------------------------------
+r14103 | delsphynx | 2006-10-16 17:30:55 -0400 (Mon, 16 Oct 2006) | 1 line
+
+ag_UnitFrames:  Re-added fourths and fifths to the texture list (Kenmayo's patch that was applied hadn't had those files added, hence why they were removed at that revision)
+------------------------------------------------------------------------
+r14071 | fenlis | 2006-10-16 07:50:18 -0400 (Mon, 16 Oct 2006) | 1 line
+
+ag_UnitFrames : Update locals koKR
+------------------------------------------------------------------------
+r14003 | ag | 2006-10-15 10:25:56 -0400 (Sun, 15 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ Test code is off per default
+------------------------------------------------------------------------
+r13918 | ag | 2006-10-14 20:06:06 -0400 (Sat, 14 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * tiny fix
+------------------------------------------------------------------------
+r13916 | ag | 2006-10-14 20:01:16 -0400 (Sat, 14 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * aUF.EMULATE_BETA - setting this to true will prevent unit frames from getting their position moved when players join/leave in combat, when you leave combat affected subgroups will be updated
+------------------------------------------------------------------------
+r13874 | ag | 2006-10-14 13:09:40 -0400 (Sat, 14 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * hide/show party in raid works again
+------------------------------------------------------------------------
+r13868 | ag | 2006-10-14 11:49:41 -0400 (Sat, 14 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * Hide/Show anchor can now be set individually for groups, group growth direction can now be set
+------------------------------------------------------------------------
+r13849 | ag | 2006-10-14 00:47:52 -0400 (Sat, 14 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * nil check 
+------------------------------------------------------------------------
+r13846 | ag | 2006-10-13 23:55:39 -0400 (Fri, 13 Oct 2006) | 3 lines
+
+ag_UnitFrames
+ * small cleanup
+ * someone added wampiric embrace to visible debuff textures for priests, why? it's not something we can dispel from others or ourselves so - removed!
+------------------------------------------------------------------------
+r13844 | ag | 2006-10-13 22:47:48 -0400 (Fri, 13 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * on s few systems/resolutions combinations global scale is something like 0.89-... instead of 1. But this is set AFTER much code have been initialized. Scheduled the method that creates units so that units will be created after the scale is correct. Position loading was bugged because of this. UGH BLIZZARD
+------------------------------------------------------------------------
+r13760 | ag | 2006-10-12 22:53:47 -0400 (Thu, 12 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * Improved the group layout system (nothing visible to the user except for it reacting faster) (Might have a chance of being compatible with BC if R_R_U allows frames to move)
+------------------------------------------------------------------------
+r13500 | fenlis | 2006-10-10 02:39:55 -0400 (Tue, 10 Oct 2006) | 3 lines
+
+ag_UnitFrames : 
+ - Apply locals for font of layouts
+ - Add locals koKR
+------------------------------------------------------------------------
+r13479 | ag | 2006-10-09 20:38:12 -0400 (Mon, 09 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * Merged Pastamancers patch so groups are sorted correctly
+------------------------------------------------------------------------
+r13477 | ag | 2006-10-09 19:57:55 -0400 (Mon, 09 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * changed RelativeToSecondary theme tags to RelativeTo2 due to theme engine changes
+------------------------------------------------------------------------
+r13475 | ag | 2006-10-09 19:52:14 -0400 (Mon, 09 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * fixed Vharr's bug
+------------------------------------------------------------------------
+r13474 | ag | 2006-10-09 19:42:05 -0400 (Mon, 09 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * tiny bugfix
+------------------------------------------------------------------------
+r13472 | ag | 2006-10-09 19:28:08 -0400 (Mon, 09 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * Merged some of Kenmayo's patch and added heavy modifications to the style system (if something breaks now, post the bug and revert to an older version until it is fixed)
+------------------------------------------------------------------------
+r13357 | saroz | 2006-10-08 14:45:46 -0400 (Sun, 08 Oct 2006) | 1 line
+
+ag_UnitFrames: Add aUF:formatLargeValue() which formats health and mana values in to human readable text. Also implements millions for bosses with a lot of HP.
+------------------------------------------------------------------------
+r13353 | delsphynx | 2006-10-08 14:27:14 -0400 (Sun, 08 Oct 2006) | 1 line
+
+ag_UnitFrames:  Added textures Fourths and Fifths, courtesy of Luzienne
+------------------------------------------------------------------------
+r13347 | ag | 2006-10-08 12:41:26 -0400 (Sun, 08 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * Removed stickyframe stuff, reported to cause problems with bartender?
+------------------------------------------------------------------------
+r13345 | ag | 2006-10-08 12:04:44 -0400 (Sun, 08 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * tweaked theme a bit more. Made it larger, as I'd rather have themes to have around the same size so that they don't differ much, use scale option instead
+------------------------------------------------------------------------
+r13313 | ag | 2006-10-08 00:11:25 -0400 (Sun, 08 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * reverted last change
+------------------------------------------------------------------------
+r13312 | ag | 2006-10-08 00:08:09 -0400 (Sun, 08 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * Small text position tweak
+------------------------------------------------------------------------
+r13310 | ag | 2006-10-08 00:00:33 -0400 (Sun, 08 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * reduced group anchor size
+------------------------------------------------------------------------
+r13308 | ag | 2006-10-07 23:49:53 -0400 (Sat, 07 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * Added Roartindon.lua theme, modified it a bit
+------------------------------------------------------------------------
+r13254 | ag | 2006-10-07 13:04:18 -0400 (Sat, 07 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * added local L to WDcore file
+------------------------------------------------------------------------
+r13253 | ag | 2006-10-07 13:03:17 -0400 (Sat, 07 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * added local L to utils file
+------------------------------------------------------------------------
+r13251 | ag | 2006-10-07 12:50:43 -0400 (Sat, 07 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * added local L to WDtags file
+------------------------------------------------------------------------
+r13250 | ag | 2006-10-07 12:49:23 -0400 (Sat, 07 Oct 2006) | 2 lines
+
+ag_UnitFrames
+ * Seperated methods into different files grouped by purpose
+------------------------------------------------------------------------
+r13245 | flyflame | 2006-10-07 12:08:55 -0400 (Sat, 07 Oct 2006) | 1 line
+
+ag_UnitFrames: update zhCN locals
+------------------------------------------------------------------------
+r13190 | delsphynx | 2006-10-06 18:34:19 -0400 (Fri, 06 Oct 2006) | 1 line
+
+ag_UnitFrames:  minor size tweaks to the oUF layout, and here's to hoping tabs are no longer > me
+------------------------------------------------------------------------
+r13141 | rabbit | 2006-10-05 21:22:42 -0400 (Thu, 05 Oct 2006) | 1 line
+
+ag_UnitFrames: Hrm, things work fine without anchoring the frames with StickyFrames, so lets not do it. I don't even know what it does.
+------------------------------------------------------------------------
+r13111 | nevcairiel | 2006-10-05 15:25:00 -0400 (Thu, 05 Oct 2006) | 1 line
+
+ag_UnitFrames: fixed indentation
+------------------------------------------------------------------------
+r13109 | krtek | 2006-10-05 15:15:25 -0400 (Thu, 05 Oct 2006) | 2 lines
+
+ ag_UnitFrames : cleaner code for [raidgroup]
+
+------------------------------------------------------------------------
+r13019 | delsphynx | 2006-10-04 20:06:22 -0400 (Wed, 04 Oct 2006) | 1 line
+
+ag_UnitFrames:  Added the [raidgroup] tag
+------------------------------------------------------------------------
+r13016 | delsphynx | 2006-10-04 19:55:12 -0400 (Wed, 04 Oct 2006) | 1 line
+
+ag_UnitFrames:  Added option for smooth health bar coloring, added a couple of "spaces" in the dewdrop menu to help subdivide it just a bit, removed Cracked bar texture because let's face it, it just didn't look good!  (I added it in the first place :) )
+------------------------------------------------------------------------
+r12999 | rabbit | 2006-10-04 16:18:14 -0400 (Wed, 04 Oct 2006) | 1 line
+
+ag_UnitFrames: Really get all the frames into the list for StickyFrames.
+------------------------------------------------------------------------
+r12844 | rabbit | 2006-10-03 14:49:14 -0400 (Tue, 03 Oct 2006) | 1 line
+
+ag_UnitFrames: Maybe a bit better sticky frames; I need some help on this, ag.
+------------------------------------------------------------------------
+r12833 | rabbit | 2006-10-03 13:26:43 -0400 (Tue, 03 Oct 2006) | 1 line
+
+ag_UnitFrames: Optional StickyFrames support, not very good at the moment, only sticks at the group headers. Needs the StickyFrames library to be loaded - Bartender2 has a copy.
+------------------------------------------------------------------------
+r12823 | rabbit | 2006-10-03 11:51:24 -0400 (Tue, 03 Oct 2006) | 1 line
+
+ag_UnitFrames: Oops.
+------------------------------------------------------------------------
+r12822 | rabbit | 2006-10-03 11:49:32 -0400 (Tue, 03 Oct 2006) | 1 line
+
+ag_UnitFrames: Group names translated.
+------------------------------------------------------------------------
+r12815 | darkimakuni | 2006-10-03 11:02:26 -0400 (Tue, 03 Oct 2006) | 2 lines
+
+ag_UnitFrames
+- Removed trailing white space from XML files
+------------------------------------------------------------------------
+r12760 | rabbit | 2006-10-03 00:10:10 -0400 (Tue, 03 Oct 2006) | 1 line
+
+ag_UnitFrames: Everything should be localizable now, afaik.
+------------------------------------------------------------------------
+r12754 | rabbit | 2006-10-02 23:26:53 -0400 (Mon, 02 Oct 2006) | 4 lines
+
+ag_UnitFrames:
+ * Indentation fixes and stray tabs nuking
+ * L[] style for AL
+ * use pairs/ipairs for looping
+------------------------------------------------------------------------
+r12746 | delsphynx | 2006-10-02 21:27:04 -0400 (Mon, 02 Oct 2006) | 1 line
+
+ag_UnitFrames:  changed the frame background to use ChatFrameBackground instead of Tooltip so that it can go completely opaque if desired, modified raid anchor border so that it will be set the same as what is chosen for the party
+------------------------------------------------------------------------
+r12745 | delsphynx | 2006-10-02 21:09:28 -0400 (Mon, 02 Oct 2006) | 1 line
+
+ag_UnitFrames:  Added DarkBottom bar texture, added the localized border option texts to the zhCN file (untranslated!)
+------------------------------------------------------------------------
+r12694 | delsphynx | 2006-10-02 14:15:44 -0400 (Mon, 02 Oct 2006) | 1 line
+
+ag_UnitFrames:  Fixed bug with [statuscolor] tag, made a couple of the really long tags multi-line to help with code readability, changed textures to be in alphabetical order in the menu
+------------------------------------------------------------------------
+r12685 | delsphynx | 2006-10-02 13:54:47 -0400 (Mon, 02 Oct 2006) | 1 line
+
+ag_UnitFrames:  Fixed typo with highlight selected menu text
+------------------------------------------------------------------------
+r12676 | rabbit | 2006-10-02 11:15:54 -0400 (Mon, 02 Oct 2006) | 1 line
+
+ag_UnitFrames: Show Vampiric Embrace for priests when the aura filter is on.
+------------------------------------------------------------------------
+r12663 | rabbit | 2006-10-02 10:03:44 -0400 (Mon, 02 Oct 2006) | 1 line
+
+ag_UnitFrames: Possible bugfix for something.
+------------------------------------------------------------------------
+r12652 | ckknight | 2006-10-02 06:36:49 -0400 (Mon, 02 Oct 2006) | 1 line
+
+ag_UnitFrames - now shows units with no mana/energy/rage as blank instead of -1%
+------------------------------------------------------------------------
 r12433 | ag | 2006-10-01 01:30:36 -0400 (Sun, 01 Oct 2006) | 3 lines
 
 ag_UnitFrames

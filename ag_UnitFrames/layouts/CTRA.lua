@@ -1,4 +1,4 @@
-local L = AceLibrary("AceLocale-2.0"):new("ag_UnitFrames")
+local L = AceLibrary("AceLocale-2.2"):new("ag_UnitFrames")
 
 aUF.Layouts.CTRA = {
 		Name = "CTRA",
@@ -16,7 +16,7 @@ aUF.Layouts.CTRA = {
 				FrameHeight = 32,
 				FrameWidth = 120,
 
-				NameLabel =		{ 		Font = L"Fonts\\FRIZQT__.TTF",
+				NameLabel =		{ 		Font = L["Fonts\\FRIZQT__.TTF"],
 									FontSize = 9.5,
 									Width = 75,
 									Point = "TOPLEFT",
@@ -45,7 +45,7 @@ aUF.Layouts.CTRA = {
 								},
 				XPBar_BG = 		{		Point = "TOPLEFT",
 									RelativeTo = "ManaBar_BG",
-									RelativeToSecondary = "HealthBar_BG",
+									RelativeTo2 = "HealthBar_BG",
 									RelativePoint = "BOTTOMLEFT",
 									x = 0,
 									y = -0.5,
@@ -71,7 +71,7 @@ aUF.Layouts.CTRA = {
 									Visibility = {"Happiness",},
 									Hidden = true,
 								},
-				ClassText =	 	{ 		Font = L"Fonts\\FRIZQT__.TTF",
+				ClassText =	 	{ 		Font = L["Fonts\\FRIZQT__.TTF"],
 									FontSize = 8,
 									Justify = "RIGHT",
 									Width = 60,
@@ -82,7 +82,7 @@ aUF.Layouts.CTRA = {
 									Hidden = true,
 								},
 
-				HealthText =	{ 		Font = "Fonts\\FRIZQT__.TTF",
+				HealthText =	{ 		Font = L["Fonts\\FRIZQT__.TTF"],
 									FontSize = 10.5,
 									Justify = "CENTER",
 									RelativeTo = "HealthBar_BG",
@@ -93,7 +93,7 @@ aUF.Layouts.CTRA = {
 									Width = 70,
 								},
 
-				StatusText =	{ 		Font = "Fonts\\FRIZQT__.TTF",
+				StatusText =	{ 		Font = L["Fonts\\FRIZQT__.TTF"],
 									FontSize = 10.5,
 									Justify = "CENTER",
 									RelativeTo = "HealthBar_BG",

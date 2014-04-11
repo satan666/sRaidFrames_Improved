@@ -1,5 +1,4 @@
- <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
-	
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<FontString name="agUFShadowFont" font="Fonts\FRIZQT__.TTF" inherits="GameFontNormalSmall" virtual="true">
 		<FontHeight>
 			<AbsValue val="8"/>
@@ -7,12 +6,12 @@
 		<Color r="1.0" g="1.0" b="1.0"/>
 		<!-- EE ADD -->
 		<!-- Make the text shadow offset smaller -->
-      	<Shadow>
-         		<Color r="0" g="0" b="0" />
-         		<Offset>
-            		<AbsDimension x="0.8" y="-0.8" />
-         		</Offset>
-      	</Shadow>		
+		<Shadow>
+			<Color r="0" g="0" b="0" />
+			<Offset>
+				<AbsDimension x="0.8" y="-0.8" />
+			</Offset>
+		</Shadow>
 	</FontString>
 
 	<FontString name="agUFCombatFont" font="Fonts\FRIZQT__.TTF" outline="NORMAL" virtual="true">
@@ -21,14 +20,14 @@
 		</FontHeight>
 		<Color r="1.0" g="1.0" b="1.0"/>
 	</FontString>
-	
+
 	<FontString name="agUFAuraFont" font="Fonts\FRIZQT__.TTF" outline="NORMAL" virtual="true">
 		<FontHeight>
 			<AbsValue val="7"/>
 		</FontHeight>
 		<Color r="1.0" g="1.0" b="1.0"/>
 	</FontString>
-	
+
 	<Button name="AGAuraTemplate" virtual="true" hidden="false">
 		<Size>
 			<AbsDimension x="15" y="15"/>
@@ -65,24 +64,24 @@
 			</Layer>
 		</Layers>
 	</Button>
-	
+
 	<Button name="AGUnitTemplate" frameStrata="MEDIUM" movable="true" parent="UIParent" hidden="true" virtual="true">
 		<Frames>
 			<Frame setAllPoints="true">
 				<Layers>
 					<Layer level="BACKGROUND">
 						<Texture name="$parent_HealthBar_BG"/>
-						<Texture name="$parent_ManaBar_BG"/>				
+						<Texture name="$parent_ManaBar_BG"/>
 						<Texture name="$parent_XPBar_BG" hidden="true"/>
 					</Layer>
 					<Layer level="ARTWORK">
 						<FontString name="$parent_HealthText" inherits="agUFShadowFont" justifyH="RIGHT" nonspacewrap="false"/>
-						<FontString name="$parent_ManaText" inherits="agUFShadowFont" justifyH="RIGHT" nonspacewrap="false"/>		
+						<FontString name="$parent_ManaText" inherits="agUFShadowFont" justifyH="RIGHT" nonspacewrap="false"/>
 						<!-- <FontString name="$parent_BarHealthText" inherits="agUFShadowFont" justifyH="CENTER" nonspacewrap="false"/> -->
 						<!-- <FontString name="$parent_BarManaText" inherits="agUFShadowFont" justifyH="CENTER" nonspacewrap="false"/> -->
 						<FontString name="$parent_StatusText" inherits="GameFontNormalSmall"/>
 					</Layer>
-					<Layer level="OVERLAY">						
+					<Layer level="OVERLAY">
 						<FontString name="$parent_ClassText" inherits="agUFShadowFont" justifyH="RIGHT">
 							<Size>
 								<AbsDimension x="60" y="1"/>
@@ -98,7 +97,7 @@
 						<Texture name="$parent_PVPIcon" hidden="true">
 							<Size>
 								<AbsDimension x="27" y="27"/>
-							</Size>						
+							</Size>
 						</Texture>
 						<Texture name="$parent_LeaderIcon" file="Interface\GroupFrame\UI-Group-LeaderIcon" hidden="true">
 							<Size>
@@ -108,19 +107,19 @@
 						<Texture name="$parent_MasterIcon" file="Interface\GroupFrame\UI-Group-MasterLooter" hidden="true">
 							<Size>
 								<AbsDimension x="10" y="10"/>
-							</Size>						
+							</Size>
 						</Texture>
 						<Texture name="$parent_InCombatIcon" file="Interface\CharacterFrame\UI-StateIcon" hidden="true">
 							<Size>
 								<AbsDimension x="18" y="18"/>
 							</Size>
-                                                        <TexCoords left="0.5" right="1.0" top="0" bottom="0.5"/>
+							<TexCoords left="0.5" right="1.0" top="0" bottom="0.5"/>
 						</Texture>
 						<Texture name="$parent_RestingIcon" file="Interface\CharacterFrame\UI-StateIcon" hidden="true">
 							<Size>
 								<AbsDimension x="18" y="18"/>
 							</Size>
-                                                        <TexCoords left="0" right="0.5" top="0" bottom="0.421875"/>
+							<TexCoords left="0" right="0.5" top="0" bottom="0.421875"/>
 						</Texture>
 						<Texture name="$parent_RaidTargetIcon" file="Interface\TargetingFrame\UI-RaidTargetingIcons" hidden="true">
 							<Size>
@@ -136,8 +135,8 @@
 						<Texture name="$parent_XPEndcapRight" file="Interface\AddOns\ag_UnitFrames\Images\Endcap" hidden="true" drawLayer="OVERLAY"/>
 					</Layer>
 				</Layers>
-			</Frame>			
-			<StatusBar name="$parent_HealthBar" drawLayer="ARTWORK" />	
+			</Frame>
+			<StatusBar name="$parent_HealthBar" drawLayer="ARTWORK" />
 			<StatusBar name="$parent_ManaBar" drawLayer="ARTWORK" />
 			<StatusBar name="$parent_XPBar" drawLayer="OVERLAY" />
 			<Frame setAllPoints="true" frameStrata="MEDIUM">
@@ -146,12 +145,12 @@
 						<Texture name="$parentHighlight" file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD" hidden="true">
 							<Anchors>
 								<Anchor point="CENTER"/>
-							</Anchors>						
+							</Anchors>
 						</Texture>
 						<Texture name="$parentDebuff" file="Interface\AddOns\ag_UnitFrames\Images\debuff2.tga" alphaMode="ADD" hidden="true">
 							<Anchors>
 								<Anchor point="CENTER"/>
-							</Anchors>							
+							</Anchors>
 						</Texture>
 					</Layer>
 				</Layers>
@@ -335,7 +334,7 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-			</Button>			
+			</Button>
 		</Frames>
 	</Button>
 	
@@ -358,16 +357,20 @@
 
 	<Button name="AGraidAnchorTemplate" frameStrata="MEDIUM" movable="true" parent="UIParent" virtual="true">
 		<Size>
-			<AbsDimension x="120" y="22"/>
+			<AbsDimension x="120" y="16"/>
 		</Size>
 		<Layers>
 			<Layer level="OVERLAY">
 				<FontString name="$parentTitle" inherits="agUFAuraFont" justifyH="CENTER">
 					<Size>
-						<AbsDimension x="120" y="22"/>
+						<AbsDimension x="120" y="16"/>
 					</Size>
 					<Anchors>
-						<Anchor point="CENTER" />
+						<Anchor point="CENTER">
+							<Offset>
+								<AbsDimension x="0" y="0.5"/>
+							</Offset>
+						</Anchor>	
 					</Anchors>
 				</FontString>
 			</Layer>

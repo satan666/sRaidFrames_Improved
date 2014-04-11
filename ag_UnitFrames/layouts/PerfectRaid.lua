@@ -1,4 +1,4 @@
-local L = AceLibrary("AceLocale-2.0"):new("ag_UnitFrames")
+local L = AceLibrary("AceLocale-2.2"):new("ag_UnitFrames")
 
 aUF.Layouts.PerfectRaid = {
 		Name = "PerfectRaid",
@@ -47,7 +47,7 @@ aUF.Layouts.PerfectRaid = {
 								
 				XPBar_BG = 		{	Point = "TOPLEFT", 
 									RelativeTo = "ManaBar_BG",
-									RelativeToSecondary = "HealthBar_BG", 									
+									RelativeTo2 = "HealthBar_BG", 									
 									RelativePoint = "BOTTOMLEFT", 
 									x = 0, 
 									y = -2, 
@@ -74,7 +74,7 @@ aUF.Layouts.PerfectRaid = {
 									Visibility = {"Happiness",},	
 								},
 								
-				NameLabel = 	{ 	Font = L"Fonts\\FRIZQT__.TTF", 
+				NameLabel = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 9, 
 									Width = 55, 
 									Point = "TOPLEFT", 
@@ -83,7 +83,7 @@ aUF.Layouts.PerfectRaid = {
 									y =-10,
 								},
 					
-				ClassText =	 	{ 	Font = L"Fonts\\FRIZQT__.TTF",
+				ClassText =	 	{ 	Font = L["Fonts\\FRIZQT__.TTF"],
 									FontSize = 9,
 									Justify = "LEFT",
 									Width = 60, 
@@ -94,7 +94,7 @@ aUF.Layouts.PerfectRaid = {
 									Hidden = true,
 								},
 				
-				HealthText = 	{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				HealthText = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									Point = "RIGHT", 
 									RelativeTo = "HealthBar_BG", 
@@ -104,7 +104,7 @@ aUF.Layouts.PerfectRaid = {
 									Width = 60,									
 								},
 					
-				ManaText = 		{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				ManaText = 		{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									Point = "RIGHT", 
 									RelativeTo = "ManaBar_BG", 
@@ -114,7 +114,7 @@ aUF.Layouts.PerfectRaid = {
 									Width = 60,									
 								},
 									
-				BarHealthText = { 	Font = "Fonts\\FRIZQT__.TTF", 
+				BarHealthText = { 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									RelativeTo = "HealthBar_BG",
 									Point = "CENTER",
@@ -124,7 +124,7 @@ aUF.Layouts.PerfectRaid = {
 									Width = 60,									
 								},
 									
-				BarManaText = 	{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				BarManaText = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									RelativeTo = "ManaBar_BG",
 									Point = "CENTER",

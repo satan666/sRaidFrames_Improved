@@ -1,6 +1,6 @@
 --[[
 Name: AceConsole-2.0
-Revision: $Rev: 11836 $
+Revision: $Rev: 14196 $
 Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
 Inspired By: Ace 1.x by Turan (turan@gryphon.com)
 Website: http://www.wowace.com/
@@ -13,24 +13,59 @@ Dependencies: AceLibrary, AceOO-2.0
 ]]
 
 local MAJOR_VERSION = "AceConsole-2.0"
-local MINOR_VERSION = "$Revision: 11836 $"
+local MINOR_VERSION = "$Revision: 14196 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary.") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
 
 if not AceLibrary:HasInstance("AceOO-2.0") then error(MAJOR_VERSION .. " requires AceOO-2.0.") end
--- localize --
-local MAP_ONOFF = { [false] = "|cffff0000Off|r", [true] = "|cff00ff00On|r" }
-local USAGE = "Usage"
-local IS_CURRENTLY_SET_TO = "|cffffff7f%s|r is currently set to |cffffff7f[|r%s|cffffff7f]|r"
-local IS_NOW_SET_TO = "|cffffff7f%s|r is now set to |cffffff7f[|r%s|cffffff7f]|r"
-local IS_NOT_A_VALID_OPTION_FOR = "[|cffffff7f%s|r] is not a valid option for |cffffff7f%s|r"
-local IS_NOT_A_VALID_VALUE_FOR = "[|cffffff7f%s|r] is not a valid value for |cffffff7f%s|r"
-local NO_OPTIONS_AVAILABLE = "No options available"
-local OPTION_HANDLER_NOT_FOUND = "Option handler |cffffff7f%q|r not found."
-local OPTION_HANDLER_NOT_VALID = "Option handler not valid."
-local OPTION_IS_DISABLED = "Option |cffffff7f%s|r is disabled."
--- localize --
+
+local MAP_ONOFF, USAGE, IS_CURRENTLY_SET_TO, IS_NOW_SET_TO, IS_NOT_A_VALID_OPTION_FOR, IS_NOT_A_VALID_VALUE_FOR, NO_OPTIONS_AVAILABLE, OPTION_HANDLER_NOT_FOUND, OPTION_HANDLER_NOT_VALID, OPTION_IS_DISABLED
+if GetLocale() == "deDE" then
+	MAP_ONOFF = { [false] = "|cffff0000Aus|r", [true] = "|cff00ff00An|r" }
+	USAGE = "Benutzung"
+	IS_CURRENTLY_SET_TO = "|cffffff7f%s|r steht momentan auf |cffffff7f[|r%s|cffffff7f]|r"
+	IS_NOW_SET_TO = "|cffffff7f%s|r ist nun auf |cffffff7f[|r%s|cffffff7f]|r gesetzt"
+	IS_NOT_A_VALID_OPTION_FOR = "[|cffffff7f%s|r] ist keine g\195\188ltige Option f\195\188r |cffffff7f%s|r"
+	IS_NOT_A_VALID_VALUE_FOR = "[|cffffff7f%s|r] ist kein g\195\188ltiger Wert f\195\188r |cffffff7f%s|r"
+	NO_OPTIONS_AVAILABLE = "Keine Optionen verf�gbar"
+	OPTION_HANDLER_NOT_FOUND = "Optionen handler |cffffff7f%q|r nicht gefunden."
+	OPTION_HANDLER_NOT_VALID = "Optionen handler nicht g\195\188ltig."
+	OPTION_IS_DISABLED = "Option |cffffff7f%s|r deaktiviert."
+elseif GetLocale() == "frFR" then
+	MAP_ONOFF = { [false] = "|cffff0000Inactif|r", [true] = "|cff00ff00Actif|r" }
+	USAGE = "Utilisation"
+	IS_CURRENTLY_SET_TO = "|cffffff7f%s|r est actuellement positionn\195\169 sur |cffffff7f[|r%s|cffffff7f]|r"
+	IS_NOW_SET_TO = "|cffffff7f%s|r est maintenant positionn\195\169 sur |cffffff7f[|r%s|cffffff7f]|r"
+	IS_NOT_A_VALID_OPTION_FOR = "[|cffffff7f%s|r] n'est pas une option valide pour |cffffff7f%s|r"
+	IS_NOT_A_VALID_VALUE_FOR = "[|cffffff7f%s|r] n'est pas une valeur valide pour |cffffff7f%s|r"
+	NO_OPTIONS_AVAILABLE = "Pas d'options disponibles"
+	OPTION_HANDLER_NOT_FOUND = "Le gestionnaire d'option |cffffff7f%q|r n'a pas \195\169t\195\169 trouv\195\169."
+	OPTION_HANDLER_NOT_VALID = "Le gestionnaire d'option n'est pas valide."
+	OPTION_IS_DISABLED = "L'option |cffffff7f%s|r est d\195\169sactiv\195\169e."
+elseif GetLocale() == "koKR" then
+	MAP_ONOFF = { [false] = "|cffff0000끔|r", [true] = "|cff00ff00켬|r" }
+	USAGE = "사용법"
+	IS_CURRENTLY_SET_TO = "|cffffff7f%s|r|1은;는; 현재 상태는 |cffffff7f[|r%s|cffffff7f]|r|1으로;로; 설정되어 있습니다"
+	IS_NOW_SET_TO = "|cffffff7f%s|r|1을;를; |cffffff7f[|r%s|cffffff7f]|r 상태로 변경합니다"
+	IS_NOT_A_VALID_OPTION_FOR = "[|cffffff7f%s|r]|1은;는; |cffffff7f%s|r에서 사용불가능한 설정입니다"
+	IS_NOT_A_VALID_VALUE_FOR = "[|cffffff7f%s|r]|1은;는; |cffffff7f%s|r에서 사용불가능한 설정값입니다"
+	NO_OPTIONS_AVAILABLE = "가능한 설정이 없습니다"
+	OPTION_HANDLER_NOT_FOUND = "설정 조정값인 |cffffff7f%q|r|1을;를; 찾지 못했습니다."
+	OPTION_HANDLER_NOT_VALID = "설정 조정값이 올바르지 않습니다."
+	OPTION_IS_DISABLED = "|cffffff7f%s|r 설정은 사용할 수 없습니다."
+else -- enUS
+	MAP_ONOFF = { [false] = "|cffff0000Off|r", [true] = "|cff00ff00On|r" }
+	USAGE = "Usage"
+	IS_CURRENTLY_SET_TO = "|cffffff7f%s|r is currently set to |cffffff7f[|r%s|cffffff7f]|r"
+	IS_NOW_SET_TO = "|cffffff7f%s|r is now set to |cffffff7f[|r%s|cffffff7f]|r"
+	IS_NOT_A_VALID_OPTION_FOR = "[|cffffff7f%s|r] is not a valid option for |cffffff7f%s|r"
+	IS_NOT_A_VALID_VALUE_FOR = "[|cffffff7f%s|r] is not a valid value for |cffffff7f%s|r"
+	NO_OPTIONS_AVAILABLE = "No options available"
+	OPTION_HANDLER_NOT_FOUND = "Option handler |cffffff7f%q|r not found."
+	OPTION_HANDLER_NOT_VALID = "Option handler not valid."
+	OPTION_IS_DISABLED = "Option |cffffff7f%s|r is disabled."
+end
 
 local NONE = NONE or "None"
 

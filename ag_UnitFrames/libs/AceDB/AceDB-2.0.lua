@@ -1,6 +1,6 @@
 --[[
 Name: AceDB-2.0
-Revision: $Rev: 11577 $
+Revision: $Rev: 14276 $
 Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
 Inspired By: Ace 1.x by Turan (turan@gryphon.com)
 Website: http://www.wowace.com/
@@ -12,24 +12,100 @@ Dependencies: AceLibrary, AceOO-2.0, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "AceDB-2.0"
-local MINOR_VERSION = "$Revision: 11577 $"
+local MINOR_VERSION = "$Revision: 14276 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
 
 if not AceLibrary:HasInstance("AceOO-2.0") then error(MAJOR_VERSION .. " requires AceOO-2.0") end
 
--- localize --
-local ACTIVE = "Active"
-local ENABLED = "Enabled"
-local STATE = "State"
-local TOGGLE_ACTIVE = "Suspend/resume this addon"
-local MAP_ACTIVESUSPENDED = { [true] = "|cff00ff00Active|r", [false] = "|cffff0000Suspended|r" }
-local SET_PROFILE = "Set profile for this addon"
-local SET_PROFILE_USAGE = "{char || class || realm || <profile name>}"
-local PROFILE = "Profile"
-local PLAYER_OF_REALM = "%s of %s"
--- localize --
+local ACTIVE, ENABLED, STATE, TOGGLE_ACTIVE, MAP_ACTIVESUSPENDED, SET_PROFILE, SET_PROFILE_USAGE, PROFILE, PLAYER_OF_REALM, CHOOSE_PROFILE_DESC, CHOOSE_PROFILE_GUI, COPY_PROFILE_DESC, COPY_PROFILE_GUI, OTHER_PROFILE_DESC, OTHER_PROFILE_GUI, OTHER_PROFILE_USAGE, CHARACTER, REALM, CLASS
+
+if GetLocale() == "deDE" then
+	ACTIVE = "Aktiv"
+	ENABLED = "Aktiviert"
+	STATE = "Status"
+	TOGGLE_ACTIVE = "Stoppt/Aktiviert dieses Addon."
+	MAP_ACTIVESUSPENDED = { [true] = "|cff00ff00Aktiv|r", [false] = "|cffff0000Gestoppt|r" }
+	SET_PROFILE = "Setzt das Profil f\195\188r dieses Addon."
+	SET_PROFILE_USAGE = "{Charakter || Klasse || Realm || <Profilname>}"
+	PROFILE = "Profil"
+	PLAYER_OF_REALM = "%s von %s"
+	CHOOSE_PROFILE_DESC = "W\195\164hle ein Profil."
+	CHOOSE_PROFILE_GUI = "W\195\164hle"
+	COPY_PROFILE_DESC = "Kopiert Einstellungen von einem anderem Profil."
+	COPY_PROFILE_GUI = "Kopiere von"
+	OTHER_PROFILE_DESC = "W\195\164hle ein anderes Profil."
+	OTHER_PROFILE_GUI = "Anderes"
+	OTHER_PROFILE_USAGE = "<Profilname>"
+
+	CHARACTER = "Charakter: "
+	REALM = "Realm: "
+	CLASS = "Klasse: "
+elseif GetLocale() == "frFR" then
+	ACTIVE = "Actif"
+	ENABLED = "Activ\195\169"
+	STATE = "Etat"
+	TOGGLE_ACTIVE = "Suspend/active cet addon."
+	MAP_ACTIVESUSPENDED = { [true] = "|cff00ff00Actif|r", [false] = "|cffff0000Suspendu|r" }
+	SET_PROFILE = "S\195\169lectionne le profil pour cet addon."
+	SET_PROFILE_USAGE = "{perso || classe || royaume || <nom de profil>}"
+	PROFILE = "Profil"
+	PLAYER_OF_REALM = "%s de %s"
+	CHOOSE_PROFILE_DESC = "Choisissez un profil."
+	CHOOSE_PROFILE_GUI = "Choix"
+	COPY_PROFILE_DESC = "Copier les param\195\168tres d'un autre profil."
+	COPY_PROFILE_GUI = "Copier \195\160 partir de"
+	OTHER_PROFILE_DESC = "Choisissez un autre profil."
+	OTHER_PROFILE_GUI = "Autre"
+	OTHER_PROFILE_USAGE = "<nom de profil>"
+
+	CHARACTER = "Personnage: "
+	REALM = "Royaume: "
+	CLASS = "Classe: "
+elseif GetLocale() == "koKR" then
+	ACTIVE = "활성화"
+	ENABLED = "활성화"
+	STATE = "상태"
+	TOGGLE_ACTIVE = "이 애드온 중지/계속 실행"
+	MAP_ACTIVESUSPENDED = { [true] = "|cff00ff00활성화|r", [false] = "|cffff0000중지됨|r" }
+	SET_PROFILE = "이 애드온에 프로필 설정"
+	SET_PROFILE_USAGE = "{캐릭터명 || 직업 || 서버명 || <프로필명>}"
+	PROFILE = "프로필"
+	PLAYER_OF_REALM = "%s (%s 서버)"
+	CHOOSE_PROFILE_DESC = "프로파일을 선택합니다."
+	CHOOSE_PROFILE_GUI = "선택"
+	COPY_PROFILE_DESC = "다른 프로파일에서 설정을 복사합니다."
+	COPY_PROFILE_GUI = "복사"
+	OTHER_PROFILE_DESC = "다른 프로파일을 선택합니다."
+	OTHER_PROFILE_GUI = "기타"
+	OTHER_PROFILE_USAGE = "<프로파일명>"
+
+	CHARACTER = "캐릭터: "
+	REALM = "서버: "
+	CLASS = "직업: "
+else -- enUS
+	ACTIVE = "Active"
+	ENABLED = "Enabled"
+	STATE = "State"
+	TOGGLE_ACTIVE = "Suspend/resume this addon."
+	MAP_ACTIVESUSPENDED = { [true] = "|cff00ff00Active|r", [false] = "|cffff0000Suspended|r" }
+	SET_PROFILE = "Set profile for this addon."
+	SET_PROFILE_USAGE = "{char || class || realm || <profile name>}"
+	PROFILE = "Profile"
+	PLAYER_OF_REALM = "%s of %s"
+	CHOOSE_PROFILE_DESC = "Choose a profile."
+	CHOOSE_PROFILE_GUI = "Choose"
+	COPY_PROFILE_DESC = "Copy settings from another profile."
+	COPY_PROFILE_GUI = "Copy from"
+	OTHER_PROFILE_DESC = "Choose another profile."
+	OTHER_PROFILE_GUI = "Other"
+	OTHER_PROFILE_USAGE = "<profile name>"
+
+	CHARACTER = "Character: "
+	REALM = "Realm: "
+	CLASS = "Class: "
+end
 
 local AceOO = AceLibrary("AceOO-2.0")
 local AceEvent
@@ -524,17 +600,17 @@ function AceDB:InitializeDB(addonName)
 				if string.find(k, '^char/') then
 					local name = string.sub(k, 6)
 					if name ~= charID then
-						t[k] =  'Character: ' .. name
+						t[k] =  CHARACTER .. name
 					end
 				elseif string.find(k, '^realm/') then
 					local name = string.sub(k, 7)
 					if name ~= realmID then
-						t[k] =  'Realm: ' .. name
+						t[k] =  REALM .. name
 					end
 				elseif string.find(k, '^class/') then
 					local name = string.sub(k, 7)
 					if name ~= classID then
-						t[k] =  'Class: ' .. name
+						t[k] =  CLASS .. name
 					end
 				end
 			end
@@ -545,9 +621,9 @@ function AceDB:InitializeDB(addonName)
 		for k,v in pairs(t) do
 			t[k] = nil
 		end
-		t.char = 'Character: ' .. charID
-		t.realm = 'Realm: ' .. realmID
-		t.class = 'Class: ' .. classID
+		t.char = CHARACTER .. charID
+		t.realm = REALM .. realmID
+		t.class = CLASS .. classID
 		t.Default = "Default"
 		if db.raw.profiles then
 			for k in pairs(db.raw.profiles) do
@@ -1197,9 +1273,9 @@ function AceDB:GetAceOptionsDataTable(target)
 		for k,v in pairs(t) do
 			t[k] = nil
 		end
-		t.char = 'Character: ' .. charID
-		t.realm = 'Realm: ' .. realmID
-		t.class = 'Class: ' .. classID
+		t.char = CHARACTER .. charID
+		t.realm = REALM .. realmID
+		t.class = CLASS .. classID
 		t.Default = "Default"
 		if target.db and target.db.raw then
 			local db = target.db
@@ -1223,17 +1299,17 @@ function AceDB:GetAceOptionsDataTable(target)
 					if string.find(k, '^char/') then
 						local name = string.sub(k, 6)
 						if name ~= charID then
-							t[k] =  'Character: ' .. name
+							t[k] =  CHARACTER .. name
 						end
 					elseif string.find(k, '^realm/') then
 						local name = string.sub(k, 7)
 						if name ~= realmID then
-							t[k] =  'Realm: ' .. name
+							t[k] =  REALM .. name
 						end
 					elseif string.find(k, '^class/') then
 						local name = string.sub(k, 7)
 						if name ~= classID then
-							t[k] =  'Class: ' .. name
+							t[k] =  CLASS .. name
 						end
 					end
 				end
@@ -1261,18 +1337,18 @@ function AceDB:GetAceOptionsDataTable(target)
 				get = "GetProfile",
 				args = {
 					choose = {
-						guiName = "Choose",
+						guiName = CHOOSE_PROFILE_GUI,
 						cmdName = PROFILE,
-						desc = "Choose a profile",
+						desc = CHOOSE_PROFILE_DESC,
 						type = 'text',
 						get = "GetProfile",
 						set = "SetProfile",
 						validate = target['acedb-profile-list']
 					},
 					copy = {
-						guiName = "Copy from",
+						guiName = COPY_PROFILE_GUI,
 						cmdName = PROFILE,
-						desc = "Copy settings from another profile",
+						desc = COPY_PROFILE_DESC,
 						type = 'text',
 						get = "GetProfile",
 						set = "SetProfile",
@@ -1282,10 +1358,10 @@ function AceDB:GetAceOptionsDataTable(target)
 						end,
 					},
 					other = {
-						guiName = "Other",
+						guiName = OTHER_PROFILE_GUI,
 						cmdName = PROFILE,
-						desc = "Choose another profile",
-						usage = "<profile name>",
+						desc = OTHER_PROFILE_DESC,
+						usage = OTHER_PROFILE_USAGE,
 						type = 'text',
 						get = "GetProfile",
 						set = "SetProfile",

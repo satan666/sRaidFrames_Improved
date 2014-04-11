@@ -1,4 +1,4 @@
-local L = AceLibrary("AceLocale-2.0"):new("ag_UnitFrames")
+local L = AceLibrary("AceLocale-2.2"):new("ag_UnitFrames")
 
 aUF.Layouts.oUF = {
 		Name = "oUF",
@@ -27,13 +27,13 @@ aUF.Layouts.oUF = {
 								},
 								
 				HealthBar_BG = 	{ 	Point = "TOPLEFT",
-									RelativePoint = "TOPLEFT",
+                                    RelativePoint = "TOPLEFT",
 									x = 7,
 									y = -7,	
 									Visibility = {"HealthBar_BG","HealthBar","BarHealthText","HealthText",},
 									Height = 12,
 									HeightAdd = 0,									
-									Width = 82,
+									Width = 86,
 								},
 									
 				ManaBar_BG = 	{	Point = "TOP",
@@ -44,12 +44,12 @@ aUF.Layouts.oUF = {
 									HeightAdd = 15,
 									Visibility = {"ManaBar_BG","ManaBar","BarManaText","ManaText","ClassText",},	
 									Height = 12,
-									Width = 82,
+									Width = 86,
 								},
 								
 				XPBar_BG = 		{	Point = "TOPLEFT", 
 									RelativeTo = "ManaBar_BG", 
-									RelativeToSecondary = "HealthBar_BG", 
+									RelativeTo2 = "HealthBar_BG", 
 									RelativePoint = "BOTTOMLEFT", 
 									x = 0, 
 									y = -3, 
@@ -72,7 +72,7 @@ aUF.Layouts.oUF = {
 									Visibility = {"Happiness",},
 								},
 								
-				NameLabel = 	{ 	Font = L"Fonts\\FRIZQT__.TTF", 
+				NameLabel = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8, 
 									Width = 84, 
 									Point = "LEFT", 
@@ -82,7 +82,7 @@ aUF.Layouts.oUF = {
 									y =0.5,
 								},
 				
-				ClassText =	 	{ 	Font = L"Fonts\\FRIZQT__.TTF", 
+				ClassText =	 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8, 
 									Justify = "LEFT",
 									Width = 84, 
@@ -93,7 +93,7 @@ aUF.Layouts.oUF = {
 									y =0.5,
 								},
 					
-				HealthText = 	{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				HealthText = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									Point = "RIGHT", 
 									RelativeTo = "HealthBar_BG", 
@@ -103,7 +103,7 @@ aUF.Layouts.oUF = {
 									Width = 60,
 								},
 					
-				ManaText = 		{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				ManaText = 		{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 8,
 									Point = "RIGHT", 
 									RelativeTo = "ManaBar_BG", 
@@ -113,7 +113,7 @@ aUF.Layouts.oUF = {
 									Width = 60,
 								},
 									
-				BarHealthText = { 	Font = "Fonts\\FRIZQT__.TTF", 
+				BarHealthText = { 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 7,
 									RelativeTo = "HealthBar_BG",
 									Point = "CENTER",
@@ -123,7 +123,7 @@ aUF.Layouts.oUF = {
 									Width = 60,									
 								},
 									
-				BarManaText = 	{ 	Font = "Fonts\\FRIZQT__.TTF", 
+				BarManaText = 	{ 	Font = L["Fonts\\FRIZQT__.TTF"], 
 									FontSize = 7,
 									RelativeTo = "ManaBar_BG",
 									Point = "CENTER",
@@ -173,9 +173,9 @@ aUF.Layouts.oUF = {
 			},
 			raid = {
 				FrameWidth = 170,
-				HealthBar_BG = 	{ 	Width = 170,
+				HealthBar_BG = 	{ 	Width = 87,
 								},
-				ManaBar_BG = 	{	Width = 170,
+				ManaBar_BG = 	{	Width = 87,
 								},							
 			}
 		}

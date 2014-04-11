@@ -1,4 +1,4 @@
-local L = AceLibrary("AceLocale-2.0"):new("ag_UnitFrames")
+local L = AceLibrary("AceLocale-2.2"):new("ag_UnitFrames")
 
 aUF.Layouts.yaABF = {
 	Name = "yaABF",
@@ -48,7 +48,7 @@ aUF.Layouts.yaABF = {
 							
 			XPBar_BG = 		{	Point = "TOPLEFT", 
 								RelativeTo = "ManaBar_BG", 
-								RelativeToSecondary = "HealthBar_BG", 
+								RelativeTo2 = "HealthBar_BG", 
 								RelativePoint = "BOTTOMLEFT", 
 								x = 0, 
 								y = -1, 
