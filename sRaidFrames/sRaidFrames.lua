@@ -1581,7 +1581,6 @@ function sRaidFrames:OverHealCalc(unit)
 	if self.opt.dynamic_overheal_sort then
 		local indicator = self.indicator and self.indicator[unit] and self.indicator[unit].active
 		if indicator and indicator > 0 then
-			--DEFAULT_CHAT_FRAME:AddMessage(indicator)
 			bonus = bonus + 15*indicator
 		end
 	end
@@ -1618,6 +1617,7 @@ function sRaidFrames:UnitModHP(unit)
 	local treshhold = 3
 	
 	local order = self:OrderCalc(unit)
+	local overheal = self:OverHealCalc(unit)
 	
 	if UnitHealth(unit) <= 1 or not UnitIsConnected(unit) then
 		percent = 1000
@@ -1630,15 +1630,18 @@ function sRaidFrames:UnitModHP(unit)
 		else
 			self.UnitFocusHPArray[unit] = health
 		end
-		
-		percent = health + order + 800
-		
+
+		if overheal > 0 and (health + overheal) >= 100 then
+			health = 99
+		else
+			health = health + overheal
+		end
+
 		if self.opt.dynamic_range_sort and self.UnitRangeArray[unit] ~= "" then
 			percent = health + order
+		else
+			percent = health + order + 800
 		end
-		
-		percent = percent + self:OverHealCalc(unit)
-	
 	end
 
 	return percent
