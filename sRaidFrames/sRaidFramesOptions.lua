@@ -837,7 +837,7 @@ sRaidFrames.options = {
 				enable = {
 					name = L["Enable light range check"],
 					type = "toggle",
-					desc = L["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - suggested when you don't use Blizzard target frame of modified agUnitFrames"],
+					desc = L["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - Suggested when you don't play healing class or not using Blizzard target frame of modified agUnitFrames"],
 					get = function() return sRaidFrames.opt.RangeCheck end,
 					set = function(value)
 						sRaidFrames:DisableRangeCheck()
@@ -851,7 +851,7 @@ sRaidFrames.options = {
 				enable40y = {
 					name = L["Enable accurate range check"],
 					type = "toggle",
-					desc = L["Enable 40y range check that requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames to be present"],
+					desc = L["Enable 40y range check that requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames to be present - Only healing classses can use accurate range check"],
 					get = function() return sRaidFrames.opt.ExtendedRangeCheck end,
 					set = function(value)
 						sRaidFrames:DisableRangeCheck()

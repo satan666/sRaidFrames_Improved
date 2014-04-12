@@ -159,10 +159,10 @@ L:RegisterTranslations("enUS", function() return {
 	["Set about range"] = true,
 	
 	["Enable light range check"] = true,
-	["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - suggested when you don't use Blizzard target frame of modified agUnitFrames"] = true,
+	["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - Suggested when you don't play healing class or not using Blizzard target frame of modified agUnitFrames"] = true,
 	
 	["Enable accurate range check"] = true,
-	["Enable 40y range check that requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames to be present"] = true,
+	["Enable 40y range check that requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames to be present - Only healing classses can use accurate range check"] = true,
 	
 	["Enable debug"] = true,
 	["Range accuracy calculation, only for testing"] = true,
