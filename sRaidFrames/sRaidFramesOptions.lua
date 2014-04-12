@@ -11,7 +11,7 @@ sRaidFrames.options = {
 		aggro_notification = {
 			name = L["_Aggro notification"],
 			type = "group",
-			desc = L["Use keybinding to add/remove units"],
+			desc = L["Aggro notification"],
 			args = {
 		
 				highlight = {
@@ -87,7 +87,7 @@ sRaidFrames.options = {
 		focus = {
 			name = L["_Focus frame"],
 			type = "group",
-			desc = L["Use keybinding to add/remove units"],
+			desc = L["Use keybinding to add/remove units manually or select Polpulate with range feature"],
 			args = {
 
 				growth_focus = {
@@ -152,7 +152,7 @@ sRaidFrames.options = {
 				sort_focus = {
 				name = L["Sort focus"],
 				type = "group",
-				desc = L["Use keybinding to add/remove units"],
+				desc = L["Sort focus"],
 				args = {	
 					
 					

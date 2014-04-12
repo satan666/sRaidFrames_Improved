@@ -9,14 +9,14 @@ L:RegisterTranslations("enUS", function() return {
 	["shown"] = true,
 	
 	["_Aggro notification"] = true,
-	
+	["Aggro notification"] = true,
 	
 	["_Class colors"] = true,
 	["Status Bar - Class colors"] = true,
 	["Red status bar"] = true,
 	
 	["_Focus frame"] = true,
-	["Use keybinding to add/remove units"] = true,
+	["Use keybinding to add/remove units manually or select Polpulate with range feature"] = true,
 	
 	["Load predefined settings"] = true,
 	["Load profile - Common"] = true,
