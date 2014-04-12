@@ -170,8 +170,7 @@ sRaidFrames.options = {
 							
 							if not sort then
 								sRaidFrames.opt.dynamic_range_sort = sort
-								sRaidFrames.opt.dynamic_class_sort = sort
-								sRaidFrames.opt.dynamic_group_sort = sort
+								sRaidFrames.opt.dynamic_overheal_sort = sort
 								sRaidFrames.opt.dynamic_aggro_sort = sort
 							end	
 							
@@ -190,51 +189,27 @@ sRaidFrames.options = {
 							if sort  then
 								sRaidFrames.opt.dynamic_sort = sort
 							else
-								sRaidFrames.opt.dynamic_class_sort = sort
-								sRaidFrames.opt.dynamic_group_sort = sort
-								--sRaidFrames.opt.dynamic_aggro_sort = sort
+								sRaidFrames.opt.dynamic_overheal_sort = sort
 							end		
 						end,
 					},
 					
 					
-					sort_focus_class = {
-						name = L["Dynamic sort lvl3 - class"],
+					sort_focus_overheal = {
+						name = L["Dynamic sort lvl3 - overheal"],
 						type = "toggle",
-						desc = L["Dynamic sort lvl3 - class"],
+						desc = L["Dynamic sort lvl3 - overheal"],
 						get = function()
-							return sRaidFrames.opt.dynamic_class_sort
+							return sRaidFrames.opt.dynamic_overheal_sort
 						end,
 						set = function(sort)
-							sRaidFrames:S("dynamic_class_sort", sort)
+							sRaidFrames:S("dynamic_overheal_sort", sort)
 							if sort then
 								sRaidFrames.opt.dynamic_sort = sort
 								sRaidFrames.opt.dynamic_range_sort = sort
-								sRaidFrames.opt.dynamic_group_sort = not sort
-								--sRaidFrames.opt.dynamic_aggro_sort = not sort
 							end		
 						end,
 					},
-					
-					--[[
-					sort_focus_group = {
-						name = L["Dynamic sort lvl3 - group"],
-						type = "toggle",
-						desc = L["Dynamic sort lvl3 - group"],
-						get = function()
-							return sRaidFrames.opt.dynamic_group_sort
-						end,
-						set = function(sort)
-							sRaidFrames:S("dynamic_group_sort", sort)
-							if sort  then
-								sRaidFrames.opt.dynamic_sort = sort
-								sRaidFrames.opt.dynamic_range_sort = sort
-								sRaidFrames.opt.dynamic_class_sort = not sort
-								--sRaidFrames.opt.dynamic_aggro_sort = not sort
-							end		
-						end,
-					},
-					--]]
 					
 					
 					sort_focus_aggro = {
@@ -248,9 +223,6 @@ sRaidFrames.options = {
 							sRaidFrames:S("dynamic_aggro_sort", sort)
 							if sort  then
 								sRaidFrames.opt.dynamic_sort = sort
-								--sRaidFrames.opt.dynamic_range_sort = sort
-								--sRaidFrames.opt.dynamic_class_sort = not sort
-								--sRaidFrames.opt.dynamic_group_sort = not sort
 							end		
 						end,
 					},
@@ -413,7 +385,7 @@ sRaidFrames.options = {
 					end,
 					set = function(style)
 						sRaidFrames:S("style", style)
-						
+						sRaidFrames:ProfileFeed(style)
 						sRaidFrames:UpdateVisibility()
 						sRaidFrames:LoadProfile()
 						sRaidFrames:LoadStyle()
@@ -434,9 +406,12 @@ sRaidFrames.options = {
 								sRaidFrames.opt.dynamic_aggro_sort = not value
 								sRaidFrames.opt.fill_range = not value
 								
-								sRaidFrames:ProfileFeed(value)
+								sRaidFrames.opt.dynamic_sort = value
+								sRaidFrames.opt.dynamic_range_sort = value
+
 								sRaidFrames:UpdateAll()
 								sRaidFrames:Sort()
+								
 								sRaidFrames.opt.profile2 = not value
 								sRaidFrames.opt.profile3 = not value
 								sRaidFrames.opt.profile4 = not value
@@ -461,7 +436,6 @@ sRaidFrames.options = {
 								sRaidFrames.opt.hp_limit = 1
 								sRaidFrames.opt.units_limit = 5
 								
-								sRaidFrames:ProfileFeed(value)
 								sRaidFrames:UpdateAll()
 								sRaidFrames:Sort()
 								
@@ -483,16 +457,18 @@ sRaidFrames.options = {
 						end,
 						set = function(value)
 							if value then
-								sRaidFrames.opt.dynamic_aggro_sort = not value
 								sRaidFrames.opt.fill_range = value
+								sRaidFrames.opt.dynamic_range_sort = value
+								sRaidFrames.opt.dynamic_overheal_sort = value
+								sRaidFrames.opt.dynamic_sort = value
+								sRaidFrames.opt.dynamic_aggro_sort = not value
 								
 								sRaidFrames.opt.hp_limit = 85
-								sRaidFrames.opt.units_limit = 6
+								sRaidFrames.opt.units_limit = 5
 								
-								sRaidFrames:ProfileFeed(value)
 								sRaidFrames:UpdateAll()
 								sRaidFrames:Sort()
-								
+
 								sRaidFrames.opt.profile1 = not value
 								sRaidFrames.opt.profile2 = not value
 								sRaidFrames.opt.profile4 = not value
@@ -511,16 +487,18 @@ sRaidFrames.options = {
 						end,
 						set = function(value)
 							if value then
-								sRaidFrames.opt.dynamic_aggro_sort = not value
 								sRaidFrames.opt.fill_range = value
+								sRaidFrames.opt.dynamic_range_sort = value
+								sRaidFrames.opt.dynamic_overheal_sort = value
+								sRaidFrames.opt.dynamic_sort = value
+								sRaidFrames.opt.dynamic_aggro_sort = not value
 								
 								sRaidFrames.opt.hp_limit = 100
-								sRaidFrames.opt.units_limit = 6
+								sRaidFrames.opt.units_limit = 5
 								
-								sRaidFrames:ProfileFeed(value)
 								sRaidFrames:UpdateAll()
 								sRaidFrames:Sort()
-								
+
 								sRaidFrames.opt.profile1 = not value
 								sRaidFrames.opt.profile2 = not value
 								sRaidFrames.opt.profile3 = not value
@@ -1293,7 +1271,6 @@ end
 
 function sRaidFrames:ProfileFeed(value)
 	sRaidFrames.opt.heal = value
-	sRaidFrames.opt.profile2 = not value
 	sRaidFrames.opt.healthDisplayType = "none"
 	sRaidFrames.opt.TooltipMethod = "never"
 	--sRaidFrames:chatToggleBorder()
@@ -1320,7 +1297,6 @@ function sRaidFrames:ProfileFeed(value)
 			
 	sRaidFrames.opt.RangeAlpha = 0.3
 	sRaidFrames.opt.BuffType = "debuffs"
-	sRaidFrames.opt.Invert = not value
 
 	sRaidFrames:LoadStyle()
 end

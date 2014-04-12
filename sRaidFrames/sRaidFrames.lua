@@ -191,7 +191,7 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterEvent("oRA_PlayerNotResurrected")
 
 	-- TODO: only updateunit
-	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.75, self)
+	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.5, self)
 	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, self.opt.RangeFrequency, self)
 	
 	
@@ -1576,28 +1576,37 @@ function sRaidFrames:RefreshFocusWithRange()
 	end	
 end
 
+function sRaidFrames:OverHealCalc(unit)
+	local bonus = 0
+	if self.opt.dynamic_overheal_sort then
+		local indicator = self.indicator and self.indicator[unit] and self.indicator[unit].active
+		if indicator and indicator > 0 then
+			--DEFAULT_CHAT_FRAME:AddMessage(indicator)
+			bonus = bonus + 15*indicator
+		end
+	end
+	return bonus
+end
 
 function sRaidFrames:OrderCalc(unit)
 	local order = 0
 	
-	local _, classFileName = UnitClass(unit)
-	local class_order = self.UnitClassSort[classFileName]
+	--local _, classFileName = UnitClass(unit)
+	--local class_order = self.UnitClassSort[classFileName]
 	
 	local id_str = string.gsub(unit,"raid","")
 	local id_fix = tonumber(id_str)
 	local group_order = self.UnitSortOrder[id_fix]
 	
-	if self.opt.dynamic_class_sort then
-		order = class_order/100 + group_order/10000
-	--elseif self.opt.dynamic_group_sort then
-	else
+	--if self.opt.dynamic_overheal_sort then
+		--order = class_order/100 + group_order/10000
+	--else
 		order = group_order/10000
-	end
+	--end
 	
-	--if self.opt.dynamic_aggro_sort and not self.UnitAggro[unit] then
 	local unit_aggro = Banzai:GetUnitAggroByUnitId(unit)
 	if self.opt.dynamic_aggro_sort and not unit_aggro then
-		order = order + 100
+		order = order + 200
 	end
 	
 	return order
@@ -1616,7 +1625,7 @@ function sRaidFrames:UnitModHP(unit)
 		local health = math.ceil(Zorlen_HealthPercent(unit))
 		local health_old = self.UnitFocusHPArray[unit]
 
-		if self.opt.dynamic_group_sort and health_old and health and health_old ~= health and health ~= 100 and math.abs(health - health_old) <= treshhold then
+		if health_old and health and health_old ~= health and health ~= 100 and math.abs(health - health_old) <= treshhold then ---fixed
 			health = health_old
 		else
 			self.UnitFocusHPArray[unit] = health
@@ -1627,8 +1636,10 @@ function sRaidFrames:UnitModHP(unit)
 		if self.opt.dynamic_range_sort and self.UnitRangeArray[unit] ~= "" then
 			percent = health + order
 		end
-		--DEFAULT_CHAT_FRAME:AddMessage(UnitClass(unit).." - health: "..health.." - order: "..order)
-	end	
+		
+		percent = percent + self:OverHealCalc(unit)
+	
+	end
 
 	return percent
 end
