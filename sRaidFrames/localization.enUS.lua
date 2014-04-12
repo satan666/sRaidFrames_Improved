@@ -33,7 +33,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Dynamic sort lvl1 - health"] = true,
 	["Dynamic sort lvl2 - range"] = true,
 	["Dynamic sort lvl3 - class"] = true,
-	["Dynamic sort lvl3 - overheal"] = true,
+	["Dynamic sort lvl3 - anti overheal"] = true,
 	["Aggro units on top"] = true,
 	
 	["Focus aura"] = true,

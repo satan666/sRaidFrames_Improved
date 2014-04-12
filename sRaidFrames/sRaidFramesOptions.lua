@@ -196,9 +196,9 @@ sRaidFrames.options = {
 					
 					
 					sort_focus_overheal = {
-						name = L["Dynamic sort lvl3 - overheal"],
+						name = L["Dynamic sort lvl3 - anti overheal"],
 						type = "toggle",
-						desc = L["Dynamic sort lvl3 - overheal"],
+						desc = L["Dynamic sort lvl3 - anti overheal"],
 						get = function()
 							return sRaidFrames.opt.dynamic_overheal_sort
 						end,
