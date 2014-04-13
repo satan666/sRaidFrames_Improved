@@ -1197,7 +1197,8 @@ function sRaidFrames:chatUpdateBuffMenu()
 	self.options.args.bufffilter.args["remove"].desc = 'Remove buffs from the list'
 	self.options.args.bufffilter.args["remove"].args = {}
 	local i = 1
-	for buff in self.opt.BuffFilter do
+	--for buff in self.opt.BuffFilter do
+	for buff in pairs(self.opt.BuffFilter) do
 		local buffName = buff -- Odd hack, don't know
 		self.options.args.bufffilter.args["remove"].args["buff" .. i] = {}
 		self.options.args.bufffilter.args["remove"].args["buff" .. i].type = 'execute'

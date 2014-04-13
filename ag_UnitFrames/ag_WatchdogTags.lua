@@ -76,8 +76,8 @@ aUF.UnitInformation = {
 	["classification"] = function (u)
 		if UnitClassification(u) == "rare" then
 			return L["Rare"]
-		elseif UnitClassification(u) == "eliterare" then
-			return L["Rare Elite"]
+		elseif UnitClassification(u) == "rareelite" then
+			return L["RareElite"]
 		elseif UnitClassification(u) == "elite" then
 			return L["Elite"]
 		elseif UnitClassification(u) == "worldboss" then

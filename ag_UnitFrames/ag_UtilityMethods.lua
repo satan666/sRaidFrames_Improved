@@ -88,7 +88,7 @@ function aUF:TargetGetMobType(unit)
 	if ( classification == "worldboss" ) then
 		return L["Boss"]
 	elseif ( classification == "rareelite" ) then
-		return L["Rare-Elite"]
+		return L["RareElite"]
 	elseif ( classification == "elite" ) then
 		return L["Elite"]
 	elseif ( classification == "rare" ) then

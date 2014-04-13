@@ -161,10 +161,10 @@ L:RegisterTranslations("enUS", function() return {
 		["Custom"] = true,
 		
 		-- Unit classifications
-		["Boss"] = true,
-		["Rare-Elite"] = true,
-		["Elite"] = true,
-		["Rare"] = true,
+		["Boss"] = "|cffFF0000Boss ",
+		["RareElite"] = "|cffFF66FFRare Elite ",
+		["Elite"] = "|cffFFCC00Elite ",
+		["Rare"] = "|cffFF66FFRare ",
 		
 		-- Unit status
 		["Dead"] = true,

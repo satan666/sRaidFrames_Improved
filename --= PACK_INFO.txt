@@ -26,6 +26,7 @@ patch 0.70 - anti overheal focus sort
 - reworked range 
 - added anti overheal sorting to focus frame
 - raid and focus frames are now resizable independably
+- implemented agUnitFrames modification by Snelf
 - fixed meni bugs
 
 --== IF YOU'RE USING SRF 0.61 AND OLDER IT'S MANDATORY TO DELETE SRF FILES FROM SAVEDVARIABLES FOLDER !!!

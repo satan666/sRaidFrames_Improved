@@ -13,6 +13,8 @@ surface:Register("Smooth", "Interface\\AddOns\\sRaidFrames\\textures\\smooth")
 surface:Register("Striped", "Interface\\AddOns\\sRaidFrames\\textures\\striped")
 surface:Register("BantoBar", "Interface\\AddOns\\sRaidFrames\\textures\\bantobar")
 
+local math_mod = math.fmod or math.mod 
+
 
 sRaidFrames = AceLibrary("AceAddon-2.0"):new(
 	"AceDB-2.0",
@@ -879,7 +881,7 @@ function sRaidFrames:SetUnitBuffDuration(unit, buff)
 end
 
 function sRaidFrames:GetHPSeverity(percent)
-	if (percent<=0 or percent>1.0) then return 0.35,0.35,0.35 end
+	--if (percent<=0 or percent>1.0) then return 0.35,0.35,0.35 end
 
 	if (percent >= 0.5) then
 		return (1.0-percent)*2, 1.0, 0.0
@@ -1392,7 +1394,7 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 			yMod = (i) * v:GetWidth()
 			xMod = 0
 		elseif layout == "vertical" then
-			if i ~= 0 and math.mod(i, 2) == 0 then
+			if i ~= 0 and math_mod(i, 2) == 0 then
 				xMod = xMod + (-1*MEMBERS_PER_RAID_GROUP*frameHeight)
 				yMod = 0
 				i = 0
@@ -1400,7 +1402,7 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 				yMod = i * v:GetWidth()
 			end
 		elseif layout == "ctra" then
-			if i ~= 0 and math.mod(i, 2) == 0 then
+			if i ~= 0 and math_mod(i, 2) == 0 then
 				yMod = yMod + v:GetWidth()
 				xMod = 0
 				i = 0
@@ -1631,7 +1633,9 @@ function sRaidFrames:UnitModHP(unit)
 			self.UnitFocusHPArray[unit] = health
 		end
 
-		if overheal > 0 and (health + overheal) >= 100 then
+		if health >= 100 then
+			--
+		elseif overheal > 0 and (health + overheal) >= 100 then
 			health = 99
 		else
 			health = health + overheal
