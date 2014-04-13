@@ -195,7 +195,7 @@ function sRaidFrames:JoinedRaid()
 	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, self.opt.RangeFrequency, self)
 	
 	
-	self:ScheduleRepeatingEvent("sRaidFramesUpdateAll", self.UpdateAll, 1.5, self)
+	self:ScheduleRepeatingEvent("sRaidFramesUpdateAll", self.UpdateAll, 1, self)
 	
 
 	self:UpdateRoster()
