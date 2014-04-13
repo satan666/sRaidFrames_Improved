@@ -22,6 +22,12 @@ patch 0.66 - class colors
 - added class color status bar
 - greatly improved focus frame functionality
 
+patch 0.70 - anti overheal focus sort
+- reworked range 
+- added anti overheal sorting to focus frame
+- raid and focus frames are now resizable independably
+- fixed meni bugs
+
 --== IF YOU'RE USING SRF 0.61 AND OLDER IT'S MANDATORY TO DELETE SRF FILES FROM SAVEDVARIABLES FOLDER !!!
 
 
