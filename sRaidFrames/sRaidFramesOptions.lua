@@ -283,6 +283,9 @@ sRaidFrames.options = {
 							return sRaidFrames.opt.fill_range
 						end,
 						set = function(set)
+							if set then
+								sRaidFrames.opt.dynamic_sort = set
+							end
 							sRaidFrames:S("fill_range", set)
 							sRaidFrames:UpdateVisibility()
 							sRaidFrames:LoadStyle()
