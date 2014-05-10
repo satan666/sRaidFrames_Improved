@@ -428,7 +428,7 @@ function sRaidFrames:IsSpellInRangeAndActionBar(SpellName)
 end
 
 function sRaidFrames:Freqcalc(num)
-	local val1 = (0.077*num + 0.923 + 0.25)
+	local val1 = (0.064*num + 0.936)
 	local val2 = val1/num
 	--DEFAULT_CHAT_FRAME:AddMessage(num.." - "..val1.." - "..val2)
 	return val2
@@ -540,7 +540,7 @@ function sRaidFrames:RangeCheck()
 			
 			local table_val = self:ExtendedRangeArrayUtilize("calc")
 			local freq = self:Freqcalc(table_val)
-			self:Debug("RC_TOTAL: "..table_val.." - STEP RATE:"..((math.floor(freq *100))/100).."s - STATUS: "..status)
+			self:Debug("RC_TOTAL: "..table_val.." - STEP RATE: "..((math.floor(freq *100))/100).."s - STATUS: "..status)
 			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, freq , self)	
 		end
 	end
@@ -648,8 +648,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 						range =  ""
 					end
 				end
-				
-				
+
 				local _, class = UnitClass(unit)
 				local unit_name = UnitName(unit)
 				
