@@ -6,7 +6,6 @@ local Banzai = AceLibrary("Banzai-1.0")
 --local proximity = ProximityLib:GetInstance("1")
 local surface = AceLibrary("Surface-1.0") 
 local roster = AceLibrary("RosterLib-2.0")
-local TargetMonitor = nil
 
 surface:Register("Otravi", "Interface\\AddOns\\sRaidFrames\\textures\\otravi")
 surface:Register("Smooth", "Interface\\AddOns\\sRaidFrames\\textures\\smooth")
@@ -34,6 +33,7 @@ sRaidFrames.clickableTooltip = false
 sRaidFrames.hideWithoutStandby = true
 sRaidFrames.independentProfile = true
 sRaidFrames.TargetMonitor = nil
+sRaidFrames.TargetMonitorEnd = nil
 
 sRaidFrames.FocusWithRange = false
 sRaidFrames.ClassCheck = false
@@ -185,6 +185,8 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterBucketEvent("PLAYER_REGEN_ENABLED", 2, "ResetHealIndicators")
 	self:RegisterBucketEvent("PLAYER_REGEN_DISABLED", 2, "ResetHealIndicators")
 
+	self:RegisterEvent("PLAYER_TARGET_CHANGED")
+
 	self:RegisterEvent("Banzai_UnitGainedAggro")
 	self:RegisterEvent("Banzai_UnitLostAggro")
 	
@@ -205,6 +207,16 @@ function sRaidFrames:JoinedRaid()
 
 	self.master:Show()
 	self:ZoneCheck()
+end
+
+function sRaidFrames:PLAYER_TARGET_CHANGED()
+	
+	--DEFAULT_CHAT_FRAME:AddMessage("PLAYER_TARGET_CHANGED")
+	
+	if self.TargetMonitor and self.TargetMonitorEnd then
+		self.TargetMonitorEnd = nil
+		self.TargetMonitor = nil
+	end
 end
 
 function sRaidFrames:LeftRaid()
@@ -248,6 +260,8 @@ function sRaidFrames:Variables()
 	self.debuffColors["Disease"]  = { ["r"] = 1, ["g"] = 1, ["b"] = 0, ["a"] = 0.5, ["priority"] = 2 }
 	self.debuffColors["Poison"]   = { ["r"] = 0, ["g"] = 0.5, ["b"] = 0, ["a"] = 0.5, ["priority"] = 1 }
 
+
+--[[
 	self.classColors = {}
 	self.classColors["PALADIN"]   = "|cFFF48CBA"
 	self.classColors["SHAMAN"]    = "|cFFF48CBA"
@@ -259,17 +273,18 @@ function sRaidFrames:Variables()
 	self.classColors["ROGUE"]     = "|cFFFFF468"
 	self.classColors["HUNTER"]    = "|cFFAAD372"
 	
+--]]
 	
 	self.RAID_CLASS_COLORS = {
-	  ["HUNTER"] = { r = 0.67, g = 0.83, b = 0.45, colorStr = "ffabd473" },
-	  ["WARLOCK"] = { r = 0.58, g = 0.51, b = 0.79, colorStr = "ff9482c9" },
-	  ["PRIEST"] = { r = 1.0, g = 1.0, b = 1.0, colorStr = "ffffffff" },
-	  ["PALADIN"] = { r = 0.96, g = 0.55, b = 0.73, colorStr = "fff58cba" },
-	  ["MAGE"] = { r = 0.41, g = 0.8, b = 0.94, colorStr = "ff69ccf0" },
-	  ["ROGUE"] = { r = 1.0, g = 0.96, b = 0.41, colorStr = "fffff569" },
-	  ["DRUID"] = { r = 1.0, g = 0.49, b = 0.04, colorStr = "ffff7d0a" },
-	  ["SHAMAN"] = { r = 0.0, g = 0.44, b = 0.87, colorStr = "ff0070de" },
-	  ["WARRIOR"] = { r = 0.78, g = 0.61, b = 0.43, colorStr = "ffc79c6e" },
+	  ["HUNTER"] = { r = 0.67, g = 0.83, b = 0.45, colorStr = "|cffabd473" },
+	  ["WARLOCK"] = { r = 0.58, g = 0.51, b = 0.79, colorStr = "|cff9482c9" },
+	  ["PRIEST"] = { r = 1.0, g = 1.0, b = 1.0, colorStr = "|cffffffff" },
+	  ["PALADIN"] = { r = 0.96, g = 0.55, b = 0.73, colorStr = "|cfff58cba" },
+	  ["MAGE"] = { r = 0.41, g = 0.8, b = 0.94, colorStr = "|cff69ccf0" },
+	  ["ROGUE"] = { r = 1.0, g = 0.96, b = 0.41, colorStr = "|cfffff569" },
+	  ["DRUID"] = { r = 1.0, g = 0.49, b = 0.04, colorStr = "|cffff7d0a" },
+	  ["SHAMAN"] = { r = 0.0, g = 0.44, b = 0.87, colorStr = "|cff0070de" },
+	  ["WARRIOR"] = { r = 0.78, g = 0.61, b = 0.43, colorStr = "|cffc79c6e" },
 	};
 	
 	self.UnitClassSort = {}
@@ -412,13 +427,44 @@ function sRaidFrames:IsSpellInRangeAndActionBar(SpellName)
 	return false
 end
 
+function sRaidFrames:Freqcalc(num)
+	local val1 = (0.077*num + 0.923 + 0.25)
+	local val2 = val1/num
+	--DEFAULT_CHAT_FRAME:AddMessage(num.." - "..val1.." - "..val2)
+	return val2
+end
+
+function sRaidFrames:ExtendedRangeArrayUtilize(modez, unit)
+	local counter = 0
+	if modez == "add" then
+		self.ExtendedRangeScan[unit] = true
+		
+	elseif modez == "remove" then
+		self.ExtendedRangeScan[unit] = nil
+	
+	elseif modez == "ret" then
+		for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
+			return blockindex
+		end
+		
+	elseif modez == "reset" then
+		for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
+			self.ExtendedRangeScan[blockindex] = nil
+		end
+	
+	elseif modez == "calc" then
+		for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
+			counter = counter + 1
+		end
+		return counter
+	end
+end
+
 function sRaidFrames:RangeCheck()
 	local now = GetTime()
 	local moving = Zorlen_isMoving()
 	local _px, _py = GetPlayerMapPosition("player")
-	
-	
-	
+
 	if _px > 0 and _py > 0 and not self.MapEnable then
 		self.MapEnable = true
 		self:Debug("RC_MAP_ENABLE")
@@ -432,14 +478,13 @@ function sRaidFrames:RangeCheck()
 		self.SpellCheck = self.ClassSpellArray[self.ClassCheck]
 	end
 	
-	if not UnitIsDeadOrGhost("player") and table.getn(self.ExtendedRangeScan) == 0 then --now > self.NextScan or and (self.MapEnable and self.MapScale == 0 or not self.MapEnable)
-		
-		--local freq = self.opt.RangeFrequency or 1
-		--self.NextScan = now + freq 
+	--if not UnitIsDeadOrGhost("player") and table.getn(self.ExtendedRangeScan) == 0 then --now > self.NextScan or and (self.MapEnable and self.MapScale == 0 or not self.MapEnable)
+	if not UnitIsDeadOrGhost("player") and self:ExtendedRangeArrayUtilize("calc") == 0 then --now > self.NextScan or and (self.MapEnable and self.MapScale == 0 or not self.MapEnable)
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		
 		--self.ExtendedRangeScan = {} 
-		self.ExtendedRangeScan = Compost and Compost:Acquire() or {}
+		--self.ExtendedRangeScan = Compost and Compost:Acquire() or {}
+		self:ExtendedRangeArrayUtilize("reset")
 
 		local counter = 1		
 		for unit in pairs(self.visible) do	
@@ -478,8 +523,10 @@ function sRaidFrames:RangeCheck()
 					--self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
 				end
 			elseif unitcheck and self.SpellCheck and self.opt.ExtendedRangeCheck then
-				self.ExtendedRangeScan[counter] = unit
+				--self.ExtendedRangeScan[counter] = unit
+				self:ExtendedRangeArrayUtilize("add", unit)
 				counter = counter + 1
+				
 			else
 				self.UnitRangeArray[unit] = ""
 				--self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
@@ -487,41 +534,39 @@ function sRaidFrames:RangeCheck()
 		end	
 		if counter > 1 then 
 			local status = "INACTIVE"
-			if not self.MenuOpen or self.MenuOpen < GetTime() then 
+			if not self.MenuOpen or self.MenuOpen < GetTime()then 
 				status = "ACTIVE" 
 			end
-			self:Debug("RC_TOTAL: "..table.getn(self.ExtendedRangeScan).." STATUS: "..status)
-			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, 2/table.getn(self.ExtendedRangeScan), self) 
+			
+			local table_val = self:ExtendedRangeArrayUtilize("calc")
+			local freq = self:Freqcalc(table_val)
+			self:Debug("RC_TOTAL: "..table_val.." - STEP RATE:"..((math.floor(freq *100))/100).."s - STATUS: "..status)
+			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, freq , self)	
 		end
 	end
 end
 
 function sRaidFrames:ExtendedRangeCheck()
 	local now = GetTime()
-	local i, j
+	local j = self:ExtendedRangeArrayUtilize("ret")
 	
-	for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
-		i = blockindex;
-		j = blockmatch;
-	end
-	
-	if not self.opt.ExtendedRangeCheck or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or IsShiftKeyDown() or Zorlen_isEnemy("target") and isShootActive() then 
-		
+	if not self.opt.ExtendedRangeCheck or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or IsShiftKeyDown() or Zorlen_isEnemy("target") and isShootActive() then	
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
-		Compost:Reclaim(self.ExtendedRangeScan)
-		--self.ExtendedRangeScan = {}
-
+		--Compost:Reclaim(self.ExtendedRangeScan)
+		self:ExtendedRangeArrayUtilize("reset")
 		return 
 	end
 
-	if i and j then
+	if j then
 		local jumpnext = true
 		local targetchanged = nil
 
 		if not UnitExists("target") or UnitExists("target") and not UnitIsUnit("target", j) then
+			
 			targetchanged = true
 			self.TargetMonitor = true
 			TargetUnit(j)
+			--DEFAULT_CHAT_FRAME:AddMessage("TargetUnit")
 		end
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			--self.frames[j]:SetAlpha(1)
@@ -530,8 +575,10 @@ function sRaidFrames:ExtendedRangeCheck()
 			jumpnext = nil
 		end
 		if targetchanged then 
+			self.TargetMonitorEnd = true
 			TargetLastTarget()
-			self.TargetMonitor = nil
+			--DEFAULT_CHAT_FRAME:AddMessage("TargetLastTarget")
+			
 		end
 		if jumpnext then
 			--self.frames[j]:SetAlpha(self.opt.RangeAlpha)
@@ -539,6 +586,7 @@ function sRaidFrames:ExtendedRangeCheck()
 			self:Debug("RC "..GetUnitName(j).."_40y - " .."|cffFF0000 NOT PASS")
 		end
 		self.ExtendedRangeScan[i] = nil
+		self:ExtendedRangeArrayUtilize("remove", j)
 	end
 end
 
@@ -617,7 +665,8 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 					--end
 				elseif class then
 					--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:UpdateUnit "..unit.." - "..GetUnitName(unit))
-					f.title:SetText(self.classColors[class]..unit_name..range.."|r")
+					--f.title:SetText(self.classColors[class]..unit_name..range.."|r")
+					f.title:SetText(self.RAID_CLASS_COLORS[class].colorStr..unit_name..range.."|r")
 				else
 					f.title:SetText(unit_name or L["Unknown"])
 				end
@@ -932,7 +981,7 @@ function sRaidFrames:UnitTooltip(frame)
 	end
 	local name, rank, subgroup, level, class, fileName, zone, online, isDead = GetRaidRosterInfo(frame.id);
 	GameTooltip:SetOwner(frame)
-	GameTooltip:AddDoubleLine(name, level, RAID_CLASS_COLORS[fileName].r, RAID_CLASS_COLORS[fileName].g, RAID_CLASS_COLORS[fileName].b, 1, 1, 1)
+	GameTooltip:AddDoubleLine(name, level, self.RAID_CLASS_COLORS[fileName].r, self.RAID_CLASS_COLORS[fileName].g, self.RAID_CLASS_COLORS[fileName].b, 1, 1, 1)
 	GameTooltip:AddLine(UnitRace(frame.unit) .. " " .. class, 1, 1, 1);
 	GameTooltip:AddDoubleLine(zone, "Group ".. subgroup, 1, 1, 1, 1, 1, 1);
 
@@ -1095,7 +1144,6 @@ function sRaidFrames:SortGroupFrames(frame, id)
 	else
 		frame:SetPoint("TOPLEFT", self.groupframes[id-1], "BOTTOMLEFT")
 	end
-	DEFAULT_CHAT_FRAME:AddMessage(id)
 end
 
 function sRaidFrames:SetBackdrop(f, aggro)
@@ -1428,11 +1476,7 @@ function sRaidFrames:S(var, val)
 end
 
 
-
-
 --==Added by Ogrisch
-
-
 function sRaidFrames:CreateHealIndicator(unit)
 	f = self.frames[unit]
 	
@@ -1580,7 +1624,7 @@ end
 
 function sRaidFrames:OverHealCalc(unit)
 	local bonus = 0
-	if self.opt.dynamic_overheal_sort then
+	if self.opt.dynamic_overheal_sort and not Banzai:GetUnitAggroByUnitId(unit) then
 		local indicator = self.indicator and self.indicator[unit] and self.indicator[unit].active
 		if indicator and indicator > 0 then
 			bonus = bonus + 15*indicator
@@ -1591,27 +1635,17 @@ end
 
 function sRaidFrames:OrderCalc(unit)
 	local order = 0
-	
-	--local _, classFileName = UnitClass(unit)
-	--local class_order = self.UnitClassSort[classFileName]
-	
 	local id_str = string.gsub(unit,"raid","")
 	local id_fix = tonumber(id_str)
 	local group_order = self.UnitSortOrder[id_fix]
+
+	order = group_order/10000
 	
-	--if self.opt.dynamic_overheal_sort then
-		--order = class_order/100 + group_order/10000
-	--else
-		order = group_order/10000
-	--end
-	
-	local unit_aggro = Banzai:GetUnitAggroByUnitId(unit)
-	if self.opt.dynamic_aggro_sort and not unit_aggro then
+	if self.opt.dynamic_aggro_sort and not Banzai:GetUnitAggroByUnitId(unit) then
 		order = order + 200
 	end
 	
 	return order
-
 end
 
 function sRaidFrames:UnitModHP(unit)
@@ -1671,7 +1705,7 @@ function sRaidFrames:CheckRangeFocus(unit, mode)
 	end
 	
 	local hplimit = self.opt.hp_limit or 100
-	local check1 = hplimit >= Zorlen_HealthPercent(unit) and UnitHealth(unit) > 1 or self.opt.dynamic_aggro_sort and Banzai:GetUnitAggroByUnitId(unit)
+	local check1 = UnitIsConnected(unit) and hplimit >= Zorlen_HealthPercent(unit) and UnitHealth(unit) > 1 or self.opt.dynamic_aggro_sort and Banzai:GetUnitAggroByUnitId(unit)
 	local check2 = self.UnitRangeArray[unit] ~= ""
 
 	if mode == "add" then
@@ -1715,8 +1749,6 @@ function sRaidFrames:CheckFocusUnit(unit)
 	return nil
 end
 
-
-
 function sRaidFrames:AddRemoveFocusUnit(unit)
 	local err_txt = "Unit not in Group"
 	if UnitExists(unit) then	
@@ -1731,7 +1763,8 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 	local name = UnitName(unit)
 
 	local _, classFileName = UnitClass(unit)
-	local color = self.classColors[classFileName]
+	--local color = self.classColors[classFileName]
+	local color = self.RAID_CLASS_COLORS[classFileName].colorStr
 	
 	if self.UnitFocusArray[name] then
 		self.UnitFocusArray[name] = nil
@@ -1759,7 +1792,3 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 	end
 	return
 end
-
-
-
-
