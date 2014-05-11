@@ -164,7 +164,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Enable accurate range check"] = true,
 	["Enable 40y range check that requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames to be present - Only healing classes can use accurate range check"] = true,
 	
-	["Enable combat accurate range check"] = true,
+	["Enable combined range check"] = true,
 	["Enable 40y accurate range check only in combat otherwise light range check is active"] = true,
 	
 	["Enable debug"] = true,

@@ -869,7 +869,7 @@ sRaidFrames.options = {
 				},
 				
 				enable40ycombat = {
-					name = L["Enable combat accurate range check"],
+					name = L["Enable combined range check"],
 					type = "toggle",
 					desc = L["Enable 40y accurate range check only in combat otherwise light range check is active"],
 					get = function() return sRaidFrames.opt.ExtendedRangeCheckCombat end,
