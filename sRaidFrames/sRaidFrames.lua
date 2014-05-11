@@ -287,6 +287,7 @@ function sRaidFrames:Variables()
 	  ["WARRIOR"] = { r = 0.78, g = 0.61, b = 0.43, colorStr = "|cffc79c6e" },
 	};
 	
+	--[[
 	self.UnitClassSort = {}
 	self.UnitClassSort["WARLOCK"]   = 1
 	self.UnitClassSort["MAGE"]      = 2
@@ -297,7 +298,7 @@ function sRaidFrames:Variables()
 	self.UnitClassSort["HUNTER"]    = 7
 	self.UnitClassSort["PALADIN"]   = 8
 	self.UnitClassSort["SHAMAN"]    = 8
-
+	--]]
 	
 
 	self.cooldownSpells = {}
@@ -431,7 +432,7 @@ function sRaidFrames:Freqcalc(num)
 	local val1 = (0.064*num + 0.936)
 	local val2 = val1/num
 	--DEFAULT_CHAT_FRAME:AddMessage(num.." - "..val1.." - "..val2)
-	return val2
+	return val2, val1
 end
 
 function sRaidFrames:ExtendedRangeArrayUtilize(modez, unit)
@@ -469,7 +470,7 @@ function sRaidFrames:RangeCheck()
 		self.MapEnable = true
 		self:Debug("RC_MAP_ENABLE")
 	end
-	if not self.opt.RangeCheck and not self.opt.ExtendedRangeCheck then 
+	if not self.opt.RangeCheck and not self.opt.ExtendedRangeCheck and not self.opt.ExtendedRangeCheckCombat then 
 		return 
 	end	
 	--DEFAULT_CHAT_FRAME:AddMessage("|cff00eeeeDebug: |cffffffffRange Check")
@@ -496,7 +497,7 @@ function sRaidFrames:RangeCheck()
 			elseif unitcheck and CheckInteractDistance(unit, 4) then
 				--self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = " 28Y"
-				if self.MapEnable and self.opt.RangeCheck then
+				if self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) then
 					local _tx, _ty = GetPlayerMapPosition(unit)
 					local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
 					if _tx > 0 and _ty > 0 then
@@ -512,7 +513,7 @@ function sRaidFrames:RangeCheck()
 						end
 					end	
 				end
-			elseif unitcheck and self.MapEnable and self.opt.RangeCheck then
+			elseif unitcheck and self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) then
 				local _tx, _ty = GetPlayerMapPosition(unit)
 				local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
 				if _tx > 0 and _ty > 0 and self:VerifyUnitRange(unit, dist) then
@@ -522,7 +523,7 @@ function sRaidFrames:RangeCheck()
 					self.UnitRangeArray[unit] = ""
 					--self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
 				end
-			elseif unitcheck and self.SpellCheck and self.opt.ExtendedRangeCheck then
+			elseif unitcheck and self.SpellCheck and (self.opt.ExtendedRangeCheck or self.opt.ExtendedRangeCheckCombat and UnitAffectingCombat("player")) then
 				--self.ExtendedRangeScan[counter] = unit
 				self:ExtendedRangeArrayUtilize("add", unit)
 				counter = counter + 1
@@ -534,14 +535,14 @@ function sRaidFrames:RangeCheck()
 		end	
 		if counter > 1 then 
 			local status = "INACTIVE"
-			if not self.MenuOpen or self.MenuOpen < GetTime()then 
+			if (not self.MenuOpen or self.MenuOpen < GetTime()) and not (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) then 
 				status = "ACTIVE" 
 			end
 			
 			local table_val = self:ExtendedRangeArrayUtilize("calc")
-			local freq = self:Freqcalc(table_val)
-			self:Debug("RC_TOTAL: "..table_val.." - STEP RATE: "..((math.floor(freq *100))/100).."s - STATUS: "..status)
-			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, freq , self)	
+			local step, freq = self:Freqcalc(table_val)
+			self:Debug("RC_TOTAL: "..table_val.." - CYCLE FREQ: "..((math.floor(freq *100))/100).."s - STATUS: "..status)
+			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, step , self)	
 		end
 	end
 end
@@ -550,7 +551,7 @@ function sRaidFrames:ExtendedRangeCheck()
 	local now = GetTime()
 	local j = self:ExtendedRangeArrayUtilize("ret")
 	
-	if not self.opt.ExtendedRangeCheck or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or IsShiftKeyDown() or Zorlen_isEnemy("target") and isShootActive() then	
+	if not (self.opt.ExtendedRangeCheck or self.opt.ExtendedRangeCheckCombat and UnitAffectingCombat("player")) or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or Zorlen_isEnemy("target") and isShootActive() then	
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		--Compost:Reclaim(self.ExtendedRangeScan)
 		self:ExtendedRangeArrayUtilize("reset")
@@ -570,7 +571,7 @@ function sRaidFrames:ExtendedRangeCheck()
 		end
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			--self.frames[j]:SetAlpha(1)
-			if self.MapEnable and self.opt.RangeCheck then self.UnitRangeArray[j] = " 40Y*" else self.UnitRangeArray[j] = " 40Y"	end
+			if self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) then self.UnitRangeArray[j] = " 40Y*" else self.UnitRangeArray[j] = " 40Y"	end
 			self:Debug("RC "..GetUnitName(j).."_40y - " .."|cff00FF00 PASS")
 			jumpnext = nil
 		end
@@ -1206,7 +1207,7 @@ function sRaidFrames:Sort_Force()
 		self:Sort(true)
 	end
 	
-	if self.opt.RangeCheck or self.opt.ExtendedRangeCheck  then
+	if self.opt.RangeCheck or self.opt.ExtendedRangeCheck or self.opt.ExtendedRangeCheckCombat then
 		for id = 1, MAX_RAID_MEMBERS do
 			if self.visible["raid" .. id] then
 				if self.UnitRangeArray["raid" .. id] ~= "" then
@@ -1711,7 +1712,6 @@ function sRaidFrames:CheckRangeFocus(unit, mode)
 		if check1 and check2 and not self:CheckFocusUnit(unit) then
 			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:CheckRangeFocus - Add - "..UnitName(unit))
 			table.insert(self.UnitRangeFocus, unit)
-				
 		end
 		
 	elseif mode == "check" then

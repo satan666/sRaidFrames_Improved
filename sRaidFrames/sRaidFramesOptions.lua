@@ -847,6 +847,7 @@ sRaidFrames.options = {
 						sRaidFrames.opt.RangeCheck = value
 						if value then
 							sRaidFrames.opt.ExtendedRangeCheck = not value
+							sRaidFrames.opt.ExtendedRangeCheckCombat = not value
 						end
 					end,
 					order = 1,
@@ -861,10 +862,28 @@ sRaidFrames.options = {
 						sRaidFrames.opt.ExtendedRangeCheck = value
 						if value  then
 							sRaidFrames.opt.RangeCheck = not value
+							sRaidFrames.opt.ExtendedRangeCheckCombat = not value
 						end	
 					end,
 					order = 2,
 				},
+				
+				enable40ycombat = {
+					name = L["Enable combat accurate range check"],
+					type = "toggle",
+					desc = L["Enable 40y accurate range check only in combat otherwise light range check is active"],
+					get = function() return sRaidFrames.opt.ExtendedRangeCheckCombat end,
+					set = function(value)
+						sRaidFrames:DisableRangeCheck()
+						sRaidFrames.opt.ExtendedRangeCheckCombat = value
+						if value  then
+							sRaidFrames.opt.RangeCheck = not value
+							sRaidFrames.opt.ExtendedRangeCheck = not value
+						end	
+					end,
+					order = 3,		
+				},
+				
 					debug = {
 					name = L["Enable debug"],
 					type = "toggle",
