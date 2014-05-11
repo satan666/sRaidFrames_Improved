@@ -909,7 +909,7 @@ sRaidFrames.options = {
 					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
 				},
 				frequency = {
-					name = L["Frequency"],
+					name = L["Light range frequency"],
 					type = "range",
 					desc = L["The interval between which range checks are performed"],
 					get = function() return sRaidFrames.opt.RangeFrequency end,

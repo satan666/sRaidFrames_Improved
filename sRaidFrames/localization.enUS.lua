@@ -172,7 +172,7 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["Alpha"] = true,
 	["The alpha level for units who are out of range"] = true,
-	["Frequency"] = true,
+	["Light range frequency"] = true,
 	["The interval between which range checks are performed"] = true,
 
 	["Show Group/Class"] = true,
