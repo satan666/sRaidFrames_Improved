@@ -491,7 +491,7 @@ function sRaidFrames:RangeCheck()
 		for unit in pairs(self.visible) do	
 		 
 			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) and UnitHealth(unit) > 0
-			if unitcheck and UnitIsUnit("player", unit) then
+			if UnitIsUnit("player", unit) then
 				--self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = " 11Y"
 			elseif unitcheck and CheckInteractDistance(unit, 4) then
