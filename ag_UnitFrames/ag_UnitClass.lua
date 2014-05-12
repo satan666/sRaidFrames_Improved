@@ -650,12 +650,14 @@ end
 
 function aUF.classes.aUFunit.prototype:UpdateAll()
 	if self:SetVisibility() then
+		--DEFAULT_CHAT_FRAME:AddMessage(self.name)
 		if self.name == "target" and sRaidFrames and sRaidFrames.TargetMonitor then
 			--DEFAULT_CHAT_FRAME:AddMessage("UpdateAll not pass - "..UnitName(self.name))
 			return
 		else
 			--DEFAULT_CHAT_FRAME:AddMessage("UpdateAll pass - "..UnitName(self.name))
 		end
+		--DEFAULT_CHAT_FRAME:AddMessage(self.name)
 		
 		self:GroupingUpdate()
 		self:StatusBarsColor()

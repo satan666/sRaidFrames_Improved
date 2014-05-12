@@ -163,6 +163,7 @@ end
 
 function sRaidFrames:TargetFrame_OnEvent(event)
 	if not self.TargetMonitor then
+		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:TargetFrame_OnEvent")
 		self.hooks.TargetFrame_OnEvent.orig(event)
 	end	
 end
@@ -185,7 +186,8 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterBucketEvent("PLAYER_REGEN_ENABLED", 2, "ResetHealIndicators")
 	self:RegisterBucketEvent("PLAYER_REGEN_DISABLED", 2, "ResetHealIndicators")
 
-	self:RegisterEvent("PLAYER_TARGET_CHANGED")
+	--self:RegisterEvent("PLAYER_TARGET_CHANGED")
+	self:RegisterBucketEvent("PLAYER_TARGET_CHANGED", 0.01)
 
 	self:RegisterEvent("Banzai_UnitGainedAggro")
 	self:RegisterEvent("Banzai_UnitLostAggro")
@@ -447,7 +449,8 @@ function sRaidFrames:ExtendedRangeArrayUtilize(modez, unit)
 		for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
 			return blockindex
 		end
-		
+		return nil
+
 	elseif modez == "reset" then
 		for blockindex,blockmatch in pairs(self.ExtendedRangeScan) do
 			self.ExtendedRangeScan[blockindex] = nil
@@ -563,9 +566,8 @@ function sRaidFrames:ExtendedRangeCheck()
 		local targetchanged = nil
 
 		if not UnitExists("target") or UnitExists("target") and not UnitIsUnit("target", j) then
-			
-			targetchanged = true
 			self.TargetMonitor = true
+			targetchanged = true
 			TargetUnit(j)
 			--DEFAULT_CHAT_FRAME:AddMessage("TargetUnit")
 		end
