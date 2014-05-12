@@ -586,7 +586,7 @@ function sRaidFrames:ExtendedRangeCheck()
 			self.UnitRangeArray[j] = ""
 			self:Debug("RC "..GetUnitName(j).."_40y - " .."|cffFF0000 NOT PASS")
 		end
-		self.ExtendedRangeScan[i] = nil
+		--self.ExtendedRangeScan[i] = nil
 		self:ExtendedRangeArrayUtilize("remove", j)
 	end
 end
