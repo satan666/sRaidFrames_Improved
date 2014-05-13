@@ -117,7 +117,7 @@ function sRaidFrames:OnInitialize()
 
 	self.master:Hide()
 	
-	self:LoadProfile()
+	--self:LoadProfile()
 
 	for i = 1, MAX_RAID_MEMBERS do
 		self:CreateUnitFrame(i)
@@ -162,6 +162,7 @@ function sRaidFrames:OnEnable()
 end
 
 function sRaidFrames:TargetFrame_OnEvent(event)
+	--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:TargetFrame_OnEvent")
 	if not self.TargetMonitor then
 		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:TargetFrame_OnEvent")
 		self.hooks.TargetFrame_OnEvent.orig(event)
@@ -493,7 +494,7 @@ function sRaidFrames:RangeCheck()
 		local counter = 1		
 		for unit in pairs(self.visible) do	
 		 
-			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) and UnitHealth(unit) > 0
+			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and UnitIsConnected(unit) and not UnitIsDeadOrGhost(unit) and UnitHealth(unit) > 0
 			if unitcheck and UnitIsUnit("player", unit) then
 				--self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = " 11Y"
@@ -655,8 +656,8 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				local _, class = UnitClass(unit)
 				local unit_name = UnitName(unit)
 				
-				if self.unit_name_lenght then
-					unit_name = string.sub(UnitName(unit), 1, self.unit_name_lenght) --UnitName(unit)
+				if self.opt.unit_name_lenght then
+					unit_name = string.sub(UnitName(unit), 1, 3) --UnitName(unit)
 				end
 				
 				local unit_aggro = Banzai:GetUnitAggroByUnitId(unit)
@@ -804,7 +805,7 @@ function sRaidFrames:UpdateBuffs(units)
 				local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, self.opt.ShowOnlyDispellable)
 				if not debuffTexture then break end
 
-				if self.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
+				if not self.opt.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
 					cAura = self.debuffColors[debuffType]
 				end
 
@@ -845,7 +846,7 @@ function sRaidFrames:UpdateBuffs(units)
 
 			f.mpbar.text:SetText()
 			
-			if self.show_txt_buff then
+			if not self.opt.show_txt_buff then
 				for i=1,32 do
 					local texture = UnitBuff(unit, i)
 					if not texture then break end
@@ -1563,17 +1564,19 @@ function sRaidFrames:ResetHealIndicators()
 	end
 end
 
+--[[
 function sRaidFrames:LoadProfile()
 	if self.opt.style then
-		self.unit_debuff_aura = nil
-		self.unit_name_lenght = 3
-		self.show_txt_buff = nil
+		self.opt.unit_debuff_aura = nil
+		self.opt.unit_name_lenght = 3
+		self.opt.show_txt_buff = nil
 	else
-		self.unit_debuff_aura = true
-		self.unit_name_lenght = nil
-		self.show_txt_buff = true
+		self.opt.unit_debuff_aura = true
+		self.opt.unit_name_lenght = nil
+		self.opt.show_txt_buff = true
 	end
 end
+--]]
 
 function sRaidFrames:LoadStyle()
 	for unit in pairs(self.visible) do

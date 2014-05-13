@@ -25,8 +25,12 @@ L:RegisterTranslations("enUS", function() return {
 	["Load profile - Healer2"] = true,
 	
 	["_Pure view"] = true,
-	["Compact style"] = true,
 	["Clear and compact raid frames"] = true,
+	
+	["Disable colored debuff aura"] = true,
+	["Disable bottom buff name"] = true,
+	["Short unit names"] = true,
+	
 	
 	["_Focus frames"] = true,
 	["Sort focus"] = true,

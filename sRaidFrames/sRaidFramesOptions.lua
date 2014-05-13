@@ -379,22 +379,55 @@ sRaidFrames.options = {
 			type = "group",
 			desc = L["Clear and compact raid frames"],
 			args = {
-				style = {
-					name = L["Compact style"],
+				style1 = {
+					name = L["Disable colored debuff aura"],
 					type = "toggle",
-					desc = L["Compact style"],
+					desc = L["Disable colored debuff aura"],
 					get = function()
-						return sRaidFrames.opt.style
+						return sRaidFrames.opt.unit_debuff_aura
 					end,
 					set = function(style)
-						sRaidFrames:S("style", style)
-						sRaidFrames:ProfileFeed(style)
+						sRaidFrames:S("unit_debuff_aura", style)
 						sRaidFrames:UpdateVisibility()
-						sRaidFrames:LoadProfile()
+						--sRaidFrames:LoadProfile()
 						sRaidFrames:LoadStyle()
 						
 					end,
 					order = 1,
+				},
+				
+				style2 = {
+					name = L["Disable bottom buff name"],
+					type = "toggle",
+					desc = L["Disable bottom buff name"],
+					get = function()
+						return sRaidFrames.opt.show_txt_buff
+					end,
+					set = function(style)
+						sRaidFrames:S("show_txt_buff", style)
+						sRaidFrames:UpdateVisibility()
+						--sRaidFrames:LoadProfile()
+						sRaidFrames:LoadStyle()
+						
+					end,
+					order = 2,
+				},
+				
+				style3 = {
+					name = L["Short unit names"],
+					type = "toggle",
+					desc = L["Short unit names"],
+					get = function()
+						return sRaidFrames.opt.unit_name_lenght
+					end,
+					set = function(style)
+						sRaidFrames:S("unit_name_lenght", style)
+						sRaidFrames:UpdateVisibility()
+						--sRaidFrames:LoadProfile()
+						sRaidFrames:LoadStyle()
+						
+					end,
+					order = 3,
 				},
 			
 				profile1 = {
@@ -420,8 +453,9 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile4 = not value
 							end
 							sRaidFrames:S("profile1", value)
+							sRaidFrames:ProfileFeed(value)
 						end,
-						order = 2,
+						order = 4,
 					},
 				
 				profile2 = {
@@ -447,8 +481,9 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile4 = not value
 							end
 							sRaidFrames:S("profile2", value)
+							sRaidFrames:ProfileFeed(value)
 						end,
-						order = 3,
+						order = 5,
 					},
 					
 				profile3 = {
@@ -477,8 +512,9 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile4 = not value
 							end
 							sRaidFrames:S("profile3", value)
+							sRaidFrames:ProfileFeed(value)
 						end,
-						order = 4,
+						order = 6,
 					},	
 					
 				profile4 = {
@@ -508,7 +544,7 @@ sRaidFrames.options = {
 							end
 							sRaidFrames:S("profile4", value)
 						end,
-						order = 5,
+						order = 7,
 					},		
 					
 						
