@@ -1,6 +1,9 @@
 >> sRaidFrames Improved with working 
-- 40 yard range check 
-- focus frame with dynamic sorting
+- unique 40y range check
+- grid like healing indicators,
+- focus frame
+- aggro status
+- class colored status bars
 
 --== USING BONGOS, OSKING OR UNITFRAMES OTHER THAN BLIZZARD UF OR MODIFIED AGUNITFRAMES MAY CAUSE PROBLEMS(DISAPPEARING LOOT FRAME OR TARGET FLICKING - YOU CAN FIND MODIFIED AGUF IN THIS PACK)
 
