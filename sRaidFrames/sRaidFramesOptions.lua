@@ -953,8 +953,8 @@ sRaidFrames.options = {
 						sRaidFrames.opt.RangeFrequency = value
 						sRaidFrames:UpdateRangeFrequency(value)
 					end,
-					min  = 0.35,
-					max  = 1,
+					min  = 0.25,
+					max  = 0.5,
 					step = 0.25,
 					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
 				},
@@ -1337,10 +1337,10 @@ function sRaidFrames:ProfileFeed(value)
 	sRaidFrames:chatSortBy("fixed")
 	sRaidFrames.opt.SubSort = "class"
 								
-	sRaidFrames.opt.redbar = value
-	sRaidFrames.opt.red = value
+	--sRaidFrames.opt.redbar = value
+	--sRaidFrames.opt.red = value
 						
-	sRaidFrames.opt.class_color = value
+	--sRaidFrames.opt.class_color = value
 	sRaidFrames.opt.dynamic_sort = value
 	sRaidFrames.opt.Spacing = 0
 								

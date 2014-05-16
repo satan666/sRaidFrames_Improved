@@ -87,7 +87,7 @@ function sRaidFrames:OnInitialize()
 		aggro				= false,
 		RangeCheck 			= true,
 		ExtendedRangeCheck = false,
-		RangeFrequency 		= 0.35,
+		RangeFrequency 		= 0.25,
 		RangeAlpha 			= 0.2,
 		lock_focus			= false,
 		ShowGroupTitles_Focus = true,
@@ -1223,6 +1223,33 @@ function sRaidFrames:Sort_Force()
 	end	
 end
 
+function sRaidFrames:MembersSortBy(id)
+	local sort_by = ""
+	local unit = "raid" .. id
+	
+	if self.opt.SubSort == "class" then
+		sort_by = UnitClass(unit)
+		--DEFAULT_CHAT_FRAME:AddMessage(sort_by)
+	elseif self.opt.SubSort == "name" then
+		sort_by = UnitName(unit)
+		--DEFAULT_CHAT_FRAME:AddMessage(sort_by)
+	else
+		sort_by = ""..id
+	end	
+	
+	if self.opt.SortBy == "fixed" then
+		if not UnitIsConnected(unit) then
+			sort_by = "zzz"..sort_by
+		elseif UnitIsDead(unit) then
+			sort_by = "zzy"..sort_by
+		elseif UnitIsGhost(unit) then
+			sort_by = "zzx"..sort_by
+		end	
+	end
+	--DEFAULT_CHAT_FRAME:AddMessage(sort_by)
+	return sort_by
+end
+
 function sRaidFrames:Sort(force_sort)
 	local self = sRaidFrames
 	local frameAssignments = {}
@@ -1239,12 +1266,16 @@ function sRaidFrames:Sort(force_sort)
 			--end
 		end
 	end
-
+	
+	--[[
 	if self.opt.SubSort == "name" then
 		table.sort(sort, function(a,b) return UnitName("raid" .. a) < UnitName("raid" ..b) end)
 	elseif self.opt.SubSort == "class" then
 		table.sort(sort, function(a,b) return UnitClass("raid" .. a) < UnitClass("raid" ..b) end)
 	end
+	--]]
+
+	table.sort(sort, function(a,b) return self:MembersSortBy(a) < self:MembersSortBy(b) end)
 
 
 	if self.opt.SortBy == "class" then
