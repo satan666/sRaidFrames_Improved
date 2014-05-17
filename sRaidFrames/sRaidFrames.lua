@@ -342,12 +342,12 @@ function sRaidFrames:QueryVisibility(id)
 	end
 
 	local _, eClass = UnitClass(unitid)
-	if not self.opt.ClassFilter[eClass] then
+	if eClass and not self.opt.ClassFilter[eClass] then
 		return false
 	end
 
 	local _, _, subgroup = GetRaidRosterInfo(id)
-	if not self.opt.GroupFilter[subgroup] then
+	if subgroup and not self.opt.GroupFilter[subgroup] then
 		return false
 	end
 
@@ -1228,10 +1228,10 @@ function sRaidFrames:MembersSortBy(id)
 	local unit = "raid" .. id
 	
 	if self.opt.SubSort == "class" then
-		sort_by = UnitClass(unit)
+		sort_by = UnitClass(unit) or ""
 		--DEFAULT_CHAT_FRAME:AddMessage(sort_by)
 	elseif self.opt.SubSort == "name" then
-		sort_by = UnitName(unit)
+		sort_by = UnitName(unit) or ""
 		--DEFAULT_CHAT_FRAME:AddMessage(sort_by)
 	else
 		sort_by = ""..id
