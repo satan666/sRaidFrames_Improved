@@ -158,6 +158,7 @@ function sRaidFrames:OnEnable()
 
 	self:RegisterBucketEvent("RAID_ROSTER_UPDATE", 0.1, "UpdateRoster")
 	self:RegisterBucketEvent("PLAYER_ENTERING_WORLD",1)
+	self:RegisterBucketEvent("PARTY_MEMBERS_CHANGED", 0.01, "UpdateParty");
 
 	self:UpdateRoster()
 	
@@ -212,15 +213,18 @@ function sRaidFrames:JoinedRaid()
 
 	self.master:Show()
 	self:ZoneCheck()
-	
-	if self.opt.srfhideparty then
-		HidePartyFrame()
-	end	
+	self:UpdateParty()
+end
+
+function sRaidFrames:UpdateParty()
+	if self.opt.srfhideparty and UnitInRaid("player") then
+		HidePartyFrame();
+	end
 end
 
 function sRaidFrames:PLAYER_ENTERING_WORLD()
 	if not self.enabled and UnitInRaid("player") then
-		self:JoinedRaid()
+		self:JoinedRaid();
 	end
 end
 
@@ -341,7 +345,6 @@ function sRaidFrames:UpdateRoster()
 	
 	self:UpdateVisibility()
 	self:LoadStyle()
-	
 end
 
 function sRaidFrames:QueryVisibility(id)
