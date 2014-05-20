@@ -86,6 +86,9 @@ L:RegisterTranslations("enUS", function() return {
 	["Unlocked"] = true,
 	["Locked"] = true,
 
+	["_Hide party interface"] = true,
+	["Hide party interface in raid"] = true,
+
 	["Health text"] = true,
 	["Set health display type"] = true,
 	["Current and max health"] = true,

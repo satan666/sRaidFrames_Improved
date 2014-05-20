@@ -89,6 +89,7 @@ function sRaidFrames:OnInitialize()
 		ExtendedRangeCheck = false,
 		RangeFrequency 		= 0.25,
 		RangeAlpha 			= 0.2,
+		srfhideparty		= true,
 		lock_focus			= false,
 		ShowGroupTitles_Focus = true,
 		fill_range = false,
@@ -156,6 +157,7 @@ function sRaidFrames:OnEnable()
 	self:chatUpdateBuffMenu()
 
 	self:RegisterBucketEvent("RAID_ROSTER_UPDATE", 0.1, "UpdateRoster")
+	self:RegisterBucketEvent("PLAYER_ENTERING_WORLD",1)
 
 	self:UpdateRoster()
 	
@@ -210,12 +212,19 @@ function sRaidFrames:JoinedRaid()
 
 	self.master:Show()
 	self:ZoneCheck()
+	
+	if self.opt.srfhideparty then
+		HidePartyFrame()
+	end	
+end
+
+function sRaidFrames:PLAYER_ENTERING_WORLD()
+	if not self.enabled and UnitInRaid("player") then
+		self:JoinedRaid()
+	end
 end
 
 function sRaidFrames:PLAYER_TARGET_CHANGED()
-	
-	--DEFAULT_CHAT_FRAME:AddMessage("PLAYER_TARGET_CHANGED")
-	
 	if self.TargetMonitor and self.TargetMonitorEnd then
 		self.TargetMonitorEnd = nil
 		self.TargetMonitor = nil
@@ -327,7 +336,7 @@ function sRaidFrames:UpdateRoster()
 	end
 
 	if not self.enabled then
-			self:JoinedRaid()
+		self:JoinedRaid()
 	end
 	
 	self:UpdateVisibility()
@@ -716,7 +725,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 						f.hpbar:SetValue(0)
 						f.mpbar.text:SetText()
 						f.mpbar:SetValue(0)
-						f:SetBackdropColor(0.3, 0.3, 0.3, 1)
+						--f:SetBackdropColor(0.3, 0.3, 0.3, 1)
 					else
 						
 						self:CreateHealIndicator(unit)

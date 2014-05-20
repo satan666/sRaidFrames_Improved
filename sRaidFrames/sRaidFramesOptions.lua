@@ -593,6 +593,21 @@ sRaidFrames.options = {
 			map = {[false] = L["Unlocked"], [true] = L["Locked"]},
 		},
 
+		srfhideparty = {
+			name = L["_Hide party interface"],
+			type = "toggle",
+			desc = L["Hide party interface in raid"],
+			get = function()
+				return sRaidFrames.opt.srfhideparty
+			end,
+			set = function(value)
+				if value and UnitInRaid("player") then
+					HidePartyFrame();
+				end	
+				sRaidFrames:S("srfhideparty", value)
+			end,
+		},
+
 		health = {
 			name = L["Health text"],
 			type = "text",
