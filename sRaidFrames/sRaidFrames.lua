@@ -551,7 +551,7 @@ function sRaidFrames:RangeCheck()
 		end	
 		if counter > 1 then 
 			local status = "INACTIVE"
-			if (not self.MenuOpen or self.MenuOpen < GetTime()) and not (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) then 
+			if (not self.MenuOpen or self.MenuOpen < GetTime()) and not (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or XLootFrame and XLootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) then 
 				status = "ACTIVE" 
 			end
 			
@@ -567,7 +567,7 @@ function sRaidFrames:ExtendedRangeCheck()
 	local now = GetTime()
 	local j = self:ExtendedRangeArrayUtilize("ret")
 	
-	if not (self.opt.ExtendedRangeCheck or self.opt.ExtendedRangeCheckCombat and UnitAffectingCombat("player")) or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or Zorlen_isEnemy("target") and isShootActive() then	
+	if not (self.opt.ExtendedRangeCheck or self.opt.ExtendedRangeCheckCombat and UnitAffectingCombat("player")) or not UnitExists(j) or self.MenuOpen and self.MenuOpen > now or (InspectFrame and InspectFrame:IsVisible() or XLootFrame and XLootFrame:IsVisible() or LootFrame and LootFrame:IsVisible() or TradeFrame and TradeFrame:IsVisible()) or Zorlen_isEnemy("target") and isShootActive() then	
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		--Compost:Reclaim(self.ExtendedRangeScan)
 		self:ExtendedRangeArrayUtilize("reset")
@@ -800,7 +800,7 @@ end
 
 function sRaidFrames:UpdateBuffs(units)
 	for unit in pairs(units) do
-		if self.visible[unit] and UnitExists(unit) then
+		if self.visible[unit] and UnitExists(unit) and UnitIsVisible(unit) then
 			local cAura = nil
 			local f = self.frames[unit]
 
