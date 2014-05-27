@@ -87,7 +87,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Locked"] = true,
 
 	["_Hide party interface"] = true,
-	["Hide party interface in raid"] = true,
+	["Hide party interface in raid - Blizzard's version may fail sometimes"] = true,
 
 	["Health text"] = true,
 	["Set health display type"] = true,

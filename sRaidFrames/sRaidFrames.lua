@@ -41,6 +41,7 @@ sRaidFrames.SpellCheck = false
 sRaidFrames.MenuOpen = false
 sRaidFrames.MapEnable = false
 
+sRaidFrames.JoiningWorld = 0
 sRaidFrames.NextScan = 0
 sRaidFrames.MapScale = 0
 
@@ -223,6 +224,7 @@ function sRaidFrames:UpdateParty()
 end
 
 function sRaidFrames:PLAYER_ENTERING_WORLD()
+	self.JoiningWorld = GetTime()
 	if not self.enabled and UnitInRaid("player") then
 		self:JoinedRaid();
 	end
@@ -436,7 +438,9 @@ function sRaidFrames:IsSpellInRangeAndActionBar(SpellName)
 				return false
 			end
 		else
-			UIErrorsFrame:AddMessage("|cff00eeee sRaidFrames: |cff00FF00"..SpellName.." - not on Actionbar")
+			if GetTime() - self.JoiningWorld > 5 then
+				UIErrorsFrame:AddMessage("|cff00eeee sRaidFrames: |cff00FF00"..SpellName.." - not on Actionbar")
+			end	
 			return false
 		end
 	end
@@ -668,7 +672,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				local _, class = UnitClass(unit)
 				local unit_name = UnitName(unit)
 				
-				if self.opt.unit_name_lenght then
+				if self.opt.unit_name_lenght or self.opt.Debug then
 					unit_name = string.sub(UnitName(unit), 1, 3) --UnitName(unit)
 				end
 				
@@ -800,7 +804,7 @@ end
 
 function sRaidFrames:UpdateBuffs(units)
 	for unit in pairs(units) do
-		if self.visible[unit] and UnitExists(unit) and UnitIsVisible(unit) then
+		if self.visible[unit] and UnitIsVisible(unit) and UnitExists(unit) then
 			local cAura = nil
 			local f = self.frames[unit]
 
@@ -1606,20 +1610,6 @@ function sRaidFrames:ResetHealIndicators()
 		self:SetHealIndicator(key)
 	end
 end
-
---[[
-function sRaidFrames:LoadProfile()
-	if self.opt.style then
-		self.opt.unit_debuff_aura = nil
-		self.opt.unit_name_lenght = 3
-		self.opt.show_txt_buff = nil
-	else
-		self.opt.unit_debuff_aura = true
-		self.opt.unit_name_lenght = nil
-		self.opt.show_txt_buff = true
-	end
-end
---]]
 
 function sRaidFrames:LoadStyle()
 	for unit in pairs(self.visible) do

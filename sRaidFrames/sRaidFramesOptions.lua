@@ -596,7 +596,7 @@ sRaidFrames.options = {
 		srfhideparty = {
 			name = L["_Hide party interface"],
 			type = "toggle",
-			desc = L["Hide party interface in raid"],
+			desc = L["Hide party interface in raid - Blizzard's version may fail sometimes"],
 			get = function()
 				return sRaidFrames.opt.srfhideparty
 			end,

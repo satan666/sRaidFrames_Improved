@@ -1,5 +1,9 @@
 >> sRaidFrames
 
+--== USING UNITFRAMES OTHER THAN BLIZZARD UF OR MODIFIED AG UNITFRAMES MAY CAUSE PROBLEMS(DISAPPEARING LOOT FRAME OR TARGET FLICKING - YOU CAN FIND MODIFIED AGUF IN THIS PACK)
+--== IF YOU'RE USING SRF 0.61 AND OLDER IT'S MANDATORY TO DELETE SRF FILES FROM SAVEDVARIABLES FOLDER !!!
+
+
 patch_0.50 - 40 yard range check support
 - 40y range check is only limited to healing classes due its mechanism
 - 40y range check require certain spells to be on actionbar(you will be noticed by message if spell missing)
@@ -29,13 +33,17 @@ patch 0.70 - anti overheal focus sort
 - implemented agUnitFrames modification by Snelf
 - fixed meni bugs
 
-
---== USING UNITFRAMES OTHER THAN BLIZZARD UF OR MODIFIED AG UNITFRAMES MAY CAUSE PROBLEMS(DISAPPEARING LOOT FRAME OR TARGET FLICKING - YOU CAN FIND MODIFIED AGUF IN THIS PACK)
---== IF YOU'RE USING SRF 0.61 AND OLDER IT'S MANDATORY TO DELETE SRF FILES FROM SAVEDVARIABLES FOLDER !!!
+patch 0.80 - stable
+- fixed bug where raid interface didn't appear after logging in
+- fixed bug with face texture debuffs appearing when units are far away
+- added support to Xloot addon(resolved problem with dissapearing loot frame - Xloot users)
+- modified and improved sorting method  Menu->Group By->Fixed Group
+- added combinded range check method(most effective 40y range calculation for low fps computers)
+- splitted compact style option into three separate ones for better GUI customization(Menu->_Pure View->Disable colored debuff aura/Disable bottom buff name/Short unit names)
 
 
 >> ag_UnitFrames
- - this version of ag_UnitFrames is modified to be compatible with sRaidFrames 40 yard check
+- this version of ag_UnitFrames is modified to be compatible with sRaidFrames 40 yard check
 
 >> Zorlen
 -sRaidFrames mandatory dependancy library
