@@ -188,7 +188,7 @@ sRaidFrames.options = {
 					type = "range",
 					desc = L["Set max number of units in column - effect only if Fixed Group sort is enabled"],
 					min = 3,
-					max = 10,
+					max = 20,
 					step = 1,
 					get = function()
 						return sRaidFrames.opt.fixed_count

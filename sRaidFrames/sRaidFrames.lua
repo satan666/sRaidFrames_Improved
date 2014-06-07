@@ -1631,6 +1631,10 @@ function sRaidFrames:HideHealIndicator(unit)
 end
 
 function sRaidFrames:SetHealIndicator(unit)
+	if not unit or not UnitExists(unit) then
+		return
+	end
+	
 	local f = nil
 	
 	if self.opt.Border then
