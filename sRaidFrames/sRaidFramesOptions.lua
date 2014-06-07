@@ -1484,6 +1484,7 @@ function sRaidFrames:chatScale(t)
 	self:S("Scale", t)
 
 	self.master:SetScale(t)
+	self:LoadStyle()
 end
 
 function sRaidFrames:chatBackgroundColor(r, g, b, a)
