@@ -10,22 +10,38 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["_Aggro notification"] = true,
 	["Aggro notification"] = true,
-	
-	["_Class colors"] = true,
-	["Status Bar - Class colors"] = true,
+	["Red names on aggro"] = true,
+	["Enable/Disable name color change on aggro"] = true,
 	["Red status bar"] = true,
+	
+	["_Pure view"] = true,
+	["Pure view"] = true,
+
+	["Status bar class color"] = true,
+	["Unit name class color"] = true,
+	["Vertical orientation"] = true,
+	["Full size statusbar"] = true,
+	["_Healing indicators"] = true,
+	["Show/Hide incoming heal indicators"] = true,
+	["Apply best settings"] = true,
+	["Load predefined settings for best visual effect"] = true,
+	
+	["Load pure view profiles"] = true,
+	["Horizontal border"] = true,
+	["Horizontal no border"] = true,
+	["Vertical border"] = true,
+	["Vertical no border"] = true,
 	
 	["_Focus frame"] = true,
 	["Use keybinding to add/remove units manually or select Polpulate with range feature"] = true,
 	
 	["Load predefined settings"] = true,
-	["Load profile - Common"] = true,
-	["Load profile - Aggro"] = true,
-	["Load profile - Healer1"] = true,
-	["Load profile - Healer2"] = true,
+	["Common"] = true,
+	["Aggro"] = true,
+	["Healer"] = true,
 	
-	["_Pure view"] = true,
-	["Clear and compact raid frames"] = true,
+	["Load focus profiles"] = true,
+	["Load predefined profiles"] = true,
 	
 	["Disable colored debuff aura"] = true,
 	["Disable bottom buff name"] = true,
@@ -59,11 +75,11 @@ L:RegisterTranslations("enUS", function() return {
 	
 
 	
-	["1) Lock"] = true;
-	["2) Show group titles"] = true,
-	["3) Extra width"] = true,
+	["Lock"] = true;
+	["Show group titles"] = true,
+	["Extra width"] = true,
 	["Focus frame extra width"] = true,
-	["4) Units limit number"] = true,
+	["Units limit number"] = true,
 	["Units limit number"] = true,
 	
 
@@ -75,12 +91,6 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["Requires UI reload"] = true,
 	
-	["_Healing indicators"] = true,
-	["Show/Hide incoming heal indicators"] = true,
-	
-	["Red names on aggro"] = true,
-	["Enable/Disable name color change on aggro"] = true,
-
 	["Lock"] = true,
 	["Lock/Unlock the raid frames"] = true,
 	["Unlocked"] = true,
@@ -118,6 +128,8 @@ L:RegisterTranslations("enUS", function() return {
 	["Select how you wish to show the groups"] = true,
 	["By group"] = true,
 	["By class"] = true,
+	["Units per column"] = true,
+	["Set max number of units in column - effect only if Fixed Group sort is enabled"] = true,
 
 	["Buff/Debuff visibility"] = true,
 	["Show buffs or debuffs on the raid frames"] = true,

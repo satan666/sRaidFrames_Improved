@@ -12,8 +12,34 @@ surface:Register("Smooth", "Interface\\AddOns\\sRaidFrames\\textures\\smooth")
 surface:Register("Striped", "Interface\\AddOns\\sRaidFrames\\textures\\striped")
 surface:Register("BantoBar", "Interface\\AddOns\\sRaidFrames\\textures\\bantobar")
 
-local math_mod = math.fmod or math.mod 
+surface:Register("Grid", "Interface\\AddOns\\sRaidFrames\\textures\\Grid")
+surface:Register("Bumps", "Interface\\AddOns\\sRaidFrames\\textures\\Bumps")
+surface:Register("Button", "Interface\\AddOns\\sRaidFrames\\textures\\Button")
+surface:Register("Cloud", "Interface\\AddOns\\sRaidFrames\\textures\\Cloud")
+surface:Register("Dabs", "Interface\\AddOns\\sRaidFrames\\textures\\Dabs")
+surface:Register("DarkBottom", "Interface\\AddOns\\sRaidFrames\\textures\\DarkBottom")
+surface:Register("Diagonal", "Interface\\AddOns\\sRaidFrames\\textures\\Diagonal")
+surface:Register("Fifths", "Interface\\AddOns\\sRaidFrames\\textures\\Fifths")
+surface:Register("Fourths", "Interface\\AddOns\\sRaidFrames\\textures\\Fourths")
+surface:Register("Gloss", "Interface\\AddOns\\sRaidFrames\\textures\\Gloss")
+surface:Register("Hatched", "Interface\\AddOns\\sRaidFrames\\textures\\Hatched")
+surface:Register("Rain", "Interface\\AddOns\\sRaidFrames\\textures\\Rain")
+surface:Register("Skewed", "Interface\\AddOns\\sRaidFrames\\textures\\Skewed")
+surface:Register("Smudge", "Interface\\AddOns\\sRaidFrames\\textures\\Smudge")
+surface:Register("Water", "Interface\\AddOns\\sRaidFrames\\textures\\Water")
+surface:Register("Charcoal", "Interface\\AddOns\\sRaidFrames\\textures\\Charcoal")
+surface:Register("Glaze", "Interface\\AddOns\\sRaidFrames\\textures\\glaze")
+surface:Register("Metal", "Interface\\AddOns\\sRaidFrames\\textures\\BEB-BarFill-Metal")
+surface:Register("Wood", "Interface\\AddOns\\sRaidFrames\\textures\\BEB-BarFill-Wood")
 
+surface:Register("Gradient", "Interface\\AddOns\\sRaidFrames\\textures\\gradient32x32")
+surface:Register("Aluminium", "Interface\\AddOns\\sRaidFrames\\textures\\Aluminium")
+surface:Register("Rupture", "Interface\\AddOns\\sRaidFrames\\textures\\Rupture")
+surface:Register("Dabs", "Interface\\AddOns\\sRaidFrames\\textures\\Dabs")
+
+
+
+local math_mod = math.fmod or math.mod 
 
 sRaidFrames = AceLibrary("AceAddon-2.0"):new(
 	"AceDB-2.0",
@@ -88,6 +114,7 @@ function sRaidFrames:OnInitialize()
 		aggro				= false,
 		RangeCheck 			= true,
 		ExtendedRangeCheck = false,
+		fixed_count			= 5,
 		RangeFrequency 		= 0.25,
 		RangeAlpha 			= 0.2,
 		srfhideparty		= true,
@@ -144,6 +171,8 @@ function sRaidFrames:OnInitialize()
 	
 	--==Added by Ogrisch 
 	self:Hook("TargetFrame_OnEvent")
+	--self:Hook("Luna_Target_Original")
+	
 	Zorlen_MakeFirstMacros = nil
 	DEFAULT_CHAT_FRAME:AddMessage("_SRaidFrames Improved by ".."|cff9900FF".."Ogrisch".."|cffffffff".. " loaded")
 end
@@ -158,11 +187,15 @@ function sRaidFrames:OnEnable()
 	self:chatUpdateBuffMenu()
 
 	self:RegisterBucketEvent("RAID_ROSTER_UPDATE", 0.1, "UpdateRoster")
-	self:RegisterBucketEvent("PLAYER_ENTERING_WORLD",1)
+	self:RegisterBucketEvent("PLAYER_ENTERING_WORLD",1.5)
 	self:RegisterBucketEvent("PARTY_MEMBERS_CHANGED", 0.01, "UpdateParty");
 
 	self:UpdateRoster()
 	
+	if LunaUnitFrames then
+		Luna_Target_Original = LunaUnitFrames.UpdateTargetFrame
+		LunaUnitFrames.UpdateTargetFrame = Luna_Target_Hook
+	end
 end
 
 function sRaidFrames:TargetFrame_OnEvent(event)
@@ -170,6 +203,12 @@ function sRaidFrames:TargetFrame_OnEvent(event)
 	if not self.TargetMonitor then
 		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:TargetFrame_OnEvent")
 		self.hooks.TargetFrame_OnEvent.orig(event)
+	end	
+end
+
+function Luna_Target_Hook()
+	if not sRaidFrames.TargetMonitor then
+		Luna_Target_Original()
 	end	
 end
 
@@ -215,6 +254,7 @@ function sRaidFrames:JoinedRaid()
 	self.master:Show()
 	self:ZoneCheck()
 	self:UpdateParty()
+	
 end
 
 function sRaidFrames:UpdateParty()
@@ -234,7 +274,9 @@ function sRaidFrames:PLAYER_TARGET_CHANGED()
 	if self.TargetMonitor and self.TargetMonitorEnd then
 		self.TargetMonitorEnd = nil
 		self.TargetMonitor = nil
+		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:PLAYER_TARGET_CHANGED")
 	end
+	
 end
 
 function sRaidFrames:LeftRaid()
@@ -356,7 +398,7 @@ function sRaidFrames:QueryVisibility(id)
 	end
 
 	local _, eClass = UnitClass(unitid)
-	if eClass and not self.opt.ClassFilter[eClass] then
+	if eClass and self.opt.ClassFilter and not self.opt.ClassFilter[eClass] then
 		return false
 	end
 
@@ -585,8 +627,9 @@ function sRaidFrames:ExtendedRangeCheck()
 		if not UnitExists("target") or UnitExists("target") and not UnitIsUnit("target", j) then
 			self.TargetMonitor = true
 			targetchanged = true
-			TargetUnit(j)
 			--DEFAULT_CHAT_FRAME:AddMessage("TargetUnit")
+			TargetUnit(j)
+			
 		end
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			--self.frames[j]:SetAlpha(1)
@@ -596,8 +639,8 @@ function sRaidFrames:ExtendedRangeCheck()
 		end
 		if targetchanged then 
 			self.TargetMonitorEnd = true
-			TargetLastTarget()
 			--DEFAULT_CHAT_FRAME:AddMessage("TargetLastTarget")
+			TargetLastTarget()
 			
 		end
 		if jumpnext then
@@ -655,7 +698,7 @@ end
 function sRaidFrames:UpdateUnit(units, force_focus)
 	local red_nickname = self.opt.red
 	local red_bar = self.opt.redbar
-	local class_color = self.opt.class_color
+	local class_color = self.opt.statusbar_color
 	for unit in pairs(units) do
 		local focus_unit = self:CheckFocusUnit(unit)
 		if self.visible[unit] and UnitExists(unit) then
@@ -682,6 +725,8 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 					--if not self.opt.dynamic_aggro_sort or self.opt.dynamic_aggro_sort and focus_unit then
 						f.title:SetText("|cffff0000"..unit_name..range.."|r")
 					--end
+				elseif not self.opt.unitname_color then
+					f.title:SetText(unit_name..range.."|r")
 				elseif class then
 					--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:UpdateUnit "..unit.." - "..GetUnitName(unit))
 					--f.title:SetText(self.classColors[class]..unit_name..range.."|r")
@@ -708,17 +753,8 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				
 				
 				if not self.feign[unit] then
-					local status, dead, ghost = nil, UnitIsDead(unit), UnitIsGhost(unit)
-					
-					--[[
-					if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
-					elseif self.res[unit] == 1 and dead then status = "|cfffff700"..L["Can Recover"].."|r"
-					elseif self.res[unit] == 2 and (dead or ghost) then status = "|cfffff700"..L["Resurrected"].."|r"
-					elseif ghost then status = "|cffff8c00"..L["Released"].."|r"
-					elseif dead then status = "|cffff8c00"..L["Dead"].."|r"
-					end
-					--]]
-					
+					local status, dead, ghost = nil, UnitIsDead(unit) or UnitHealth(unit) <= 1, UnitIsGhost(unit)
+									
 					if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
 					elseif self.res[unit] == 1 and dead then status = "|cffff8c00"..L["Can Recover"].."|r"
 					elseif self.res[unit] == 2 and (dead or ghost) then status = "|cffff8c00"..L["Resurrected"].."|r"
@@ -735,7 +771,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 						--f:SetBackdropColor(0.3, 0.3, 0.3, 1)
 					else
 						
-						self:CreateHealIndicator(unit)
+						--self:CreateHealIndicator(unit)
 						
 						self.unavail[unit] = false
 						self.res[unit] = nil
@@ -919,6 +955,7 @@ function sRaidFrames:UpdateBuffs(units)
 						buffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 						buffFrame.count:SetText(buffApplications > 1 and buffApplications or nil)
 						buffFrame.texture:SetTexture(buffTexture)
+						--buffFrame:SetFrameLevel(10)
 						buffFrame:Show()
 					end
 
@@ -1017,12 +1054,22 @@ function sRaidFrames:UnitTooltip(frame)
 	GameTooltip:Show()
 end
 
+
+function sRaidFrames:MouseOverHighlight(f, type)
+	--DEFAULT_CHAT_FRAME:AddMessage(type)
+	if type =="ENTER" then
+		f.hpbar.highlight:Show()
+	else
+		f.hpbar.highlight:Hide()
+	end
+end
+
 function sRaidFrames:CreateUnitFrame(id)
 	local f = CreateFrame("Button", "sRaidFrames_" .. id, self.master)
 	f:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp", "Button4Up", "Button5Up")
 	f:SetScript("OnClick", self.OnUnitClick)
-	f:SetScript("OnEnter", function() self:UnitTooltip(this) end)
-	f:SetScript("OnLeave", function() GameTooltip:Hide() end)
+	f:SetScript("OnEnter", function() self:UnitTooltip(this) sRaidFrames:MouseOverHighlight(f, "ENTER") end)
+	f:SetScript("OnLeave", function() GameTooltip:Hide() sRaidFrames:MouseOverHighlight(f, "LEAVE") end)
 
 	f.title = f:CreateFontString(nil, "ARTWORK")
 	f.title:SetFontObject(GameFontNormalSmall)
@@ -1085,10 +1132,29 @@ function sRaidFrames:CreateUnitFrame(id)
 	f.hpbar = CreateFrame("StatusBar", nil, f)
 	f.hpbar:SetStatusBarTexture(surface:Fetch(self.opt.Texture))
 	f.hpbar:SetMinMaxValues(0,100)
+	f.hpbar:SetFrameLevel(2)
 
 	f.hpbar.texture = f.hpbar:CreateTexture(nil, "BORDER")
 	f.hpbar.texture:SetTexture(surface:Fetch(self.opt.Texture))
 	f.hpbar.texture:SetVertexColor(1, 0, 0, 0)
+	
+	
+	f.hpbar.highlight = f.hpbar:CreateTexture(nil, "OVERLAY")
+	f.hpbar.highlight:SetAlpha(0.3)
+	f.hpbar.highlight:SetTexture("Interface\\AddOns\\sRaidFrames\\textures\\MouseoverHighlight")
+	f.hpbar.highlight:SetBlendMode("ADD")
+	
+	
+	f.hpbar.indicator1 = f.hpbar:CreateTexture(nil, "OVERLAY")
+	f.hpbar.indicator1:SetAlpha(1)
+	f.hpbar.indicator1:SetTexture("Interface\\Addons\\sRaidFrames\\textures\\round16x16")
+	f.hpbar.indicator1:Hide()
+	
+	f.hpbar.indicator2 = f.hpbar:CreateTexture(nil, "OVERLAY")
+	f.hpbar.indicator2:SetAlpha(1)
+	f.hpbar.indicator2:SetTexture("Interface\\Addons\\sRaidFrames\\textures\\square16x16")
+	f.hpbar.indicator2:Hide()
+	
 
 	f.hpbar.text = f.hpbar:CreateFontString(nil, "ARTWORK")
 	f.hpbar.text:SetFontObject(GameFontHighlightSmall)
@@ -1192,23 +1258,57 @@ end
 
 function sRaidFrames:SetStyle(f, width, aggro)
 	
+	--f.hpbar.highlight
+	
 	local frame_width = width or self.opt.Width
 	
 	self:SetWHP(f, frame_width, 40)
-	self:SetWHP(f.title, frame_width - 10, 16, "TOPLEFT", f, "TOPLEFT",  5, -4)
-	self:SetWHP(f.aura1, 13, 13, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
-	self:SetWHP(f.aura2, 13, 13, "RIGHT", f.aura1, "LEFT", 0, 0)
-	self:SetWHP(f.buff1, 10, 10, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
-	self:SetWHP(f.buff2, 10, 10, "RIGHT", f.buff1, "LEFT", 0, 0)
-	self:SetWHP(f.buff3, 10, 10, "RIGHT", f.buff2, "LEFT", 0, 0)
-	self:SetWHP(f.buff4, 10, 10, "RIGHT", f.buff3, "LEFT", 0, 0)
-	self:SetWHP(f.hpbar, frame_width - 10, 13, "TOPLEFT", f.title, "BOTTOMLEFT", 0, 0)
-	self:SetWHP(f.mpbar, frame_width - 10, 4, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
-
-	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f.hpbar, "CENTER", 0, 0)
-	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f.mpbar, "CENTER", 0, 0)
+	self:SetWHP(f.title, frame_width - 10, 16, "TOPLEFT", f, "TOPLEFT",  5, -8)
+	
+	self:SetWHP(f.aura1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
+	self:SetWHP(f.aura2, 12, 12, "RIGHT", f.aura1, "LEFT", 0, 0)
+	self:SetWHP(f.buff1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
+	self:SetWHP(f.buff2, 12, 12, "RIGHT", f.buff1, "LEFT", 0, 0)
+	self:SetWHP(f.buff3, 12, 12, "RIGHT", f.buff2, "LEFT", 0, 0)
+	self:SetWHP(f.buff4, 12, 12, "RIGHT", f.buff3, "LEFT", 0, 0)
+	
+		
+	if not sRaidFrames.opt.Border then
+		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
+			self:SetWHP(f.hpbar, frame_width - 10, 27, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+		else
+			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+		end	
+		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
+		self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -14)
+		self:SetWHP(f.hpbar.indicator2, 5, 5, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+	else
+		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
+			self:SetWHP(f.hpbar, frame_width - 10, 26, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+		else
+			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+		end	
+		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
+		self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -11)
+		self:SetWHP(f.hpbar.indicator1, 9, 9, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
+	end
+	
+	
+	
+	
+	self:SetWHP(f.hpbar.highlight, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35) -- highlight
+	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f, "CENTER", 0, -9)
+	
+	
+	f.mpbar.text:SetTextHeight(8)
 
 	self:SetBackdrop(f, aggro)
+	
+	if self.opt.vertical_hp then
+		f.hpbar:SetOrientation("VERTICAL")
+	else
+		f.hpbar:SetOrientation("HORIZONTAL")
+	end
 end
 
 function sRaidFrames:SetWHP(frame, width, height, p1, relative, p2, x, y)
@@ -1222,7 +1322,8 @@ function sRaidFrames:SetWHP(frame, width, height, p1, relative, p2, x, y)
 end
 
 function sRaidFrames:Sort_Force()
-	if self.opt.dynamic_sort then 
+	--DEFAULT_CHAT_FRAME:AddMessage("Sort_Force")
+	if self.opt.dynamic_sort or self.opt.SortBy == "fixed" then 
 		self:Sort(true)
 	end
 	
@@ -1245,10 +1346,8 @@ function sRaidFrames:MembersSortBy(id)
 	
 	if self.opt.SubSort == "class" then
 		sort_by = UnitClass(unit) or ""
-		--DEFAULT_CHAT_FRAME:AddMessage(sort_by)
 	elseif self.opt.SubSort == "name" then
 		sort_by = UnitName(unit) or ""
-		--DEFAULT_CHAT_FRAME:AddMessage(sort_by)
 	else
 		sort_by = ""..id
 	end	
@@ -1260,6 +1359,8 @@ function sRaidFrames:MembersSortBy(id)
 			sort_by = "zzy"..sort_by
 		elseif UnitIsGhost(unit) then
 			sort_by = "zzx"..sort_by
+		elseif UnitHealth(unit) <= 1 and not self.feign[unit] then
+			sort_by = "zzw"..sort_by
 		end	
 	end
 	--DEFAULT_CHAT_FRAME:AddMessage(sort_by)
@@ -1374,7 +1475,7 @@ function sRaidFrames:Sort(force_sort)
 			end
 		else
 			for k=8,1,-1 do
-				if counter[k] < 5 then
+				if counter[k] < self.opt.fixed_count then
 					frameAssignee = k
 				end
 			end
@@ -1527,88 +1628,83 @@ end
 
 
 --==Added by Ogrisch
-function sRaidFrames:CreateHealIndicator(unit)
-	f = self.frames[unit]
+
+function sRaidFrames:ShowHealIndicator(unit)
+	if not unit or not self.opt.heal then return end
 	
 	if not self.indicator then
 		self.indicator = {}
-	end	
+	end
 	
 	if not self.indicator[unit] then
-		self.indicator[unit] = CreateFrame("Frame", nil, f)
-		self.indicator[unit].active = 0
-		self.indicator[unit]:SetWidth(7)
-		self.indicator[unit]:SetHeight(7.5)
-		self.indicator[unit]:SetBackdrop( {
-						  bgFile = "Interface\\Addons\\sRaidFrames\\white16x16", tile = true, tileSize = 16,
-						  edgeFile = "Interface\\Addons\\sRaidFrames\\white16x16", edgeSize = 1,
-						  insets = {left = 1, right = 1, top = 1, bottom = 1},
-					  })
-		self.indicator[unit]:SetBackdropBorderColor(0,0,0,1)
-		self.indicator[unit]:SetBackdropColor(1,1,1,1)
-		self.indicator[unit]:SetFrameLevel(10)
-		self.indicator[unit]:Hide()
-
-
-		--self.indicator:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 1, 1)
-		--self.indicator:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -1, 1)
-		if sRaidFrames.opt.Border then
-			self.indicator[unit]:SetPoint("TOPLEFT", f, "TOPLEFT", 3, -2)
-		else
-			self.indicator[unit]:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
-		end	
-		--self.indicator[unit]:SetPoint("TOPRIGHT", f, "TOPRIGHT", -6, -6)
+		self.indicator[unit] = 0
 	end
-end
-
-function sRaidFrames:ShowHealIndicator(unit)
-	if not self.opt.heal then return end
-	if not unit or not self.indicator or not self.indicator[unit] then return end
+	
+	--if not unit or not self.indicator or not self.indicator[unit] then return end
 	
 	if self.indicator[unit] then
-		self.indicator[unit].active = self.indicator[unit].active + 1
+		self.indicator[unit] = self.indicator[unit] + 1
 	end	
 	
 	self:SetHealIndicator(unit);
 end
 
 function sRaidFrames:HideHealIndicator(unit)
-	if not self.opt.heal then return end
-	if not unit or not self.indicator or not self.indicator[unit] then return end
+	if not unit or not self.opt.heal then return end
 	
-	if self.indicator[unit] and self.indicator[unit].active > 0 then
-		self.indicator[unit].active = self.indicator[unit].active - 1
+	if not self.indicator then
+		self.indicator = {}
+	end
+	
+	if not self.indicator[unit] then
+		self.indicator[unit] = 0
+	end
+	
+	if self.indicator[unit] and self.indicator[unit] > 0 then
+		self.indicator[unit] = self.indicator[unit] - 1
 	end
 	
 	self:SetHealIndicator(unit);
 end
 
 function sRaidFrames:SetHealIndicator(unit)
+	local f = nil
 	
-	if self.indicator[unit].active == 0 then
-		self.indicator[unit]:SetBackdropColor(0, 0, 0, 0)
-		self.indicator[unit]:Hide()
+	if self.opt.Border then
+		f = self.frames[unit].hpbar.indicator1
 	else
-		if self.indicator[unit].active == 1 then
-			self.indicator[unit]:SetBackdropColor(0, 1, 0, 1)
-		elseif self.indicator[unit].active == 2 then
-			self.indicator[unit]:SetBackdropColor(1, 1, 0, 1)
-		elseif self.indicator[unit].active == 3 then
-			self.indicator[unit]:SetBackdropColor(1, 0.4, 0, 1)
+		f = self.frames[unit].hpbar.indicator2
+	end
+	
+	if self.indicator[unit] == 0 then
+		f:SetVertexColor(0, 0, 0, 0)
+		f:Hide()
+	else
+		if self.indicator[unit] == 1 then
+			f:SetVertexColor(0, 1, 0, 1)
+		elseif self.indicator[unit] == 2 then
+			f:SetVertexColor(1, 1, 0, 1)
+		elseif self.indicator[unit] == 3 then
+			f:SetVertexColor(1, 0.4, 0, 1)
 		else
-			self.indicator[unit]:SetBackdropColor(1, 0, 0, 1)
+			f:SetVertexColor(1, 0, 0, 1)
 		end
 		
-		self.indicator[unit]:Show()
+		f:Show()
 
 	end	
 end
 
-function sRaidFrames:ResetHealIndicators()
-	for key,value in pairs(self.indicator) do
-		self.indicator[key].active = 0
-		self:SetHealIndicator(key)
-	end
+function sRaidFrames:ResetHealIndicators(mode)
+	if UnitInRaid("player") and self.indicator then
+		for key,value in pairs(self.indicator) do
+			self.indicator[key] = 0
+			self:SetHealIndicator(key)
+			if mode == "force" then
+				self.indicator[key] = nil
+			end
+		end
+	end	
 end
 
 function sRaidFrames:LoadStyle()
@@ -1663,7 +1759,7 @@ end
 function sRaidFrames:OverHealCalc(unit)
 	local bonus = 0
 	if self.opt.dynamic_overheal_sort and not Banzai:GetUnitAggroByUnitId(unit) then
-		local indicator = self.indicator and self.indicator[unit] and self.indicator[unit].active
+		local indicator = self.indicator and self.indicator[unit] and self.indicator[unit]
 		if indicator and indicator > 0 then
 			bonus = bonus + 15*indicator
 		end
