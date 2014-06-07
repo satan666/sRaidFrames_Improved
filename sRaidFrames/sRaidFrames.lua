@@ -681,6 +681,16 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 			if (not self.opt.dynamic_sort or not focus_unit and not force_focus or focus_unit and force_focus) then
 				local f = self.frames[unit]
 				local range = ""
+				
+				local id_str = string.gsub(unit,"raid","")
+				local _, _, subgroup = GetRaidRosterInfo(id_str)
+				
+				if self.opt.grp_name then
+					subgroup = "G"..subgroup
+				else
+					subgroup = ""
+				end
+				
 				if self.opt.Debug then
 					range = self.UnitRangeArray[unit]
 					if not range then
@@ -689,10 +699,10 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				end
 
 				local _, class = UnitClass(unit)
-				local unit_name = UnitName(unit)
+				local unit_name = UnitName(unit).." "..subgroup
 				
 				if self.opt.unit_name_lenght or self.opt.Debug then
-					unit_name = string.sub(UnitName(unit), 1, 3) --UnitName(unit)
+					unit_name = string.sub(UnitName(unit), 1, 3).." "..subgroup --UnitName(unit)
 				end
 				
 				local unit_aggro = Banzai:GetUnitAggroByUnitId(unit)
@@ -1320,7 +1330,8 @@ function sRaidFrames:MembersSortBy(id)
 	elseif self.opt.SubSort == "name" then
 		sort_by = UnitName(unit) or ""
 	else
-		sort_by = ""..id
+		local _, _, subgroup = GetRaidRosterInfo(id)
+		sort_by = subgroup..id
 	end	
 	
 	if self.opt.SortBy == "fixed" then

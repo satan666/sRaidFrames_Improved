@@ -47,7 +47,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Disable colored debuff aura"] = true,
 	["Disable bottom buff name"] = true,
 	["Short unit names"] = true,
-	
+	["Show group number"] = true,
 	
 	["_Focus frames"] = true,
 	["Sort focus"] = true,

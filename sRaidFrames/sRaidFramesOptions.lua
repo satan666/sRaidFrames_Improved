@@ -180,8 +180,22 @@ sRaidFrames.options = {
 						sRaidFrames:LoadStyle()
 						
 					end,
-					order = 4,
+					order = 5,
 				},
+				
+				group_number = {
+					name = L["Show group number"],
+					type = "toggle",
+					desc = L["Show group number"],
+					get = function()
+						return sRaidFrames.opt.grp_name
+					end,
+					set = function(grp_name)
+						sRaidFrames:S("grp_name", grp_name)						
+					end,
+					order = 6,
+				},
+				
 				
 				hp_limit = {
 					name = L["Units per column"],
@@ -197,7 +211,7 @@ sRaidFrames.options = {
 						sRaidFrames:S("fixed_count", set)
 						sRaidFrames:LoadStyle()
 					end,
-					order = 5,
+					order = 6,
 				},
 				
 			
@@ -840,7 +854,7 @@ sRaidFrames.options = {
 				sRaidFrames:S("SubSort", value)
 				sRaidFrames:Sort()
 			end,
-			validate = {["name"] = L["By name"], ["class"] = L["By class"], ["none"] = L["Blizzard default"]},
+			validate = {["name"] = L["By name"], ["class"] = L["By class"], ["none"] = L["By group"]},
 		},
 
 		sort = {
