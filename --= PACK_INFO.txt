@@ -49,7 +49,7 @@ patch 0.85 - visual improvements
 - unitframe bar was reworked for better look
 - added grid like vertical hp bar mode
 - implemented round healing indicators for better look when using borders 
-- It's mandatory to delete sRaidFrames.lua and sRaidFrames.bak from WTF/../SavedVariables to avoid various errors
+- this release requires to delete sRaidFrames.lua and sRaidFrames.bak from WTF/../SavedVariables to avoid various errors
 
 >> ag_UnitFrames
 - this version of ag_UnitFrames is modified to be compatible with sRaidFrames 40 yard check

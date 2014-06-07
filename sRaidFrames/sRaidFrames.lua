@@ -77,6 +77,8 @@ sRaidFrames.UnitSortOrder = {}
 sRaidFrames.UnitFocusHPArray = {}
 sRaidFrames.UnitFocusArray = {}
 sRaidFrames.UnitRangeArray = {}
+sRaidFrames.indicator = {}
+sRaidFrames.debuff = {}
 
 sRaidFrames.ClassSpellArray = {Paladin = "Holy Light", Priest = "Flash Heal", Druid = "Healing Touch", Shaman = "Healing Wave"}
 
@@ -318,23 +320,10 @@ function sRaidFrames:Variables()
 	self.debuffColors["Curse"]    = { ["r"] = 1, ["g"] = 0, ["b"] = 0.75, ["a"] = 0.5, ["priority"] = 4 }
 	self.debuffColors["Magic"]    = { ["r"] = 1, ["g"] = 0, ["b"] = 0, ["a"] = 0.5, ["priority"] = 3 }
 	self.debuffColors["Disease"]  = { ["r"] = 1, ["g"] = 1, ["b"] = 0, ["a"] = 0.5, ["priority"] = 2 }
-	self.debuffColors["Poison"]   = { ["r"] = 0, ["g"] = 0.5, ["b"] = 0, ["a"] = 0.5, ["priority"] = 1 }
+	self.debuffColors["Poison"]   = { ["r"] = 0, ["g"] = 0.5, ["b"] = 0, ["a"] = 0.5, ["priority"] = 1 }	
+	self.debuffColors["Blue"]    = { ["r"] = 0, ["g"] = 0, ["b"] = 1, ["a"] = 1, ["priority"] = 4 }
+	self.debuffColors["Red"]    = { ["r"] = 1, ["g"] = 0, ["b"] = 0, ["a"] = 1, ["priority"] = 4 }
 
-
---[[
-	self.classColors = {}
-	self.classColors["PALADIN"]   = "|cFFF48CBA"
-	self.classColors["SHAMAN"]    = "|cFFF48CBA"
-	self.classColors["WARRIOR"]   = "|cFFC69B6D"
-	self.classColors["WARLOCK"]   = "|cFF9382C9"
-	self.classColors["PRIEST"]    = "|cFFFFFFFF"
-	self.classColors["DRUID"]     = "|cFFFF7C0A"
-	self.classColors["MAGE"]      = "|cFF68CCEF"
-	self.classColors["ROGUE"]     = "|cFFFFF468"
-	self.classColors["HUNTER"]    = "|cFFAAD372"
-	
---]]
-	
 	self.RAID_CLASS_COLORS = {
 	  ["HUNTER"] = { r = 0.67, g = 0.83, b = 0.45, colorStr = "|cffabd473" },
 	  ["WARLOCK"] = { r = 0.58, g = 0.51, b = 0.79, colorStr = "|cff9482c9" },
@@ -347,20 +336,6 @@ function sRaidFrames:Variables()
 	  ["WARRIOR"] = { r = 0.78, g = 0.61, b = 0.43, colorStr = "|cffc79c6e" },
 	};
 	
-	--[[
-	self.UnitClassSort = {}
-	self.UnitClassSort["WARLOCK"]   = 1
-	self.UnitClassSort["MAGE"]      = 2
-	self.UnitClassSort["WARRIOR"]   = 3
-	self.UnitClassSort["ROGUE"]     = 4
-	self.UnitClassSort["PRIEST"]    = 5
-	self.UnitClassSort["DRUID"]     = 6
-	self.UnitClassSort["HUNTER"]    = 7
-	self.UnitClassSort["PALADIN"]   = 8
-	self.UnitClassSort["SHAMAN"]    = 8
-	--]]
-	
-
 	self.cooldownSpells = {}
 	self.cooldownSpells["WARLOCK"] = BS["Soulstone Resurrection"]
 	self.cooldownSpells["DRUID"] = BS["Rebirth"]
@@ -759,8 +734,8 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 					elseif self.res[unit] == 1 and dead then status = "|cffff8c00"..L["Can Recover"].."|r"
 					elseif self.res[unit] == 2 and (dead or ghost) then status = "|cffff8c00"..L["Resurrected"].."|r"
 					elseif ghost then status = "|cffff0000"..L["Released"].."|r"
-					elseif dead then status = "|cffff0000"..L["Dead"].."|r"
-					end
+					elseif dead or UnitHealth(unit) <= 1 then status = "|cffff0000"..L["Dead"].."|r"
+					end				
 					
 					if status then
 						self.unavail[unit] = true
@@ -801,9 +776,8 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 						
 
 						if unit_aggro and red_bar then
-							--if not self.opt.dynamic_aggro_sort or self.opt.dynamic_aggro_sort and focus_unit then
-								f.hpbar:SetStatusBarColor(1,0,0)
-							--end	
+							f.hpbar:SetStatusBarColor(1,0,0)
+
 						elseif class_color then
 							local class, fileName = UnitClass(unit)
 							local color = self.RAID_CLASS_COLORS[fileName]
@@ -859,6 +833,9 @@ function sRaidFrames:UpdateBuffs(units)
 
 				if not self.opt.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
 					cAura = self.debuffColors[debuffType]
+					sRaidFrames.debuff[unit] = debuffType
+				else
+					sRaidFrames.debuff[unit] = nil
 				end
 
 				if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < 2 then
@@ -875,26 +852,17 @@ function sRaidFrames:UpdateBuffs(units)
 				end
 			end
 			
-			
-			self.debuffColors["Mix"]    = { ["r"] = 0.4, ["g"] = 0.2, ["b"] = 0.6, ["a"] = 1, ["priority"] = 4 }
-			self.debuffColors["Blue"]    = { ["r"] = 0, ["g"] = 0, ["b"] = 1, ["a"] = 1, ["priority"] = 4 }
-			self.debuffColors["Red"]    = { ["r"] = 1, ["g"] = 0, ["b"] = 0, ["a"] = 1, ["priority"] = 4 }
-			
-			--[[
-			if sRaidFrames.opt.style and UnitExists("target") and self:CheckFocusUnit(unit) and UnitHealth(unit) > 1 then
-				if self.opt.aura and UnitIsUnit("target", unit) then
-					cAura = self.debuffColors["Blue"]
-				elseif self.opt.aurax and Zorlen_isEnemy("target") and UnitExists("targettarget") and UnitIsUnit("targettarget", unit) then
+				if self.opt.aggro_aura and Banzai:GetUnitAggroByUnitId(unit) then
 					cAura = self.debuffColors["Red"]
-				end	
-			end	
-			--]]
-
-			if cAura then
-				f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
-			elseif not self.unavail[unit] then
-				f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
-			end
+					sRaidFrames.debuff[unit] = "Red"
+					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
+				elseif cAura then
+					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
+				else--if self.unavail[unit] then
+					
+					f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
+				end
+	
 
 			f.mpbar.text:SetText()
 			
@@ -1143,7 +1111,7 @@ function sRaidFrames:CreateUnitFrame(id)
 	f.hpbar.highlight:SetAlpha(0.3)
 	f.hpbar.highlight:SetTexture("Interface\\AddOns\\sRaidFrames\\textures\\MouseoverHighlight")
 	f.hpbar.highlight:SetBlendMode("ADD")
-	
+	f.hpbar.highlight:Hide()
 	
 	f.hpbar.indicator1 = f.hpbar:CreateTexture(nil, "OVERLAY")
 	f.hpbar.indicator1:SetAlpha(1)
@@ -1176,7 +1144,7 @@ function sRaidFrames:CreateUnitFrame(id)
 	f.id = id
 	f.unit = "raid" .. id
 
-	self:SetStyle(f)
+	self:SetStyle(f, "raid"..id)
 
 	f:Hide();
 
@@ -1231,7 +1199,7 @@ function sRaidFrames:SortGroupFrames(frame, id)
 	end
 end
 
-function sRaidFrames:SetBackdrop(f, aggro)
+function sRaidFrames:SetBackdrop(f, unit, aggro)
 	if self.opt.Border then
 		f:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 										tile = true,
@@ -1247,7 +1215,13 @@ function sRaidFrames:SetBackdrop(f, aggro)
 									})
 	end
 
-	f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
+	
+	if self.debuff[unit] then
+		local cAura = self.debuffColors[self.debuff[unit]]
+		f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
+	else
+		f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
+	end	
 	
 	if aggro and self.opt.aggro then
 		f:SetBackdropBorderColor(1, 0, 0, self.opt.BorderColor.a)
@@ -1256,7 +1230,7 @@ function sRaidFrames:SetBackdrop(f, aggro)
 	end	
 end
 
-function sRaidFrames:SetStyle(f, width, aggro)
+function sRaidFrames:SetStyle(f, unit, width, aggro)
 	
 	--f.hpbar.highlight
 	
@@ -1280,7 +1254,6 @@ function sRaidFrames:SetStyle(f, width, aggro)
 			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
-		self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -14)
 		self:SetWHP(f.hpbar.indicator2, 5, 5, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 	else
 		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
@@ -1289,20 +1262,17 @@ function sRaidFrames:SetStyle(f, width, aggro)
 			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
-		self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -11)
 		self:SetWHP(f.hpbar.indicator1, 9, 9, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
 	end
 	
-	
-	
-	
+	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -11)
 	self:SetWHP(f.hpbar.highlight, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35) -- highlight
 	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f, "CENTER", 0, -9)
 	
 	
 	f.mpbar.text:SetTextHeight(8)
 
-	self:SetBackdrop(f, aggro)
+	self:SetBackdrop(f, unit, aggro)
 	
 	if self.opt.vertical_hp then
 		f.hpbar:SetOrientation("VERTICAL")
@@ -1631,11 +1601,7 @@ end
 
 function sRaidFrames:ShowHealIndicator(unit)
 	if not unit or not self.opt.heal then return end
-	
-	if not self.indicator then
-		self.indicator = {}
-	end
-	
+		
 	if not self.indicator[unit] then
 		self.indicator[unit] = 0
 	end
@@ -1651,10 +1617,6 @@ end
 
 function sRaidFrames:HideHealIndicator(unit)
 	if not unit or not self.opt.heal then return end
-	
-	if not self.indicator then
-		self.indicator = {}
-	end
 	
 	if not self.indicator[unit] then
 		self.indicator[unit] = 0
@@ -1711,10 +1673,10 @@ function sRaidFrames:LoadStyle()
 	for unit in pairs(self.visible) do
 		local aggro = Banzai:GetUnitAggroByUnitId(unit)
 		if self:CheckFocusUnit(unit) then
-			self:SetStyle(self.frames[unit], self.opt.WidthFocus, aggro)
+			self:SetStyle(self.frames[unit], unit, self.opt.WidthFocus, aggro)
 			self.frames[unit]:SetScale(self.opt.ScaleFocus)
 		else
-			self:SetStyle(self.frames[unit], self.opt.Width, aggro)
+			self:SetStyle(self.frames[unit], unit, self.opt.Width, aggro)
 			self.frames[unit]:SetScale(self.opt.Scale)
 		end
 	end
@@ -1746,10 +1708,10 @@ function sRaidFrames:RefreshFocusWithRange()
 		for unit in pairs(self.visible) do
 			local aggro = Banzai:GetUnitAggroByUnitId(unit)
 			if self:CheckFocusUnit(unit) then
-				self:SetStyle(self.frames[unit], self.opt.WidthFocus, aggro)
+				self:SetStyle(self.frames[unit], unit, self.opt.WidthFocus, aggro)
 				self.frames[unit]:SetScale(self.opt.ScaleFocus)
 			else
-				self:SetStyle(self.frames[unit], self.opt.Width, aggro)
+				self:SetStyle(self.frames[unit], unit, self.opt.Width, aggro)
 				self.frames[unit]:SetScale(self.opt.Scale)
 			end
 		end

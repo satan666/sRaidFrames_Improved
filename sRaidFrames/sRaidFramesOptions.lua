@@ -52,6 +52,19 @@ sRaidFrames.options = {
 						
 					end,
 				},	
+				
+				red_aura = {
+					name = L["Red aura"],
+					type = "toggle",
+					desc = L["Enable/Disable name color change on aggro"],
+					get = function()
+						return sRaidFrames.opt.aggro_aura
+					end,
+					set = function(red)
+						sRaidFrames:S("aggro_aura", red)
+						
+					end,
+				},	
 			}
 	
 		},
@@ -186,9 +199,8 @@ sRaidFrames.options = {
 					end,
 					order = 5,
 				},
-
 				
-				
+			
 				
 			profiles = {
 			name = L["Load pure view profiles"],
@@ -489,6 +501,9 @@ sRaidFrames.options = {
 						set = function(set)
 							if set then
 								sRaidFrames.opt.dynamic_sort = set
+								if not sRaidFrames.opt.RangeCheck or not sRaidFrames.opt.ExtendedRangeCheck or not sRaidFrames.opt.ExtendedRangeCheckCombat then
+									sRaidFrames.opt.ExtendedRangeCheckCombat = set
+								end		
 							end
 							sRaidFrames:S("fill_range", set)
 							sRaidFrames:UpdateVisibility()
@@ -1396,7 +1411,7 @@ sRaidFrames.options = {
 				return sRaidFrames.opt.Border
 			end,
 			set = function(value)
-
+				sRaidFrames:ResetHealIndicators()
 				sRaidFrames:chatToggleBorder(value)
 				sRaidFrames:LoadStyle()
 			end
@@ -1534,6 +1549,7 @@ function sRaidFrames:ProfileFeed()
 	sRaidFrames.opt.BackgroundColor.b = 0.3
 	sRaidFrames.opt.BackgroundColor.a = 1
 	
+	sRaidFrames:S("unitname_color", true)
 	sRaidFrames:S("aggro", true)
 	sRaidFrames:S("red", true)
 	sRaidFrames:S("redbar", false)

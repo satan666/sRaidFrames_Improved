@@ -13,6 +13,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Red names on aggro"] = true,
 	["Enable/Disable name color change on aggro"] = true,
 	["Red status bar"] = true,
+	["Red aura"] = true,
 	
 	["_Pure view"] = true,
 	["Pure view"] = true,
