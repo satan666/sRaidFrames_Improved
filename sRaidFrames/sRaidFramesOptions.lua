@@ -501,7 +501,7 @@ sRaidFrames.options = {
 						set = function(set)
 							if set then
 								sRaidFrames.opt.dynamic_sort = set
-								if not sRaidFrames.opt.RangeCheck or not sRaidFrames.opt.ExtendedRangeCheck or not sRaidFrames.opt.ExtendedRangeCheckCombat then
+								if not sRaidFrames.opt.RangeCheck and not sRaidFrames.opt.ExtendedRangeCheck and not sRaidFrames.opt.ExtendedRangeCheckCombat then
 									sRaidFrames.opt.ExtendedRangeCheckCombat = set
 								end		
 							end

@@ -1419,7 +1419,9 @@ function sRaidFrames:Sort(force_sort)
 		end
 	end
 	
-	table.sort(focus_units1, function(a,b) return self:UnitModHP("raid".. a) < self:UnitModHP("raid"..b) end)
+	if self.opt.dynamic_sort then
+		table.sort(focus_units1, function(a,b) return self:UnitModHP("raid".. a) < self:UnitModHP("raid"..b) end)
+	end	
 	
 	local index = 40
 	for id in pairs(self.UnitSortOrder) do
@@ -1631,7 +1633,7 @@ function sRaidFrames:HideHealIndicator(unit)
 end
 
 function sRaidFrames:SetHealIndicator(unit)
-	if not unit or not UnitExists(unit) then
+	if not unit or not UnitExists(unit) or not self.frames or not self.frames[unit] then
 		return
 	end
 	
