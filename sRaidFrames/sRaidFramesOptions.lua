@@ -222,7 +222,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames.opt.profile44 = not value
-								sRaidFrames:S("Spacing", -3)
+								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("vertical_hp", not value)
 								
 							end
@@ -246,7 +246,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames.opt.profile44 = not value
-								sRaidFrames:S("Spacing", -5)
+								sRaidFrames:S("Spacing", 0)
 								sRaidFrames:S("vertical_hp", not value)
 								
 							end
@@ -271,7 +271,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile44 = not value
-								sRaidFrames:S("Spacing", -3)
+								sRaidFrames:S("Spacing", -4)
 								
 							end
 							sRaidFrames:S("profile33", value)
@@ -296,7 +296,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile33 = not value
-								sRaidFrames:S("Spacing", -5)
+								sRaidFrames:S("Spacing", 0)
 								
 							end
 							sRaidFrames:S("profile44", value)

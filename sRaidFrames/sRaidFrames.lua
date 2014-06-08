@@ -142,6 +142,7 @@ function sRaidFrames:OnInitialize()
 		hp_limit 			= 100,
 		units_limit 		= 10,
 		Growth_Focus 		= "down",
+		show_txt_buff		= true,
 	})
 
 	self:RegisterChatCommand({"/srf", "/sraidframes"}, self.options)
@@ -876,7 +877,7 @@ function sRaidFrames:UpdateBuffs(units)
 				end
 			end
 			
-				if self.opt.aggro_aura and Banzai:GetUnitAggroByUnitId(unit) then
+				if self.opt.aggro_aura and Banzai:GetUnitAggroByUnitId(unit) and UnitHealth(unit) >= 1 then
 					cAura = self.debuffColors["Red"]
 					sRaidFrames.debuff[unit] = "Red"
 					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
