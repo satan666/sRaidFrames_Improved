@@ -121,7 +121,7 @@ function sRaidFrames:OnInitialize()
 		Growth				= "down",
 		Spacing				= 0,
 		ShowGroupTitles		= true,
-		SubSort				= "name",
+		SubSort				= "class",
 		TooltipMethod		= "notincombat",
 		ClassFilter			= {["WARRIOR"] = true, ["PALADIN"] = true, ["SHAMAN"] = true, ["HUNTER"] = true, ["WARLOCK"] = true, ["MAGE"] = true, ["DRUID"] = true, ["ROGUE"] = true, ["PRIEST"] = true},
 		GroupFilter			= {true, true, true, true, true, true, true, true},

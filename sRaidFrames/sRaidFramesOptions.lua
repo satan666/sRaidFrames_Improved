@@ -754,6 +754,7 @@ sRaidFrames.options = {
 				end
 			end,
 			map = {[false] = L["Unlocked"], [true] = L["Locked"]},
+			order = 1,
 		},
 
 		srfhideparty = {
@@ -826,6 +827,7 @@ sRaidFrames.options = {
 				end
 			end,
 			disabled = function() return not sRaidFrames.opt.lock end,
+			order = 2,
 		},
 
 		subsort = {
@@ -840,6 +842,7 @@ sRaidFrames.options = {
 				sRaidFrames:Sort()
 			end,
 			validate = {["name"] = L["By name"], ["class"] = L["By class"], ["none"] = L["By group"]},
+			order = 4,
 		},
 
 
@@ -849,6 +852,7 @@ sRaidFrames.options = {
 			name = L["Group Method"],
 			type = "group",
 			desc = L["Group Method"],
+			order = 3,
 			args = {
 
 
@@ -861,14 +865,14 @@ sRaidFrames.options = {
 					return sRaidFrames.opt.SortBy
 				end,
 				set = "chatSortBy",
-				validate = {["group"] = L["By group"], ["class"] = L["By class"], ["fixed"] = L["Fixed group"]},
+				validate = {["group"] = L["By group"], ["class"] = L["By class"], ["fixed"] = L["Grid like"]},
 			},
 			
 			
 			per_column = {
 					name = L["Units per column"],
 					type = "range",
-					desc = L["Set max number of units in column - effect only if Fixed Group sort is enabled"],
+					desc = L["Set max number of units in column - effect only if Grid like group sort is enabled"],
 					min = 3,
 					max = 20,
 					step = 1,
@@ -885,7 +889,7 @@ sRaidFrames.options = {
 			dead_sort = {
 				name = L["Dead and offline units sub sort"],
 				type = "toggle",
-				desc = L["Dead or offline units are moved to the bottom of frame - effect only if Fixed Group sort is enabled"],
+				desc = L["Dead or offline units are moved to the bottom of frame - effect only if Grid like group sort is enabled"],
 				get = function()
 					return sRaidFrames.opt.dead_sort
 				end,
@@ -1053,6 +1057,7 @@ sRaidFrames.options = {
 			name = L["Layout"],
 			type = "group",
 			desc = L["Set the layout of the raid frames"],
+			order = 5,
 			args = {
 				reset = {
 					name = L["Reset layout"],
@@ -1081,6 +1086,7 @@ sRaidFrames.options = {
 			end,
 			set = "chatBackgroundColor",
 			hasAlpha = true,
+			order = 7,
 		},
 
 		bordercolor = {
@@ -1094,6 +1100,7 @@ sRaidFrames.options = {
 			set = "chatBorderColor",
 			hasAlpha = true,
 			disabled = function() return not sRaidFrames.opt.Border end,
+			order = 8
 		},
 
 		tooltip = {
@@ -1457,6 +1464,7 @@ sRaidFrames.options = {
 				sRaidFrames:UpdateVisibility()
 			end,
 			validate = {["up"] = L["Up"], ["down"] = L["Down"], ["left"] = L["Left"], ["right"] = L["Right"]},
+			order = 5,
 		},
 
 		border = {
@@ -1466,6 +1474,7 @@ sRaidFrames.options = {
 			get = function()
 				return sRaidFrames.opt.Border
 			end,
+			order = 9,
 			set = function(value)
 				sRaidFrames:ResetHealIndicators()
 				sRaidFrames:chatToggleBorder(value)
@@ -1487,6 +1496,7 @@ sRaidFrames.options = {
 				sRaidFrames:S("Spacing", value)
 				sRaidFrames:Sort()
 			end,
+			order = 6,
 		},
 	}
 }
