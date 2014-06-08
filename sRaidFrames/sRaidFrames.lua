@@ -542,7 +542,8 @@ function sRaidFrames:RangeCheck()
 		local counter = 1		
 		for unit in pairs(self.visible) do	
 		 
-			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and UnitIsConnected(unit) and not UnitIsDeadOrGhost(unit) and UnitHealth(unit) > 0
+			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and UnitIsConnected(unit) and not UnitIsGhost(unit)
+			local deadcheck = UnitIsDead(unit)
 			if unitcheck and UnitIsUnit("player", unit) then
 				--self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = " 11Y"
@@ -565,7 +566,7 @@ function sRaidFrames:RangeCheck()
 						end
 					end	
 				end
-			elseif unitcheck and self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) then
+			elseif unitcheck and self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) and not deadcheck then
 				local _tx, _ty = GetPlayerMapPosition(unit)
 				local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
 				if _tx > 0 and _ty > 0 and self:VerifyUnitRange(unit, dist) then
@@ -575,7 +576,7 @@ function sRaidFrames:RangeCheck()
 					self.UnitRangeArray[unit] = ""
 					--self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
 				end
-			elseif unitcheck and self.SpellCheck and (self.opt.ExtendedRangeCheck or self.opt.ExtendedRangeCheckCombat and UnitAffectingCombat("player")) then
+			elseif unitcheck and self.SpellCheck and (self.opt.ExtendedRangeCheck or self.opt.ExtendedRangeCheckCombat and UnitAffectingCombat("player")) and not deadcheck then
 				--self.ExtendedRangeScan[counter] = unit
 				self:ExtendedRangeArrayUtilize("add", unit)
 				counter = counter + 1
@@ -1347,14 +1348,14 @@ function sRaidFrames:MembersSortBy(id)
 		sort_by = subgroup..id
 	end	
 	
-	if self.opt.SortBy == "fixed" and self.opt.dead_sort then
+	if self.opt.SortBy == "fixed" and self.opt.dead_sort and not self.feign[unit] then
 		if not UnitIsConnected(unit) then
 			sort_by = "zzz"..sort_by
 		elseif UnitIsDead(unit) then
 			sort_by = "zzy"..sort_by
 		elseif UnitIsGhost(unit) then
 			sort_by = "zzx"..sort_by
-		elseif UnitHealth(unit) <= 1 and not self.feign[unit] then
+		elseif UnitHealth(unit) <= 1 then
 			sort_by = "zzw"..sort_by
 		end	
 	end

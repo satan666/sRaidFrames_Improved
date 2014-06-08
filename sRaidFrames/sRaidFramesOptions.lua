@@ -1597,16 +1597,11 @@ end
 function sRaidFrames:ProfileFeed()
 	
 	sRaidFrames:chatSortBy("fixed")
+	sRaidFrames.opt.SubSort = "class"
 	sRaidFrames.opt.fixed_count = 8
 	
 	sRaidFrames.opt.heal = true
-	sRaidFrames.opt.healthDisplayType = "none"
-	sRaidFrames.opt.TooltipMethod = "never"
-	sRaidFrames.opt.SubSort = "class"
-	sRaidFrames.opt.BuffType = "debuffs"
-
-	
-	sRaidFrames.opt.RangeAlpha = 0.2
+	sRaidFrames.opt.RangeAlpha = 0.25
 				
 	sRaidFrames.opt.PowerFilter[0] = false
 	sRaidFrames.opt.PowerFilter[1] = false
