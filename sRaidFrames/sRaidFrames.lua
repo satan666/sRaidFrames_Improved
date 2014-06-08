@@ -16,7 +16,6 @@ surface:Register("Grid", "Interface\\AddOns\\sRaidFrames\\textures\\Grid")
 surface:Register("Bumps", "Interface\\AddOns\\sRaidFrames\\textures\\Bumps")
 surface:Register("Button", "Interface\\AddOns\\sRaidFrames\\textures\\Button")
 surface:Register("Cloud", "Interface\\AddOns\\sRaidFrames\\textures\\Cloud")
-surface:Register("Dabs", "Interface\\AddOns\\sRaidFrames\\textures\\Dabs")
 surface:Register("DarkBottom", "Interface\\AddOns\\sRaidFrames\\textures\\DarkBottom")
 surface:Register("Diagonal", "Interface\\AddOns\\sRaidFrames\\textures\\Diagonal")
 surface:Register("Fifths", "Interface\\AddOns\\sRaidFrames\\textures\\Fifths")
@@ -35,7 +34,20 @@ surface:Register("Wood", "Interface\\AddOns\\sRaidFrames\\textures\\BEB-BarFill-
 surface:Register("Gradient", "Interface\\AddOns\\sRaidFrames\\textures\\gradient32x32")
 surface:Register("Aluminium", "Interface\\AddOns\\sRaidFrames\\textures\\Aluminium")
 surface:Register("Rupture", "Interface\\AddOns\\sRaidFrames\\textures\\Rupture")
-surface:Register("Dabs", "Interface\\AddOns\\sRaidFrames\\textures\\Dabs")
+
+surface:Register("VuhDo1", "Interface\\AddOns\\sRaidFrames\\textures\\bar8.tga")
+surface:Register("VuhDo3", "Interface\\AddOns\\sRaidFrames\\textures\\bar3.tga")
+
+
+surface:Register("VuhDo5", "Interface\\AddOns\\sRaidFrames\\textures\\bar17")
+surface:Register("VuhDo6", "Interface\\AddOns\\sRaidFrames\\textures\\bar15")
+surface:Register("VuhDo7", "Interface\\AddOns\\sRaidFrames\\textures\\highlight")
+surface:Register("VuhDo8", "Interface\\AddOns\\sRaidFrames\\textures\\debuffHighlight")
+
+surface:Register("TukuiBar", "Interface\\AddOns\\sRaidFrames\\textures\\tukuibar")
+surface:Register("LiteStepLite", "Interface\\AddOns\\sRaidFrames\\textures\\LiteStepLite")
+
+
 
 
 
@@ -93,16 +105,18 @@ function sRaidFrames:OnInitialize()
 
 	self:RegisterDefaults("profile", {
 		lock				= false,
-		SortBy				= "class",
+		SortBy				= "fixed",
 		healthDisplayType	= 'percent',
 		Invert = false,
 		Scale				= 0.8,
 		Width				= 82,
+		ScaleFocus 			= 1.3,
+		WidthFocus 			= 85,
 		Border				= true,
 		Texture				= "Otravi",
 		BuffType			= "debuffs",
 		ShowOnlyDispellable	= 1,
-		BackgroundColor		= {r = 0.47, g = 0.72, b = 1, a = 0.7},
+		BackgroundColor		= {r = 0.3, g = 0.3, b = 0.3, a = 0.7},
 		BorderColor			= {r = 1, g = 1, b = 1, a = 1},
 		Growth				= "down",
 		Spacing				= 0,
@@ -123,12 +137,11 @@ function sRaidFrames:OnInitialize()
 		srfhideparty		= true,
 		lock_focus			= false,
 		ShowGroupTitles_Focus = true,
-		fill_range = false,
-		hp_limit = 100,
-		units_limit = 10,
-		Growth_Focus = "down",
-		ScaleFocus = 1.3,
-		WidthFocus = 85,
+		dead_sort 			= true,
+		fill_range		    = false,
+		hp_limit 			= 100,
+		units_limit 		= 10,
+		Growth_Focus 		= "down",
 	})
 
 	self:RegisterChatCommand({"/srf", "/sraidframes"}, self.options)
@@ -1334,7 +1347,7 @@ function sRaidFrames:MembersSortBy(id)
 		sort_by = subgroup..id
 	end	
 	
-	if self.opt.SortBy == "fixed" then
+	if self.opt.SortBy == "fixed" and self.opt.dead_sort then
 		if not UnitIsConnected(unit) then
 			sort_by = "zzz"..sort_by
 		elseif UnitIsDead(unit) then

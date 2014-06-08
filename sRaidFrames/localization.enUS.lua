@@ -126,6 +126,10 @@ L:RegisterTranslations("enUS", function() return {
 	["Fixed group"] = true,
 	["Blizzard default"] = true,
 	["Group by"] = true,
+	["Group Method"] = true,
+	["Dead and offline units sub sort"] = true,
+	["Dead or offline units are moved to the bottom of frame - effect only if Fixed Group sort is enabled"] = true,
+	
 	["Select how you wish to show the groups"] = true,
 	["By group"] = true,
 	["By class"] = true,

@@ -197,22 +197,7 @@ sRaidFrames.options = {
 				},
 				
 				
-				hp_limit = {
-					name = L["Units per column"],
-					type = "range",
-					desc = L["Set max number of units in column - effect only if Fixed Group sort is enabled"],
-					min = 3,
-					max = 20,
-					step = 1,
-					get = function()
-						return sRaidFrames.opt.fixed_count
-					end,
-					set = function(set)
-						sRaidFrames:S("fixed_count", set)
-						sRaidFrames:LoadStyle()
-					end,
-					order = 6,
-				},
+				
 				
 			
 				
@@ -857,16 +842,73 @@ sRaidFrames.options = {
 			validate = {["name"] = L["By name"], ["class"] = L["By class"], ["none"] = L["By group"]},
 		},
 
-		sort = {
-			name = L["Group by"],
-			type = "text",
-			desc = L["Select how you wish to show the groups"],
-			get = function()
-				return sRaidFrames.opt.SortBy
-			end,
-			set = "chatSortBy",
-			validate = {["group"] = L["By group"], ["class"] = L["By class"], ["fixed"] = L["Fixed group"]},
+
+
+
+		sorting_method = {
+			name = L["Group Method"],
+			type = "group",
+			desc = L["Group Method"],
+			args = {
+
+
+			sort = {
+				name = L["Group by"],
+				type = "text",
+				desc = L["Select how you wish to show the groups"],
+				order = 1,
+				get = function()
+					return sRaidFrames.opt.SortBy
+				end,
+				set = "chatSortBy",
+				validate = {["group"] = L["By group"], ["class"] = L["By class"], ["fixed"] = L["Fixed group"]},
+			},
+			
+			
+			per_column = {
+					name = L["Units per column"],
+					type = "range",
+					desc = L["Set max number of units in column - effect only if Fixed Group sort is enabled"],
+					min = 3,
+					max = 20,
+					step = 1,
+					get = function()
+						return sRaidFrames.opt.fixed_count
+					end,
+					set = function(set)
+						sRaidFrames:S("fixed_count", set)
+						sRaidFrames:LoadStyle()
+					end,
+					order = 2,
+				},
+				
+			dead_sort = {
+				name = L["Dead and offline units sub sort"],
+				type = "toggle",
+				desc = L["Dead or offline units are moved to the bottom of frame - effect only if Fixed Group sort is enabled"],
+				get = function()
+					return sRaidFrames.opt.dead_sort
+				end,
+				set = function(value)
+					sRaidFrames:S("dead_sort", value)
+				end,
+				order = 3,
+			},	
+				
+			
+		}
 		},
+
+
+
+
+
+
+
+
+
+
+
 
 		bufftype = {
 			name = L["Buff/Debuff visibility"],
@@ -1506,6 +1548,7 @@ function sRaidFrames:chatBackgroundColor(r, g, b, a)
 
 	-- Need to do this, since someone might be debuffed, and so will need a diffirent background color
 	self:UpdateBuffs(self.visible)
+	self:LoadStyle()
 end
 
 function sRaidFrames:chatBorderColor(r, g, b, a)
