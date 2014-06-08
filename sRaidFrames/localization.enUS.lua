@@ -59,8 +59,9 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["Focus aura"] = true,
 	
-	["_Size"] = true,
+	["Frame size"] = true,
 	["Size"] = true,
+	["Size of the raid frames"] = true,
 	["Scale"] = true,
 	["Width"] = true,
 	
@@ -126,7 +127,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Grid like"] = true,
 	["Blizzard default"] = true,
 	["Group by"] = true,
-	["Group Method"] = true,
+	["Group method"] = true,
 	["Dead and offline units sub sort"] = true,
 	["Dead or offline units are moved to the bottom of frame - effect only if Grid like group sort is enabled"] = true,
 	
@@ -200,7 +201,7 @@ L:RegisterTranslations("enUS", function() return {
 	["The interval between which range checks are performed"] = true,
 
 	["Show Group/Class"] = true,
-	["Toggle the display of certain Groups/Classes"] = true,
+	["Toggle the display of certain Groups/Classes - Active if frames are locked"] = true,
 	["Classes"] = true,
 	["Warriors"] = true,
 	["Toggle the display of Warriors"] = true,
@@ -248,7 +249,7 @@ L:RegisterTranslations("enUS", function() return {
 
 	["Border"] = true,
 	["Toggle the display of borders around the raid frames"] = true,
-	["Frame Spacing"] = true,
+	["Frame spacing"] = true,
 	["Set the spacing between each of the raid frames"] = true,
 
 	["Offline"] = true,

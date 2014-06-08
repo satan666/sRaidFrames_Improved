@@ -849,9 +849,9 @@ sRaidFrames.options = {
 
 
 		sorting_method = {
-			name = L["Group Method"],
+			name = L["Group method"],
 			type = "group",
-			desc = L["Group Method"],
+			desc = L["Select how you wish to show the groups"],
 			order = 3,
 			args = {
 
@@ -1014,9 +1014,10 @@ sRaidFrames.options = {
 
 		
 		size = {
-				name = L["_Size"],
+				name = L["Frame size"],
 				type = "group",
-				desc = L["Size"],
+				desc = L["Size of the raid frames"],
+				order = 5, 
 				args = {
 		
 			width = {
@@ -1210,7 +1211,7 @@ sRaidFrames.options = {
 		filter = {
 			name = L["Show Group/Class"],
 			type = "group",
-			desc = L["Toggle the display of certain Groups/Classes"],
+			desc = L["Toggle the display of certain Groups/Classes - Active if frames are locked"],
 			args = {
 				classes = {
 					name = L["Classes"],
@@ -1483,7 +1484,7 @@ sRaidFrames.options = {
 		},
 
 		spacing = {
-			name = L["Frame Spacing"],
+			name = L["Frame spacing"],
 			type = "range",
 			desc = L["Set the spacing between each of the raid frames"],
 			min = -10,

@@ -859,8 +859,6 @@ function sRaidFrames:UpdateBuffs(units)
 				if not self.opt.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
 					cAura = self.debuffColors[debuffType]
 					sRaidFrames.debuff[unit] = debuffType
-				else
-					sRaidFrames.debuff[unit] = nil
 				end
 
 				if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < 2 then
@@ -878,13 +876,14 @@ function sRaidFrames:UpdateBuffs(units)
 			end
 			
 				if self.opt.aggro_aura and Banzai:GetUnitAggroByUnitId(unit) and UnitHealth(unit) >= 1 then
-					cAura = self.debuffColors["Red"]
 					sRaidFrames.debuff[unit] = "Red"
+					cAura = self.debuffColors["Red"]
 					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
 				elseif cAura then
-					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
-				else--if self.unavail[unit] then
 					
+					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
+				else
+					sRaidFrames.debuff[unit] = nil
 					f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
 				end
 	
