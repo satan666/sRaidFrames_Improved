@@ -30,23 +30,22 @@ surface:Register("Charcoal", "Interface\\AddOns\\sRaidFrames\\textures\\Charcoal
 surface:Register("Glaze", "Interface\\AddOns\\sRaidFrames\\textures\\glaze")
 surface:Register("Metal", "Interface\\AddOns\\sRaidFrames\\textures\\BEB-BarFill-Metal")
 surface:Register("Wood", "Interface\\AddOns\\sRaidFrames\\textures\\BEB-BarFill-Wood")
-
 surface:Register("Gradient", "Interface\\AddOns\\sRaidFrames\\textures\\gradient32x32")
 surface:Register("Aluminium", "Interface\\AddOns\\sRaidFrames\\textures\\Aluminium")
 surface:Register("Rupture", "Interface\\AddOns\\sRaidFrames\\textures\\Rupture")
-
-surface:Register("VuhDo1", "Interface\\AddOns\\sRaidFrames\\textures\\bar8.tga")
-surface:Register("VuhDo3", "Interface\\AddOns\\sRaidFrames\\textures\\bar3.tga")
-
-
-surface:Register("VuhDo5", "Interface\\AddOns\\sRaidFrames\\textures\\bar17")
-surface:Register("VuhDo6", "Interface\\AddOns\\sRaidFrames\\textures\\bar15")
-surface:Register("VuhDo7", "Interface\\AddOns\\sRaidFrames\\textures\\highlight")
-surface:Register("VuhDo8", "Interface\\AddOns\\sRaidFrames\\textures\\debuffHighlight")
-
+surface:Register("Highlight", "Interface\\AddOns\\sRaidFrames\\textures\\debuffHighlight")
 surface:Register("TukuiBar", "Interface\\AddOns\\sRaidFrames\\textures\\tukuibar")
 surface:Register("LiteStepLite", "Interface\\AddOns\\sRaidFrames\\textures\\LiteStepLite")
 
+surface:Register("Blur", "Interface\\AddOns\\sRaidFrames\\textures\\bar1.tga")
+surface:Register("VuhDo", "Interface\\AddOns\\sRaidFrames\\textures\\bar3.tga")
+
+surface:Register("Club", "Interface\\AddOns\\sRaidFrames\\textures\\bar5.tga")
+surface:Register("Force", "Interface\\AddOns\\sRaidFrames\\textures\\bar8.tga")
+surface:Register("CoffeShop", "Interface\\AddOns\\sRaidFrames\\textures\\bar13.tga")
+surface:Register("Toxic", "Interface\\AddOns\\sRaidFrames\\textures\\bar14.tga")
+surface:Register("HiContrast", "Interface\\AddOns\\sRaidFrames\\textures\\bar15.tga")
+surface:Register("Flat", "Interface\\AddOns\\sRaidFrames\\textures\\bar17.tga")
 
 
 

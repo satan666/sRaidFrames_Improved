@@ -1010,6 +1010,7 @@ sRaidFrames.options = {
 			end,
 			set = "chatTexture",
 			validate = surface:List(),
+			order = 6,
 		},
 
 		
