@@ -39,7 +39,6 @@ surface:Register("LiteStepLite", "Interface\\AddOns\\sRaidFrames\\textures\\Lite
 
 surface:Register("Blur", "Interface\\AddOns\\sRaidFrames\\textures\\bar1.tga")
 surface:Register("VuhDo", "Interface\\AddOns\\sRaidFrames\\textures\\bar3.tga")
-
 surface:Register("Club", "Interface\\AddOns\\sRaidFrames\\textures\\bar5.tga")
 surface:Register("Force", "Interface\\AddOns\\sRaidFrames\\textures\\bar8.tga")
 surface:Register("CoffeShop", "Interface\\AddOns\\sRaidFrames\\textures\\bar13.tga")
@@ -245,6 +244,7 @@ function sRaidFrames:JoinedRaid()
 		
 	self:RegisterBucketEvent("PLAYER_REGEN_ENABLED", 2, "ResetHealIndicators")
 	self:RegisterBucketEvent("PLAYER_REGEN_DISABLED", 2, "ResetHealIndicators")
+	self:RegisterBucketEvent("PLAYER_DEAD", 2, "ResetHealIndicators")
 
 	--self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterBucketEvent("PLAYER_TARGET_CHANGED", 0.01)
@@ -722,14 +722,10 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				local unit_aggro = Banzai:GetUnitAggroByUnitId(unit)
 				
 				if unit_aggro and red_nickname then
-					--if not self.opt.dynamic_aggro_sort or self.opt.dynamic_aggro_sort and focus_unit then
-						f.title:SetText("|cffff0000"..unit_name..range.."|r")
-					--end
+					f.title:SetText("|cffff0000"..unit_name..range.."|r")
 				elseif not self.opt.unitname_color then
 					f.title:SetText(unit_name..range.."|r")
 				elseif class then
-					--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:UpdateUnit "..unit.." - "..GetUnitName(unit))
-					--f.title:SetText(self.classColors[class]..unit_name..range.."|r")
 					f.title:SetText(self.RAID_CLASS_COLORS[class].colorStr..unit_name..range.."|r")
 				else
 					f.title:SetText(unit_name or L["Unknown"])
@@ -1825,7 +1821,6 @@ function sRaidFrames:CheckRangeFocus(unit, mode)
 		table.sort(self.UnitRangeFocus, function(a,b) return self:CheckRangeHpCalc(a) < self:CheckRangeHpCalc(b) end)
 		return
 	elseif mode == "reset" then
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:CheckRangeFocus - Reset")
 		Compost:Reclaim(self.UnitRangeFocus)
 		self.UnitRangeFocus = Compost and Compost:Acquire() or {}
 		return
@@ -1837,23 +1832,17 @@ function sRaidFrames:CheckRangeFocus(unit, mode)
 
 	if mode == "add" then
 		if check1 and check2 and not self:CheckFocusUnit(unit) then
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:CheckRangeFocus - Add - "..UnitName(unit))
 			table.insert(self.UnitRangeFocus, unit)
 		end
 		
 	elseif mode == "check" then
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:CheckRangeFocus - Check")
 		if check1 and check2 then
-			--return true
-
 			local units_limit = self.opt.units_limit or 5
 			for blockindex,blockmatch in pairs(self.UnitRangeFocus) do
-				--DEFAULT_CHAT_FRAME:AddMessage(blockmatch.." - "..blockindex)
 				if blockmatch == unit and blockindex <= units_limit then
 					return true
 				end
 			end
-
 		end
 		return nil
 	end	
