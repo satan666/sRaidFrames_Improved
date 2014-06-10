@@ -45,6 +45,17 @@ surface:Register("CoffeShop", "Interface\\AddOns\\sRaidFrames\\textures\\bar13.t
 surface:Register("Toxic", "Interface\\AddOns\\sRaidFrames\\textures\\bar14.tga")
 surface:Register("HiContrast", "Interface\\AddOns\\sRaidFrames\\textures\\bar15.tga")
 surface:Register("Flat", "Interface\\AddOns\\sRaidFrames\\textures\\bar17.tga")
+surface:Register("Tube", "Interface\\AddOns\\sRaidFrames\\textures\\Tube.tga")
+surface:Register("Stoned", "Interface\\AddOns\\sRaidFrames\\textures\\metal.tga")
+surface:Register("Minimalist", "Interface\\AddOns\\sRaidFrames\\textures\\Minimalist.tga")
+surface:Register("GlowTex", "Interface\\AddOns\\sRaidFrames\\textures\\glowTex.tga")
+surface:Register("Ray", "Interface\\AddOns\\sRaidFrames\\textures\\highlightTex.tga")
+surface:Register("Neal", "Interface\\AddOns\\sRaidFrames\\textures\\Neal.blp")
+surface:Register("Smelly", "Interface\\AddOns\\sRaidFrames\\textures\\Smelly.tga")
+surface:Register("Ruben", "Interface\\AddOns\\sRaidFrames\\textures\\Ruben.tga")
+surface:Register("RenaitreMinion", "Interface\\AddOns\\sRaidFrames\\textures\\RenaitreMinion.tga")
+surface:Register("oUF_LUI", "Interface\\AddOns\\sRaidFrames\\textures\\oUF_LUI.tga")
+surface:Register("Progressbar", "Interface\\AddOns\\sRaidFrames\\textures\\progressbar.tga")
 
 
 

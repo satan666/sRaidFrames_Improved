@@ -57,8 +57,12 @@ patch 0.85 - visual improvements
 >> Zorlen
 -sRaidFrames mandatory dependancy library
 
->> ClassicMouseover
+>> Classic Mouseover
 - mouseover cast compatible with sRaidFrames
+
+>> Classic Snowfall
+- must have this addon accelerates key bindings so that they are activated by key press rather than key release.
+
 - use example /cmast Flash of Light
 
 >> Clique
