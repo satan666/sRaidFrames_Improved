@@ -22,9 +22,8 @@ surface:Register("Fifths", "Interface\\AddOns\\sRaidFrames\\textures\\Fifths")
 surface:Register("Fourths", "Interface\\AddOns\\sRaidFrames\\textures\\Fourths")
 surface:Register("Gloss", "Interface\\AddOns\\sRaidFrames\\textures\\Gloss")
 surface:Register("Hatched", "Interface\\AddOns\\sRaidFrames\\textures\\Hatched")
-surface:Register("Rain", "Interface\\AddOns\\sRaidFrames\\textures\\Rain")
+surface:Register("Paint", "Interface\\AddOns\\sRaidFrames\\textures\\Paint")
 surface:Register("Skewed", "Interface\\AddOns\\sRaidFrames\\textures\\Skewed")
-surface:Register("Smudge", "Interface\\AddOns\\sRaidFrames\\textures\\Smudge")
 surface:Register("Water", "Interface\\AddOns\\sRaidFrames\\textures\\Water")
 surface:Register("Charcoal", "Interface\\AddOns\\sRaidFrames\\textures\\Charcoal")
 surface:Register("Glaze", "Interface\\AddOns\\sRaidFrames\\textures\\glaze")
@@ -36,7 +35,6 @@ surface:Register("Rupture", "Interface\\AddOns\\sRaidFrames\\textures\\Rupture")
 surface:Register("Highlight", "Interface\\AddOns\\sRaidFrames\\textures\\debuffHighlight")
 surface:Register("TukuiBar", "Interface\\AddOns\\sRaidFrames\\textures\\tukuibar")
 surface:Register("LiteStepLite", "Interface\\AddOns\\sRaidFrames\\textures\\LiteStepLite")
-
 surface:Register("Blur", "Interface\\AddOns\\sRaidFrames\\textures\\bar1.tga")
 surface:Register("VuhDo", "Interface\\AddOns\\sRaidFrames\\textures\\bar3.tga")
 surface:Register("Club", "Interface\\AddOns\\sRaidFrames\\textures\\bar5.tga")
@@ -48,17 +46,16 @@ surface:Register("Flat", "Interface\\AddOns\\sRaidFrames\\textures\\bar17.tga")
 surface:Register("Tube", "Interface\\AddOns\\sRaidFrames\\textures\\Tube.tga")
 surface:Register("Stoned", "Interface\\AddOns\\sRaidFrames\\textures\\metal.tga")
 surface:Register("Minimalist", "Interface\\AddOns\\sRaidFrames\\textures\\Minimalist.tga")
-surface:Register("GlowTex", "Interface\\AddOns\\sRaidFrames\\textures\\glowTex.tga")
+surface:Register("Glow", "Interface\\AddOns\\sRaidFrames\\textures\\glowTex.tga")
 surface:Register("Ray", "Interface\\AddOns\\sRaidFrames\\textures\\highlightTex.tga")
 surface:Register("Neal", "Interface\\AddOns\\sRaidFrames\\textures\\Neal.blp")
 surface:Register("Smelly", "Interface\\AddOns\\sRaidFrames\\textures\\Smelly.tga")
 surface:Register("Ruben", "Interface\\AddOns\\sRaidFrames\\textures\\Ruben.tga")
 surface:Register("RenaitreMinion", "Interface\\AddOns\\sRaidFrames\\textures\\RenaitreMinion.tga")
-surface:Register("oUF_LUI", "Interface\\AddOns\\sRaidFrames\\textures\\oUF_LUI.tga")
 surface:Register("Progressbar", "Interface\\AddOns\\sRaidFrames\\textures\\progressbar.tga")
-
-
-
+surface:Register("Orient", "Interface\\AddOns\\sRaidFrames\\textures\\Orient.tga")
+surface:Register("Ghost", "Interface\\AddOns\\sRaidFrames\\textures\\Ghost.tga")
+surface:Register("Lap", "Interface\\AddOns\\sRaidFrames\\textures\\Lap.tga")
 
 local math_mod = math.fmod or math.mod 
 
@@ -92,14 +89,6 @@ sRaidFrames.JoiningWorld = 0
 sRaidFrames.NextScan = 0
 sRaidFrames.MapScale = 0
 
-
---sRaidFrames.UnitAggro = {}
-sRaidFrames.UnitSortOrder = {}
-sRaidFrames.UnitFocusHPArray = {}
-sRaidFrames.UnitFocusArray = {}
-sRaidFrames.UnitRangeArray = {}
-sRaidFrames.indicator = {}
-sRaidFrames.debuff = {}
 
 sRaidFrames.ClassSpellArray = {Paladin = "Holy Light", Priest = "Flash Heal", Druid = "Healing Touch", Shaman = "Healing Wave"}
 
@@ -152,6 +141,7 @@ function sRaidFrames:OnInitialize()
 		units_limit 		= 10,
 		Growth_Focus 		= "down",
 		show_txt_buff		= true,
+		targeting 			= true,
 	})
 
 	self:RegisterChatCommand({"/srf", "/sraidframes"}, self.options)
@@ -340,6 +330,14 @@ function sRaidFrames:Variables()
 	self.enabled = false
 	self.frames, self.visible, self.groupframes = {}, {}, {}
 	self.feign, self.unavail, self.res = {}, {}, {}
+	
+	self.UnitSortOrder = {}
+	self.UnitFocusHPArray = {}
+	self.UnitFocusArray = {}
+	self.UnitRangeArray = {}
+	self.indicator = {}
+	self.debuff = {}
+	self.targeting = {}
 
 	self.debuffColors = {}
 	self.debuffColors["Curse"]    = { ["r"] = 1, ["g"] = 0, ["b"] = 0.75, ["a"] = 0.5, ["priority"] = 4 }
@@ -373,7 +371,6 @@ function sRaidFrames:Variables()
 end
 
 function sRaidFrames:UpdateRoster()
-	
 	local num = GetNumRaidMembers()
 
 	if num == 0 then
@@ -480,7 +477,7 @@ function sRaidFrames:IsSpellInRangeAndActionBar(SpellName)
 				return false
 			end
 		else
-			if GetTime() - self.JoiningWorld > 5 then
+			if self.JoiningWorld > 0 and (GetTime() - self.JoiningWorld > 5) then
 				UIErrorsFrame:AddMessage("|cff00eeee sRaidFrames: |cff00FF00"..SpellName.." - not on Actionbar")
 			end	
 			return false
@@ -679,9 +676,10 @@ function sRaidFrames:VerifyUnitRange(unit, dist)
 end
 
 function sRaidFrames:ZoneCheck()
-	sRaidFrames.MapScale = 0
-	sRaidFrames.MapEnable = false
+	self.MapScale = 0
+	self.MapEnable = false
 	SetMapToCurrentZone()
+	self:ResetHealIndicators()
 	self:Debug("RC_RST")
 end
 
@@ -697,8 +695,6 @@ function sRaidFrames:UpdateRangeFrequency(value)
 end
 
 function sRaidFrames:UpdateUnit(units, force_focus)
-	local red_nickname = self.opt.red
-	local red_bar = self.opt.redbar
 	local class_color = self.opt.statusbar_color
 	for unit in pairs(units) do
 		local focus_unit = self:CheckFocusUnit(unit)
@@ -732,7 +728,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				
 				local unit_aggro = Banzai:GetUnitAggroByUnitId(unit)
 				
-				if unit_aggro and red_nickname then
+				if unit_aggro and self.opt.red then
 					f.title:SetText("|cffff0000"..unit_name..range.."|r")
 				elseif not self.opt.unitname_color then
 					f.title:SetText(unit_name..range.."|r")
@@ -745,6 +741,12 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				self.feign[unit] = nil
 				
 				-- Silly hunters, why do you have to be so annoying
+				if UnitExists(unit.."target") and UnitIsUnit(unit.."target", "player") and not UnitIsUnit(unit, "player") then
+					self.targeting[unit] = true
+				else
+					self.targeting[unit] = nil
+				end
+				
 				if class == "HUNTER" then
 					if UnitIsDead(unit) then
 						for i=1,32 do
@@ -776,6 +778,9 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 						f.mpbar.text:SetText()
 						f.mpbar:SetValue(0)
 						--f:SetBackdropColor(0.3, 0.3, 0.3, 1)
+					
+						self:HideHealIndicator(unit, true)
+						
 					else
 						
 						--self:CreateHealIndicator(unit)
@@ -807,9 +812,12 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 						f.hpbar:SetValue(hpvalue)			
 						
 
-						if unit_aggro and red_bar then
+						if unit_aggro and self.opt.redbar then
 							f.hpbar:SetStatusBarColor(1,0,0)
-
+							
+						elseif self.opt.targeting and not UnitAffectingCombat("player") and self.targeting[unit] then
+							f.hpbar:SetStatusBarColor(0,0,0)
+						
 						elseif class_color then
 							local class, fileName = UnitClass(unit)
 							local color = self.RAID_CLASS_COLORS[fileName]
@@ -897,7 +905,10 @@ function sRaidFrames:UpdateBuffs(units)
 
 			f.mpbar.text:SetText()
 			
-			if not self.opt.show_txt_buff then
+			if self.opt.targeting and not UnitAffectingCombat("player") and self.targeting[unit] then
+				f.mpbar.text:SetText("|cffffffff Targeting You |r")
+			
+			elseif not self.opt.show_txt_buff then
 				for i=1,32 do
 					local texture = UnitBuff(unit, i)
 					if not texture then break end
@@ -1649,7 +1660,7 @@ function sRaidFrames:ShowHealIndicator(unit)
 	self:SetHealIndicator(unit);
 end
 
-function sRaidFrames:HideHealIndicator(unit)
+function sRaidFrames:HideHealIndicator(unit, force)
 	if not unit or not self.opt.heal then return end
 	
 	if not self.indicator[unit] then
@@ -1657,7 +1668,11 @@ function sRaidFrames:HideHealIndicator(unit)
 	end
 	
 	if self.indicator[unit] and self.indicator[unit] > 0 then
-		self.indicator[unit] = self.indicator[unit] - 1
+		if force then
+			self.indicator[unit] = 0
+		else
+			self.indicator[unit] = self.indicator[unit] - 1
+		end	
 	end
 	
 	self:SetHealIndicator(unit);

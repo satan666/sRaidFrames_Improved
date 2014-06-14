@@ -92,46 +92,45 @@ sRaidFrames.options = {
 		type = "group",
 		desc = L["Pure view"],
 		args = {
-			
-				vertical_orientation = {
-					name = L["Vertical orientation"],
+
+				black_status_bar = {
+					name = L["Status bar - black color"],
 					type = "toggle",
-					desc = L["Vertical orientation"],
+					desc = L["Black colored status bar when friendly unit is targeting you and out of combat"],
 					get = function()
-						return sRaidFrames.opt.vertical_hp
+						return sRaidFrames.opt.targeting
 					end,
-					set = function(val)
-						sRaidFrames:S("vertical_hp", val)
-						sRaidFrames:LoadStyle()
+					set = function(targeting)
+						sRaidFrames:S("targeting", targeting)
 					end,
-					order = 1,
+					order = 2,
 				},
-					
+			
 			
 				status_bar = {
-					name = L["Status bar class color"],
+					name = L["Status bar - class color"],
 					type = "toggle",
-					desc = L["Status bar class color"],
+					desc = L["Class colored status bar"],
 					get = function()
 						return sRaidFrames.opt.statusbar_color
 					end,
 					set = function(statusbar_color)
 						sRaidFrames:S("statusbar_color", statusbar_color)
 					end,
-					order = 4,
+					order = 1,
 				},
 						
 				unit_name = {
-					name = L["Unit name class color"],
+					name = L["Unit name - class color"],
 					type = "toggle",
-					desc = L["Unit name class color"],
+					desc = L["Class colored unit name"],
 					get = function()
 						return sRaidFrames.opt.unitname_color
 					end,
 					set = function(unitname_color)
 						sRaidFrames:S("unitname_color", unitname_color)
 					end,
-					order = 4,
+					order = 3,
 				},
 
 
@@ -164,13 +163,13 @@ sRaidFrames.options = {
 						sRaidFrames:LoadStyle()
 						
 					end,
-					order = 4,
+					order = 5,
 				},
 				
 				short_names = {
 					name = L["Short unit names"],
 					type = "toggle",
-					desc = L["Short unit names"],
+					desc = L["Reduce unit name to three letters"],
 					get = function()
 						return sRaidFrames.opt.unit_name_lenght
 					end,
@@ -180,23 +179,35 @@ sRaidFrames.options = {
 						sRaidFrames:LoadStyle()
 						
 					end,
-					order = 5,
+					order = 6,
 				},
 				
 				group_number = {
 					name = L["Show group number"],
 					type = "toggle",
-					desc = L["Show group number"],
+					desc = L["Add group number to unit name string"],
 					get = function()
 						return sRaidFrames.opt.grp_name
 					end,
 					set = function(grp_name)
 						sRaidFrames:S("grp_name", grp_name)						
 					end,
-					order = 6,
+					order = 7,
 				},
 				
-				
+				vertical_orientation = {
+					name = L["Vertical orientation"],
+					type = "toggle",
+					desc = L["Vertical orientation"],
+					get = function()
+						return sRaidFrames.opt.vertical_hp
+					end,
+					set = function(val)
+						sRaidFrames:S("vertical_hp", val)
+						sRaidFrames:LoadStyle()
+					end,
+					order = 8,
+				},
 				
 				
 			
@@ -849,7 +860,7 @@ sRaidFrames.options = {
 
 
 		sorting_method = {
-			name = L["Group method"],
+			name = L["Group by"],
 			type = "group",
 			desc = L["Select how you wish to show the groups"],
 			order = 3,
@@ -1018,7 +1029,7 @@ sRaidFrames.options = {
 				name = L["Frame size"],
 				type = "group",
 				desc = L["Size of the raid frames"],
-				order = 5, 
+				order = 6, 
 				args = {
 		
 			width = {

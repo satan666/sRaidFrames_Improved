@@ -18,8 +18,13 @@ L:RegisterTranslations("enUS", function() return {
 	["_Pure view"] = true,
 	["Pure view"] = true,
 
-	["Status bar class color"] = true,
-	["Unit name class color"] = true,
+	["Status bar - class color"] = true,
+	["Class colored status bar"] = true,
+	["Unit name - class color"] = true,
+	["Class colored unit name"] = true,
+	["Status bar - black color"] = true,
+	["Black colored status bar when friendly unit is targeting you and out of combat"] = true,
+	
 	["Vertical orientation"] = true,
 	["Full size statusbar"] = true,
 	["_Healing indicators"] = true,
@@ -47,7 +52,9 @@ L:RegisterTranslations("enUS", function() return {
 	["Disable colored debuff aura"] = true,
 	["Disable bottom buff name"] = true,
 	["Short unit names"] = true,
+	["Reduce unit name to three letters"] = true,
 	["Show group number"] = true,
+	["Add group number to unit name string"] = true,
 	
 	["_Focus frames"] = true,
 	["Sort focus"] = true,
@@ -127,7 +134,6 @@ L:RegisterTranslations("enUS", function() return {
 	["Grid like"] = true,
 	["Blizzard default"] = true,
 	["Group by"] = true,
-	["Group method"] = true,
 	["Dead and offline units sub sort"] = true,
 	["Dead or offline units are moved to the bottom of frame - effect only if Grid like group sort is enabled"] = true,
 	
