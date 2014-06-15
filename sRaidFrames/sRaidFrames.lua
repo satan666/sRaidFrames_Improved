@@ -855,131 +855,132 @@ end
 
 function sRaidFrames:UpdateBuffs(units)
 	for unit in pairs(units) do
-		local f = self.frames[unit]
-		if self.visible[unit] and UnitExists(unit) and UnitIsVisible(unit) then
-			local cAura = nil
+		if self.visible[unit] then
 			local f = self.frames[unit]
+			if UnitExists(unit) and UnitIsVisible(unit) then
+				local cAura = nil
+				local f = self.frames[unit]
 
-			for i = 1, 2 do
-				f["aura".. i]:Hide()
-			end
-
-			for i = 1, 4 do
-				f["buff".. i]:Hide()
-			end
-
-			local debuffSlots = 0
-			for i=1,16 do
-				local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, self.opt.ShowOnlyDispellable)
-				if not debuffTexture then break end
-
-				if not self.opt.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
-					cAura = self.debuffColors[debuffType]
-					sRaidFrames.debuff[unit] = debuffType
+				for i = 1, 2 do
+					f["aura".. i]:Hide()
 				end
 
-				if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < 2 then
-					debuffSlots = debuffSlots + 1
-					local debuffFrame = f["aura".. debuffSlots]
-					debuffFrame.unitid = unit
-					debuffFrame.debuffid = i
-					debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, self.opt.ShowOnlyDispellable) end);
-					debuffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
-					debuffFrame.count:SetText(debuffApplications > 1 and debuffApplications or nil);
-					debuffFrame.texture:SetTexture(debuffTexture)
-					debuffFrame:SetFrameLevel(5)
-					debuffFrame:Show()
+				for i = 1, 4 do
+					f["buff".. i]:Hide()
 				end
-			end
-			
-			local dead = UnitIsDeadOrGhost(unit) or UnitHealth(unit) <= 1
-			if self.opt.aggro_aura and not dead and Banzai:GetUnitAggroByUnitId(unit) then
-				sRaidFrames.debuff[unit] = "Red"
-				cAura = self.debuffColors["Red"]
-				f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
+
+				local debuffSlots = 0
+				for i=1,16 do
+					local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, self.opt.ShowOnlyDispellable)
+					if not debuffTexture then break end
+
+					if not self.opt.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
+						cAura = self.debuffColors[debuffType]
+						sRaidFrames.debuff[unit] = debuffType
+					end
+
+					if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < 2 then
+						debuffSlots = debuffSlots + 1
+						local debuffFrame = f["aura".. debuffSlots]
+						debuffFrame.unitid = unit
+						debuffFrame.debuffid = i
+						debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, self.opt.ShowOnlyDispellable) end);
+						debuffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+						debuffFrame.count:SetText(debuffApplications > 1 and debuffApplications or nil);
+						debuffFrame.texture:SetTexture(debuffTexture)
+						debuffFrame:SetFrameLevel(5)
+						debuffFrame:Show()
+					end
+				end
 				
-			elseif cAura and not dead then
-				f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
+				local dead = UnitIsDeadOrGhost(unit) or UnitHealth(unit) <= 1
+				if self.opt.aggro_aura and not dead and Banzai:GetUnitAggroByUnitId(unit) then
+					sRaidFrames.debuff[unit] = "Red"
+					cAura = self.debuffColors["Red"]
+					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
 					
+				elseif cAura and not dead then
+					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
+						
+				else
+					sRaidFrames.debuff[unit] = nil
+					f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
+				end
+		
+
+				f.mpbar.text:SetText()
+				
+				if self.opt.targeting and not UnitAffectingCombat("player") and self.targeting[unit] then
+					f.mpbar.text:SetText("|cffffffff Targeting You |r")
+				
+				elseif not self.opt.show_txt_buff then
+					for i=1,32 do
+						local texture = UnitBuff(unit, i)
+						if not texture then break end
+
+						-- First we match the texture, then we pull the name of the debuff from a tooltip, and compare it to BabbleSpell
+						-- The idea is that we do a simple string match, and only if that string match triggers something, then we do the extra check
+						-- This should prevent unnessesary calls to functions and lookups
+						if texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
+							f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
+						elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
+							f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
+						elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
+							f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
+						elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
+							f.mpbar.text:SetText("|cffffffff"..L["Shield Wall"].."|r")
+						elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then
+							f.mpbar.text:SetText("|cffffffff"..L["Last stand"].."|r")
+						elseif texture == "Interface\\Icons\\INV_Misc_Gem_Pearl_05" then
+							f.mpbar.text:SetText("|cffffffff"..L["Gift of Life"].."|r")
+						elseif texture == "Interface\\Icons\\Spell_Frost_Frost" and self:GetBuffName(unit, i) == BS["Ice Block"] then
+							f.mpbar.text:SetText("|cffbfefff"..L["Ice block"].."|r")
+						elseif texture == "Interface\\Icons\\Spell_Holy_SealOfProtection" and self:GetBuffName(unit, i) == BS["Blessing of Protection"] then
+							f.mpbar.text:SetText("|cffffffff"..L["Protection"].."|r")
+						elseif texture == "Interface\\Icons\\Spell_Holy_DivineIntervention" and self:GetBuffName(unit, i) == BS["Divine Shield"] then
+							f.mpbar.text:SetText("|cffffffff"..L["Divine Shield"].."|r")
+						elseif texture == "Interface\\Icons\\Ability_Vanish" and self:GetBuffName(unit, i) == BS["Vanish"] then
+							f.mpbar.text:SetText("|cffffffff"..L["Vanished"].."|r")
+						elseif texture == "Interface\\Icons\\Ability_Stealth" and self:GetBuffName(unit, i) == BS["Stealth"] then
+							f.mpbar.text:SetText("|cffffffff"..L["Stealthed"].."|r")
+						elseif texture == "Interface\\Icons\\Spell_Holy_PowerInfusion" and self:GetBuffName(unit, i) == BS["Power Infusion"] then
+							f.mpbar.text:SetText("|cffffffff"..L["Infused"].."|r")
+						elseif texture == "Interface\\Icons\\Spell_Holy_Excorcism" and self:GetBuffName(unit, i) == BS["Fear Ward"] then
+							f.mpbar.text:SetText("|cffffff00"..L["Fear Ward"].."|r")
+						end
+					end
+				end
+
+				if self.opt.BuffType == "buffs" or (self.opt.BuffType == "buffsifnotdebuffed" and debuffSlots == 0) then
+					local buffSlots = 0
+					local showOnlyCastable = 1
+					if next(self.opt.BuffFilter) then
+						showOnlyCastable = 0
+					end
+					for i=1,32 do
+						local buffTexture, buffApplications = UnitBuff(unit, i, showOnlyCastable)
+						if not buffTexture then break end
+
+						if showOnlyCastable == 1 or self.opt.BuffFilter[self:GetBuffName(unit, i)] then
+							buffSlots = buffSlots + 1
+							local buffFrame = f["buff".. buffSlots]
+							buffFrame.buffid = i
+							buffFrame.unitid = unit
+							buffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(buffFrame) GameTooltip:SetUnitBuff(this.unitid, this.buffid, showOnlyCastable) end)
+							buffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+							buffFrame.count:SetText(buffApplications > 1 and buffApplications or nil)
+							buffFrame.texture:SetTexture(buffTexture)
+							--buffFrame:SetFrameLevel(10)
+							buffFrame:Show()
+						end
+
+						if buffSlots == 4 then break end
+					end
+				end
 			else
-				sRaidFrames.debuff[unit] = nil
-				f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
+				f.mpbar.text:SetText()
 			end
-	
-
-			f.mpbar.text:SetText()
-			
-			if self.opt.targeting and not UnitAffectingCombat("player") and self.targeting[unit] then
-				f.mpbar.text:SetText("|cffffffff Targeting You |r")
-			
-			elseif not self.opt.show_txt_buff then
-				for i=1,32 do
-					local texture = UnitBuff(unit, i)
-					if not texture then break end
-
-					-- First we match the texture, then we pull the name of the debuff from a tooltip, and compare it to BabbleSpell
-					-- The idea is that we do a simple string match, and only if that string match triggers something, then we do the extra check
-					-- This should prevent unnessesary calls to functions and lookups
-					if texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
-						f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
-					elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
-						f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
-					elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
-						f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
-					elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
-						f.mpbar.text:SetText("|cffffffff"..L["Shield Wall"].."|r")
-					elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then
-						f.mpbar.text:SetText("|cffffffff"..L["Last stand"].."|r")
-					elseif texture == "Interface\\Icons\\INV_Misc_Gem_Pearl_05" then
-						f.mpbar.text:SetText("|cffffffff"..L["Gift of Life"].."|r")
-					elseif texture == "Interface\\Icons\\Spell_Frost_Frost" and self:GetBuffName(unit, i) == BS["Ice Block"] then
-						f.mpbar.text:SetText("|cffbfefff"..L["Ice block"].."|r")
-					elseif texture == "Interface\\Icons\\Spell_Holy_SealOfProtection" and self:GetBuffName(unit, i) == BS["Blessing of Protection"] then
-						f.mpbar.text:SetText("|cffffffff"..L["Protection"].."|r")
-					elseif texture == "Interface\\Icons\\Spell_Holy_DivineIntervention" and self:GetBuffName(unit, i) == BS["Divine Shield"] then
-						f.mpbar.text:SetText("|cffffffff"..L["Divine Shield"].."|r")
-					elseif texture == "Interface\\Icons\\Ability_Vanish" and self:GetBuffName(unit, i) == BS["Vanish"] then
-						f.mpbar.text:SetText("|cffffffff"..L["Vanished"].."|r")
-					elseif texture == "Interface\\Icons\\Ability_Stealth" and self:GetBuffName(unit, i) == BS["Stealth"] then
-						f.mpbar.text:SetText("|cffffffff"..L["Stealthed"].."|r")
-					elseif texture == "Interface\\Icons\\Spell_Holy_PowerInfusion" and self:GetBuffName(unit, i) == BS["Power Infusion"] then
-						f.mpbar.text:SetText("|cffffffff"..L["Infused"].."|r")
-					elseif texture == "Interface\\Icons\\Spell_Holy_Excorcism" and self:GetBuffName(unit, i) == BS["Fear Ward"] then
-						f.mpbar.text:SetText("|cffffff00"..L["Fear Ward"].."|r")
-					end
-				end
-			end
-
-			if self.opt.BuffType == "buffs" or (self.opt.BuffType == "buffsifnotdebuffed" and debuffSlots == 0) then
-				local buffSlots = 0
-				local showOnlyCastable = 1
-				if next(self.opt.BuffFilter) then
-					showOnlyCastable = 0
-				end
-				for i=1,32 do
-					local buffTexture, buffApplications = UnitBuff(unit, i, showOnlyCastable)
-					if not buffTexture then break end
-
-					if showOnlyCastable == 1 or self.opt.BuffFilter[self:GetBuffName(unit, i)] then
-						buffSlots = buffSlots + 1
-						local buffFrame = f["buff".. buffSlots]
-						buffFrame.buffid = i
-						buffFrame.unitid = unit
-						buffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(buffFrame) GameTooltip:SetUnitBuff(this.unitid, this.buffid, showOnlyCastable) end)
-						buffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
-						buffFrame.count:SetText(buffApplications > 1 and buffApplications or nil)
-						buffFrame.texture:SetTexture(buffTexture)
-						--buffFrame:SetFrameLevel(10)
-						buffFrame:Show()
-					end
-
-					if buffSlots == 4 then break end
-				end
-			end
-		elseif self.visible[unit] then
-			--DEFAULT_CHAT_FRAME:AddMessage(UnitName(unit))
-			f.mpbar.text:SetText()
-		end
+		end	
 	end
 end
 
