@@ -35,10 +35,10 @@ L:RegisterTranslations("enUS", function() return {
 	["Load predefined settings for best visual effect"] = true,
 	
 	["Load pure view profiles"] = true,
-	["Horizontal border"] = true,
-	["Horizontal no border"] = true,
-	["Vertical border"] = true,
-	["Vertical no border"] = true,
+	["Border - 5 per column"] = true,
+	["No border - 5 per column"] = true,
+	["Border - 8 per column"] = true,
+	["No border - 8 per column"] = true,
 	
 	["_Focus frame"] = true,
 	["Use keybinding to add/remove units manually or select Polpulate with range feature"] = true,

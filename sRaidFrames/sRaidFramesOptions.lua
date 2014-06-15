@@ -220,7 +220,7 @@ sRaidFrames.options = {
 				
 			
 				profile11 = {
-						name = L["Horizontal border"],
+						name = L["Border - 5 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -228,14 +228,12 @@ sRaidFrames.options = {
 						end,
 						set = function(value)
 							if value then
-								sRaidFrames:chatTexture("Aluminium")
 								sRaidFrames:chatToggleBorder(value)
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
-								sRaidFrames:S("vertical_hp", not value)
-								
+								sRaidFrames.opt.fixed_count = 5
 							end
 							sRaidFrames:S("profile11", value)
 							sRaidFrames:ProfileFeed()
@@ -244,7 +242,7 @@ sRaidFrames.options = {
 					},
 				
 				profile22 = {
-						name = L["Horizontal no border"],
+						name = L["No border - 5 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -252,14 +250,12 @@ sRaidFrames.options = {
 						end,
 						set = function(value)
 							if value then
-								sRaidFrames:chatTexture("Aluminium")
 								sRaidFrames:chatToggleBorder(not value)
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", 0)
-								sRaidFrames:S("vertical_hp", not value)
-								
+								sRaidFrames.opt.fixed_count = 5
 							end
 							sRaidFrames:S("profile22", value)
 							sRaidFrames:ProfileFeed()
@@ -268,7 +264,7 @@ sRaidFrames.options = {
 					},
 					
 				profile33 = {
-						name = L["Vertical border"],
+						name = L["Border - 8 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -276,14 +272,12 @@ sRaidFrames.options = {
 						end,
 						set = function(value)
 							if value then
-								sRaidFrames:S("vertical_hp", value)
-								sRaidFrames:chatTexture("Gradient")
 								sRaidFrames:chatToggleBorder(value)
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
-								
+								sRaidFrames.opt.fixed_count = 8
 							end
 							sRaidFrames:S("profile33", value)
 							sRaidFrames:ProfileFeed()
@@ -293,22 +287,22 @@ sRaidFrames.options = {
 					},	
 					
 				profile44 = {
-						name = L["Vertical no border"],
+						name = L["No border - 8 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
 							return sRaidFrames.opt.profile44
 						end,
 						set = function(value)
+							
+							
 							if value then
-								sRaidFrames:S("vertical_hp", value)
-								sRaidFrames:chatTexture("Gradient")
 								sRaidFrames:chatToggleBorder(not value)
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames:S("Spacing", 0)
-								
+								sRaidFrames.opt.fixed_count = 8
 							end
 							sRaidFrames:S("profile44", value)
 							sRaidFrames:ProfileFeed()
@@ -1607,10 +1601,8 @@ function sRaidFrames:DisableRangeCheck()
 end		
 
 function sRaidFrames:ProfileFeed()
-	
 	sRaidFrames:chatSortBy("fixed")
 	sRaidFrames.opt.SubSort = "class"
-	sRaidFrames.opt.fixed_count = 8
 	
 	sRaidFrames.opt.heal = true
 	sRaidFrames.opt.RangeAlpha = 0.25
@@ -1624,6 +1616,7 @@ function sRaidFrames:ProfileFeed()
 	sRaidFrames.opt.BackgroundColor.g = 0.3
 	sRaidFrames.opt.BackgroundColor.b = 0.3
 	sRaidFrames.opt.BackgroundColor.a = 1
+	
 	
 	sRaidFrames:S("unitname_color", true)
 	sRaidFrames:S("aggro", true)
