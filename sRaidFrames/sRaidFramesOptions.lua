@@ -43,7 +43,7 @@ sRaidFrames.options = {
 				redbar = {
 					name = L["Red status bar"],
 					type = "toggle",
-					desc = L["Enable/Disable name color change on aggro"],
+					desc = L["Enable/Disable statusbar color change on aggro"],
 					get = function()
 						return sRaidFrames.opt.redbar
 					end,
@@ -56,7 +56,7 @@ sRaidFrames.options = {
 				red_aura = {
 					name = L["Red aura"],
 					type = "toggle",
-					desc = L["Enable/Disable name color change on aggro"],
+					desc = L["Enable/Disable background color change on aggro"],
 					get = function()
 						return sRaidFrames.opt.aggro_aura
 					end,
@@ -137,7 +137,7 @@ sRaidFrames.options = {
 				debuff_aura = {
 					name = L["Disable colored debuff aura"],
 					type = "toggle",
-					desc = L["Disable colored debuff aura"],
+					desc = L["Disable background color change when unit has debuff"],
 					get = function()
 						return sRaidFrames.opt.unit_debuff_aura
 					end,

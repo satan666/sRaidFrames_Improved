@@ -13,7 +13,9 @@ L:RegisterTranslations("enUS", function() return {
 	["Red names on aggro"] = true,
 	["Enable/Disable name color change on aggro"] = true,
 	["Red status bar"] = true,
+	["Enable/Disable statusbar color change on aggro"] = true,
 	["Red aura"] = true,
+	["Enable/Disable background color change on aggro"] = true,
 	
 	["_Pure view"] = true,
 	["Pure view"] = true,
@@ -50,6 +52,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Load predefined profiles"] = true,
 	
 	["Disable colored debuff aura"] = true,
+	["Disable background color change when unit has debuff"] = true,
 	["Disable bottom buff name"] = true,
 	["Short unit names"] = true,
 	["Reduce unit name to three letters"] = true,

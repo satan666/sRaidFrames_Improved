@@ -111,7 +111,7 @@ function sRaidFrames:OnInitialize()
 		ScaleFocus 			= 1.3,
 		WidthFocus 			= 85,
 		Border				= true,
-		Texture				= "Otravi",
+		Texture				= "Gradient",
 		BuffType			= "debuffs",
 		ShowOnlyDispellable	= 1,
 		BackgroundColor		= {r = 0.3, g = 0.3, b = 0.3, a = 0.7},
@@ -187,7 +187,7 @@ function sRaidFrames:OnInitialize()
 	
 	--==Added by Ogrisch 
 	self:Hook("TargetFrame_OnEvent")
-	--self:Hook("Luna_Target_Original")
+
 	
 	Zorlen_MakeFirstMacros = nil
 	DEFAULT_CHAT_FRAME:AddMessage("_SRaidFrames Improved by ".."|cff9900FF".."Ogrisch".."|cffffffff".. " loaded")
@@ -384,6 +384,7 @@ function sRaidFrames:UpdateRoster()
 		self:JoinedRaid()
 	end
 	
+	self:ResetHealIndicators()
 	self:UpdateVisibility()
 	self:LoadStyle()
 end
@@ -816,7 +817,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 							f.hpbar:SetStatusBarColor(1,0,0)
 							
 						elseif self.opt.targeting and not UnitAffectingCombat("player") and self.targeting[unit] then
-							f.hpbar:SetStatusBarColor(0,0,0)
+							f.hpbar:SetStatusBarColor(0,0,0,0.75)
 						
 						elseif class_color then
 							local class, fileName = UnitClass(unit)
@@ -854,7 +855,8 @@ end
 
 function sRaidFrames:UpdateBuffs(units)
 	for unit in pairs(units) do
-		if self.visible[unit] and UnitIsVisible(unit) and UnitExists(unit) then
+		local f = self.frames[unit]
+		if self.visible[unit] and UnitExists(unit) and UnitIsVisible(unit) then
 			local cAura = nil
 			local f = self.frames[unit]
 
@@ -890,17 +892,19 @@ function sRaidFrames:UpdateBuffs(units)
 				end
 			end
 			
-				if self.opt.aggro_aura and Banzai:GetUnitAggroByUnitId(unit) and UnitHealth(unit) >= 1 then
-					sRaidFrames.debuff[unit] = "Red"
-					cAura = self.debuffColors["Red"]
-					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
-				elseif cAura then
+			local dead = UnitIsDeadOrGhost(unit) or UnitHealth(unit) <= 1
+			if self.opt.aggro_aura and not dead and Banzai:GetUnitAggroByUnitId(unit) then
+				sRaidFrames.debuff[unit] = "Red"
+				cAura = self.debuffColors["Red"]
+				f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
+				
+			elseif cAura and not dead then
+				f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
 					
-					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
-				else
-					sRaidFrames.debuff[unit] = nil
-					f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
-				end
+			else
+				sRaidFrames.debuff[unit] = nil
+				f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
+			end
 	
 
 			f.mpbar.text:SetText()
@@ -972,6 +976,9 @@ function sRaidFrames:UpdateBuffs(units)
 					if buffSlots == 4 then break end
 				end
 			end
+		elseif self.visible[unit] then
+			--DEFAULT_CHAT_FRAME:AddMessage(UnitName(unit))
+			f.mpbar.text:SetText()
 		end
 	end
 end
@@ -1257,8 +1264,8 @@ function sRaidFrames:SetBackdrop(f, unit, aggro)
 									})
 	end
 
-	
-	if self.debuff[unit] then
+	local dead = UnitExists(unit) and (UnitIsDeadOrGhost(unit) or UnitHealth(unit) <= 1)
+	if self.debuff[unit] and not dead then
 		local cAura = self.debuffColors[self.debuff[unit]]
 		f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
 	else
