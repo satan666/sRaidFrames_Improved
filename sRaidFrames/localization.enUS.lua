@@ -10,7 +10,7 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["_Aggro notification"] = true,
 	["Aggro notification"] = true,
-	["Red names on aggro"] = true,
+	["Red name on aggro"] = true,
 	["Enable/Disable name color change on aggro"] = true,
 	["Red status bar"] = true,
 	["Enable/Disable statusbar color change on aggro"] = true,

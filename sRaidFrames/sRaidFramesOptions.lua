@@ -6,8 +6,6 @@ local surface = AceLibrary("Surface-1.0")
 sRaidFrames.options = {
 	type = "group",
 	args = {
-
-		
 		aggro_notification = {
 			name = L["_Aggro notification"],
 			type = "group",
@@ -27,7 +25,7 @@ sRaidFrames.options = {
 	
 			
 				redname = {
-					name = L["Red names on aggro"],
+					name = L["Red name on aggro"],
 					type = "toggle",
 					desc = L["Enable/Disable name color change on aggro"],
 					get = function()
@@ -314,22 +312,6 @@ sRaidFrames.options = {
 					}
 					
 				},
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-		
-			
 			}
 		},		
 						
@@ -593,11 +575,6 @@ sRaidFrames.options = {
 
 				}
 				},
-				
-				
-				
-				
-				
 				
 				
 			profiles = {
