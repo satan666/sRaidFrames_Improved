@@ -1019,11 +1019,11 @@ function sRaidFrames:GetHPSeverity(percent)
 	--elseif percent >= 0.25 then
 		--return 1.0, (2*percent - 0.5), 0.0
 		
-	--elseif percent >= 0.30 then
-		--return 1.0, (2.22*percent - 0.66), 0.0	
+	elseif percent >= 0.30 then
+		return 1.0, (2.22*percent - 0.66), 0.0	
 			
-	elseif percent >= 0.35 then
-		return 1.0, (1.54*percent - 0.546), 0.0	
+	--elseif percent >= 0.35 then
+		--return 1.0, (1.54*percent - 0.546), 0.0	
 			
 	else
 		return 1.0, 0.0, 0.0
