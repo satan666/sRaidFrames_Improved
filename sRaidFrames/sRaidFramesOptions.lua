@@ -236,6 +236,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.unit_name_lenght = nil
 								sRaidFrames.opt.debuff_slots = 2
 								sRaidFrames.opt.buff_slots = 2
+								sRaidFrames.opt.vertical_hp = nil
 							end
 							sRaidFrames:S("profile11", value)
 							sRaidFrames:ProfileFeed()
@@ -263,6 +264,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.unit_name_lenght = true
 								sRaidFrames.opt.debuff_slots = 1
 								sRaidFrames.opt.buff_slots = 1
+								sRaidFrames.opt.vertical_hp = true
 							end
 							sRaidFrames:S("profile22", value)
 							sRaidFrames:ProfileFeed()
@@ -289,6 +291,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.unit_name_lenght = nil
 								sRaidFrames.opt.debuff_slots = 2
 								sRaidFrames.opt.buff_slots = 2
+								sRaidFrames.opt.vertical_hp = nil
 							end
 							sRaidFrames:S("profile33", value)
 							sRaidFrames:ProfileFeed()
@@ -318,6 +321,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.unit_name_lenght = nil
 								sRaidFrames.opt.debuff_slots = 2
 								sRaidFrames.opt.buff_slots = 2
+								sRaidFrames.opt.vertical_hp = nil
 							end
 							sRaidFrames:S("profile44", value)
 							sRaidFrames:ProfileFeed()

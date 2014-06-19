@@ -106,7 +106,7 @@ function sRaidFrames:OnInitialize()
 		SortBy				= "fixed",
 		healthDisplayType	= 'percent',
 		Invert = false,
-		Scale				= 0.8,
+		Scale				= 1,
 		Width				= 75,
 		ScaleFocus 			= 1.3,
 		WidthFocus 			= 85,
@@ -136,7 +136,7 @@ function sRaidFrames:OnInitialize()
 		srfhideparty		= true,
 		lock_focus			= false,
 		ShowGroupTitles_Focus = true,
-		dead_sort 			= true,
+		dead_sort 			= false,
 		fill_range		    = false,
 		hp_limit 			= 100,
 		units_limit 		= 10,
@@ -1321,7 +1321,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
-		self:SetWHP(f.hpbar.indicator2, 4, 4, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+		self:SetWHP(f.hpbar.indicator2, 5, 5, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 	else
 		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
 			self:SetWHP(f.hpbar, frame_width - 10, 26, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
@@ -1329,7 +1329,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
-		self:SetWHP(f.hpbar.indicator1, 7, 7, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
+		self:SetWHP(f.hpbar.indicator1, 8, 8, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
 	end
 	
 	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -11)
