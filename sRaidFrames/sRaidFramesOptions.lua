@@ -262,7 +262,7 @@ sRaidFrames.options = {
 								sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 70)
 								sRaidFrames:S("Width", 40)
 								sRaidFrames:S("unit_name_lenght", true)
-								sRaidFrames:S("debuff_slots", 2)
+								sRaidFrames:S("debuff_slots", 1)
 								sRaidFrames:S("buff_slots", 1)
 								sRaidFrames:S("vertical_hp", true)
 							end
@@ -1668,6 +1668,8 @@ function sRaidFrames:ProfileFeed()
 	sRaidFrames:S("aggro", true)
 	sRaidFrames:S("red", true)
 	sRaidFrames:S("redbar", false)
+
+	sRaidFrames:S("Texture", "Gradient")
 
 	sRaidFrames:LoadStyle()
 end
