@@ -231,12 +231,12 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
-								sRaidFrames.opt.fixed_count = 5
-								sRaidFrames.opt.Width = sRaidFrames.opt.Width_OLD or 70
-								sRaidFrames.opt.unit_name_lenght = nil
-								sRaidFrames.opt.debuff_slots = 2
-								sRaidFrames.opt.buff_slots = 2
-								sRaidFrames.opt.vertical_hp = nil
+								sRaidFrames:S("fixed_count", 5)
+								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
+								sRaidFrames:S("unit_name_lenght", nil)
+								sRaidFrames:S("debuff_slots", 2)
+								sRaidFrames:S("buff_slots", 2)
+								sRaidFrames:S("vertical_hp", nil)
 							end
 							sRaidFrames:S("profile11", value)
 							sRaidFrames:ProfileFeed()
@@ -258,13 +258,13 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
-								sRaidFrames.opt.fixed_count = 5
-								sRaidFrames.opt.Width_OLD = sRaidFrames.opt.Width or 70
-								sRaidFrames.opt.Width = 40
-								sRaidFrames.opt.unit_name_lenght = true
-								sRaidFrames.opt.debuff_slots = 1
-								sRaidFrames.opt.buff_slots = 1
-								sRaidFrames.opt.vertical_hp = true
+								sRaidFrames:S("fixed_count", 5)
+								sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 70)
+								sRaidFrames:S("Width", 40)
+								sRaidFrames:S("unit_name_lenght", true)
+								sRaidFrames:S("debuff_slots", 2)
+								sRaidFrames:S("buff_slots", 1)
+								sRaidFrames:S("vertical_hp", true)
 							end
 							sRaidFrames:S("profile22", value)
 							sRaidFrames:ProfileFeed()
@@ -286,12 +286,12 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
-								sRaidFrames.opt.fixed_count = 8
-								sRaidFrames.opt.Width = sRaidFrames.opt.Width_OLD or 70
-								sRaidFrames.opt.unit_name_lenght = nil
-								sRaidFrames.opt.debuff_slots = 2
-								sRaidFrames.opt.buff_slots = 2
-								sRaidFrames.opt.vertical_hp = nil
+								sRaidFrames:S("fixed_count", 8)
+								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
+								sRaidFrames:S("unit_name_lenght", nil)
+								sRaidFrames:S("debuff_slots", 2)
+								sRaidFrames:S("buff_slots", 2)
+								sRaidFrames:S("vertical_hp", nil)
 							end
 							sRaidFrames:S("profile33", value)
 							sRaidFrames:ProfileFeed()
@@ -308,20 +308,18 @@ sRaidFrames.options = {
 							return sRaidFrames.opt.profile44
 						end,
 						set = function(value)
-							
-							
 							if value then
 								sRaidFrames:chatToggleBorder(value)
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames:S("Spacing", -4)
-								sRaidFrames.opt.fixed_count = 20
-								sRaidFrames.opt.Width = sRaidFrames.opt.Width_OLD or 70
-								sRaidFrames.opt.unit_name_lenght = nil
-								sRaidFrames.opt.debuff_slots = 2
-								sRaidFrames.opt.buff_slots = 2
-								sRaidFrames.opt.vertical_hp = nil
+								sRaidFrames:S("fixed_count", 20)
+								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
+								sRaidFrames:S("unit_name_lenght", nil)
+								sRaidFrames:S("debuff_slots", 2)
+								sRaidFrames:S("buff_slots", 2)
+								sRaidFrames:S("vertical_hp", nil)
 							end
 							sRaidFrames:S("profile44", value)
 							sRaidFrames:ProfileFeed()

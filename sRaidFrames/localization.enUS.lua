@@ -268,7 +268,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Set the spacing between each of the raid frames"] = true,
 
 	["Offline"] = true,
-	["Released"] = true,
+	["Ghost"] = true,
 	["Dead"] = true,
 	["Resurrected"] = true,
 	["Can Recover"] = true,

@@ -773,7 +773,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 					if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
 					elseif self.res[unit] == 1 and dead then status = "|cffff8c00"..L["Can Recover"].."|r"
 					elseif self.res[unit] == 2 and (dead or ghost) then status = "|cffff8c00"..L["Resurrected"].."|r"
-					elseif ghost then status = "|cffff0000"..L["Released"].."|r"
+					elseif ghost then status = "|cffff0000"..L["Ghost"].."|r"
 					elseif dead or UnitHealth(unit) <= 1 then status = "|cffff0000"..L["Dead"].."|r"
 					end				
 					
