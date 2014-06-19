@@ -35,10 +35,10 @@ L:RegisterTranslations("enUS", function() return {
 	["Load predefined settings for best visual effect"] = true,
 	
 	["Load pure view profiles"] = true,
-	["Border - 5 per column"] = true,
-	["No border - 5 per column"] = true,
-	["Border - 8 per column"] = true,
-	["No border - 8 per column"] = true,
+	["Classic - 5 per column"] = true,
+	["Classic - 8 per column"] = true,
+	["Classic - 20 per column"] = true,
+	["Grid - 5 per column"] = true,
 	
 	["_Focus frame"] = true,
 	["Use keybinding to add/remove units manually or select Polpulate with range feature"] = true,
@@ -151,6 +151,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Only buffs"] = true,
 	["Only debuffs"] = true,
 	["Buffs if not debuffed"] = true,
+	["Nothing"] = true,
 	["Power type visiblity"] = true,
 	["Toggle the display of certain power types (Mana, Rage, Energy)"] = true,
 	["Mana"] = true,
@@ -161,7 +162,12 @@ L:RegisterTranslations("enUS", function() return {
 	["Toggle the display of rage bars"] = true,
 	["Filter dispellable debuffs"] = true,
 	["Toggle display of dispellable debuffs only"] = true,
-
+	["Buff slot number"] = true,
+	["Set max number of buffs"] = true,
+	["Debuff slot number"] = true,
+	["Set max number of debuffs"] = true,
+	["Buffs/Debuffs"] = true,
+	["_Buffs/Debuffs"] = true,
 	["Bar textures"] = true,
 	["Set the texture used on health and mana bars"] = true,
 

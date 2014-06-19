@@ -218,7 +218,7 @@ sRaidFrames.options = {
 				
 			
 				profile11 = {
-						name = L["Border - 5 per column"],
+						name = L["Classic - 5 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -232,6 +232,10 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames.opt.fixed_count = 5
+								sRaidFrames.opt.Width = sRaidFrames.opt.Width_OLD or 70
+								sRaidFrames.opt.unit_name_lenght = nil
+								sRaidFrames.opt.debuff_slots = 2
+								sRaidFrames.opt.buff_slots = 2
 							end
 							sRaidFrames:S("profile11", value)
 							sRaidFrames:ProfileFeed()
@@ -240,7 +244,7 @@ sRaidFrames.options = {
 					},
 				
 				profile22 = {
-						name = L["No border - 5 per column"],
+						name = L["Grid - 5 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -248,21 +252,26 @@ sRaidFrames.options = {
 						end,
 						set = function(value)
 							if value then
-								sRaidFrames:chatToggleBorder(not value)
+								sRaidFrames:chatToggleBorder(value)
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames.opt.profile44 = not value
-								sRaidFrames:S("Spacing", 0)
+								sRaidFrames:S("Spacing", -4)
 								sRaidFrames.opt.fixed_count = 5
+								sRaidFrames.opt.Width_OLD = sRaidFrames.opt.Width or 70
+								sRaidFrames.opt.Width = 40
+								sRaidFrames.opt.unit_name_lenght = true
+								sRaidFrames.opt.debuff_slots = 1
+								sRaidFrames.opt.buff_slots = 1
 							end
 							sRaidFrames:S("profile22", value)
 							sRaidFrames:ProfileFeed()
 						end,
-						order = 2,
+						order = 4,
 					},
 					
 				profile33 = {
-						name = L["Border - 8 per column"],
+						name = L["Classic - 8 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -276,16 +285,20 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames.opt.fixed_count = 8
+								sRaidFrames.opt.Width = sRaidFrames.opt.Width_OLD or 70
+								sRaidFrames.opt.unit_name_lenght = nil
+								sRaidFrames.opt.debuff_slots = 2
+								sRaidFrames.opt.buff_slots = 2
 							end
 							sRaidFrames:S("profile33", value)
 							sRaidFrames:ProfileFeed()
 
 						end,
-						order = 3,
+						order = 2,
 					},	
 					
 				profile44 = {
-						name = L["No border - 8 per column"],
+						name = L["Classic - 20 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -295,17 +308,21 @@ sRaidFrames.options = {
 							
 							
 							if value then
-								sRaidFrames:chatToggleBorder(not value)
+								sRaidFrames:chatToggleBorder(value)
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile33 = not value
-								sRaidFrames:S("Spacing", 0)
-								sRaidFrames.opt.fixed_count = 8
+								sRaidFrames:S("Spacing", -4)
+								sRaidFrames.opt.fixed_count = 20
+								sRaidFrames.opt.Width = sRaidFrames.opt.Width_OLD or 70
+								sRaidFrames.opt.unit_name_lenght = nil
+								sRaidFrames.opt.debuff_slots = 2
+								sRaidFrames.opt.buff_slots = 2
 							end
 							sRaidFrames:S("profile44", value)
 							sRaidFrames:ProfileFeed()
 						end,
-						order = 4,
+						order = 3,
 					},		
 					
 								
@@ -767,27 +784,7 @@ sRaidFrames.options = {
 			validate = {["curmax"] = L["Current and max health"], ["deficit"] = L["Health deficit"], ["percent"] = L["Health percentage"], ["current"] = L["Current health"], ["none"] = L["Hide health text"]},
 		},
 
-		bufffilter = {
-			name = L["Buff filter"],
-			type = "group",
-			desc = L["Set buff filter"],
-			args = {
-				add = {
-					name = L["Add buff"],
-					type = "text",
-					desc = L["Add a buff"],
-					get = false,
-					set = function(value)
-						if not sRaidFrames.opt.BuffFilter[value] then
-							sRaidFrames.opt.BuffFilter[value] = true
-							sRaidFrames:chatUpdateBuffMenu()
-						end
-					end,
-					usage = L["<name of buff>"],
-				},
-			},
-			disabled = function() return (sRaidFrames.opt.BuffType == "debuffs") end,
-		},
+		
 
 		titles = {
 			name = L["Show group titles"],
@@ -890,22 +887,102 @@ sRaidFrames.options = {
 
 
 
-
-
-
-
-
-
-		bufftype = {
-			name = L["Buff/Debuff visibility"],
-			type = "text",
-			desc = L["Show buffs or debuffs on the raid frames"],
-			get = function()
-				return sRaidFrames.opt.BuffType
-			end,
-			set = "chatBuffType",
-			validate = {["buffs"] = L["Only buffs"], ["debuffs"] = L["Only debuffs"], ["buffsifnotdebuffed"] = L["Buffs if not debuffed"]},
+		buffsdebuffs = {
+			name = L["_Buffs/Debuffs"],
+			type = "group",
+			desc = L["Buffs/Debuffs"],
+			args = {
+			
+			
+			
+			bufffilter = {
+				name = L["Buff filter"],
+				type = "group",
+				desc = L["Set buff filter"],
+				args = {
+					add = {
+						name = L["Add buff"],
+						type = "text",
+						desc = L["Add a buff"],
+						get = false,
+						set = function(value)
+							if not sRaidFrames.opt.BuffFilter[value] then
+								sRaidFrames.opt.BuffFilter[value] = true
+								sRaidFrames:chatUpdateBuffMenu()
+							end
+						end,
+						usage = L["<name of buff>"],
+					},
+				},
+				disabled = function() return (sRaidFrames.opt.BuffType == "debuffs" or sRaidFrames.opt.BuffType == "nothing") end,
+			},
+			
+			
+			
+			
+			bufftype = {
+				name = L["Buff/Debuff visibility"],
+				type = "text",
+				desc = L["Show buffs or debuffs on the raid frames"],
+				get = function()
+					return sRaidFrames.opt.BuffType
+				end,
+				set = "chatBuffType",
+				validate = {["buffs"] = L["Only buffs"], ["debuffs"] = L["Only debuffs"], ["nothing"] = L["Nothing"], ["buffsifnotdebuffed"] = L["Buffs if not debuffed"]},
+				order = 1,
+			},
+			
+			buff_slot = {
+						name = L["Buff slot number"],
+						type = "range",
+						desc = L["Set max number of buffs"],
+						min = 1,
+						max = 4,
+						step = 1,
+						get = function()
+							return sRaidFrames.opt.buff_slots
+						end,
+						set = function(set)
+							sRaidFrames:S("buff_slots", set)
+						end,
+						order = 2,
+					},
+					
+			debuff_slot = {
+				name = L["Debuff slot number"],
+				type = "range",
+				desc = L["Set max number of debuffs"],
+				min = 1,
+				max = 2,
+				step = 1,
+				get = function()
+					return sRaidFrames.opt.debuff_slots
+				end,
+				set = function(set)
+					sRaidFrames:S("debuff_slots", set)
+				end,
+				order = 3,
+			},
+			
+			
+			filterdebuffs = {
+				name = L["Filter dispellable debuffs"],
+				type = "toggle",
+				desc = L["Toggle display of dispellable debuffs only"],
+				get = function()
+					return sRaidFrames.opt.ShowOnlyDispellable
+				end,
+				set = "chatToggleDispellable",
+				disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+			},
+		
+			
+			
+		}
 		},
+
+		
+		
 
 		powerfilter = {
 			name = L["Power type visiblity"],
@@ -959,16 +1036,6 @@ sRaidFrames.options = {
 			},
 		},
 
-		filterdebuffs = {
-			name = L["Filter dispellable debuffs"],
-			type = "toggle",
-			desc = L["Toggle display of dispellable debuffs only"],
-			get = function()
-				return sRaidFrames.opt.ShowOnlyDispellable
-			end,
-			set = "chatToggleDispellable",
-			disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs") end,
-		},
 		
 		invert = {
 			name = L["Invert health bars"],
@@ -1486,20 +1553,20 @@ sRaidFrames.options = {
 }
 
 function sRaidFrames:chatUpdateBuffMenu()
-	self.options.args.bufffilter.args["remove"] = {}
-	self.options.args.bufffilter.args["remove"].type = 'group'
-	self.options.args.bufffilter.args["remove"].name = 'Remove buff'
-	self.options.args.bufffilter.args["remove"].desc = 'Remove buffs from the list'
-	self.options.args.bufffilter.args["remove"].args = {}
+	self.options.args.buffsdebuffs.args.bufffilter.args["remove"] = {}
+	self.options.args.buffsdebuffs.args.bufffilter.args["remove"].type = 'group'
+	self.options.args.buffsdebuffs.args.bufffilter.args["remove"].name = 'Remove buff'
+	self.options.args.buffsdebuffs.args.bufffilter.args["remove"].desc = 'Remove buffs from the list'
+	self.options.args.buffsdebuffs.args.bufffilter.args["remove"].args = {}
 	local i = 1
 	--for buff in self.opt.BuffFilter do
 	for buff in pairs(self.opt.BuffFilter) do
 		local buffName = buff -- Odd hack, don't know
-		self.options.args.bufffilter.args["remove"].args["buff" .. i] = {}
-		self.options.args.bufffilter.args["remove"].args["buff" .. i].type = 'execute'
-		self.options.args.bufffilter.args["remove"].args["buff" .. i].name = buffName
-		self.options.args.bufffilter.args["remove"].args["buff" .. i].desc = 'Remove '.. buffName .. ' from the buff list'
-		self.options.args.bufffilter.args["remove"].args["buff" .. i].func = function() self.opt.BuffFilter[buffName] = nil self:chatUpdateBuffMenu()  end
+		self.options.args.buffsdebuffs.args.bufffilter.args["remove"].args["buff" .. i] = {}
+		self.options.args.buffsdebuffs.args.bufffilter.args["remove"].args["buff" .. i].type = 'execute'
+		self.options.args.buffsdebuffs.args.bufffilter.args["remove"].args["buff" .. i].name = buffName
+		self.options.args.buffsdebuffs.args.bufffilter.args["remove"].args["buff" .. i].desc = 'Remove '.. buffName .. ' from the buff list'
+		self.options.args.buffsdebuffs.args.bufffilter.args["remove"].args["buff" .. i].func = function() self.opt.BuffFilter[buffName] = nil self:chatUpdateBuffMenu()  end
 		i = i + 1
 	end
 end

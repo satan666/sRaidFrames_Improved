@@ -107,9 +107,10 @@ function sRaidFrames:OnInitialize()
 		healthDisplayType	= 'percent',
 		Invert = false,
 		Scale				= 0.8,
-		Width				= 82,
+		Width				= 75,
 		ScaleFocus 			= 1.3,
 		WidthFocus 			= 85,
+		Width_OLD			= 75,
 		Border				= true,
 		Texture				= "Gradient",
 		BuffType			= "debuffs",
@@ -142,6 +143,9 @@ function sRaidFrames:OnInitialize()
 		Growth_Focus 		= "down",
 		show_txt_buff		= true,
 		targeting 			= true,
+		buff_slots			= 2,
+		debuff_slots		= 2,
+		
 	})
 
 	self:RegisterChatCommand({"/srf", "/sraidframes"}, self.options)
@@ -858,18 +862,16 @@ function sRaidFrames:UpdateBuffs(units)
 	for unit in pairs(units) do
 		if self.visible[unit] then
 			local f = self.frames[unit]
+			for i = 1, 2 do
+				f["aura".. i]:Hide()
+			end
+			for i = 1, 4 do
+				f["buff".. i]:Hide()
+			end
+			
 			if UnitExists(unit) and UnitIsVisible(unit) then
 				local cAura = nil
 				local f = self.frames[unit]
-
-				for i = 1, 2 do
-					f["aura".. i]:Hide()
-				end
-
-				for i = 1, 4 do
-					f["buff".. i]:Hide()
-				end
-
 				local debuffSlots = 0
 				for i=1,16 do
 					local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, self.opt.ShowOnlyDispellable)
@@ -880,7 +882,7 @@ function sRaidFrames:UpdateBuffs(units)
 						sRaidFrames.debuff[unit] = debuffType
 					end
 
-					if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < 2 then
+					if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < self.opt.debuff_slots then
 						debuffSlots = debuffSlots + 1
 						local debuffFrame = f["aura".. debuffSlots]
 						debuffFrame.unitid = unit
@@ -923,7 +925,7 @@ function sRaidFrames:UpdateBuffs(units)
 						-- The idea is that we do a simple string match, and only if that string match triggers something, then we do the extra check
 						-- This should prevent unnessesary calls to functions and lookups
 						if texture == "Interface\\Icons\\INV_BannerPVP_01" then
-							f.mpbar.text:SetText("|cffff0000 Flag Carrier|r")
+							f.mpbar.text:SetText("|cffff00ffCarrier|r")
 						elseif texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
 							f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
 						elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
@@ -967,7 +969,6 @@ function sRaidFrames:UpdateBuffs(units)
 					for i=1,32 do
 						local buffTexture, buffApplications = UnitBuff(unit, i, showOnlyCastable)
 						if not buffTexture then break end
-
 						if showOnlyCastable == 1 or self.opt.BuffFilter[self:GetBuffName(unit, i)] then
 							buffSlots = buffSlots + 1
 							local buffFrame = f["buff".. buffSlots]
@@ -979,9 +980,10 @@ function sRaidFrames:UpdateBuffs(units)
 							buffFrame.texture:SetTexture(buffTexture)
 							--buffFrame:SetFrameLevel(10)
 							buffFrame:Show()
+							
 						end
 
-						if buffSlots == 4 then break end
+						if buffSlots == self.opt.buff_slots then break end
 					end
 				end
 			else
@@ -1011,12 +1013,20 @@ function sRaidFrames:SetUnitBuffDuration(unit, buff)
 end
 
 function sRaidFrames:GetHPSeverity(percent)
-	--if (percent<=0 or percent>1.0) then return 0.35,0.35,0.35 end
-
-	if (percent >= 0.5) then
-		return (1.0-percent)*2, 1.0, 0.0
+	if percent >= 0.75 then
+		return (-4*percent + 4), 1.0, 0.0
+	
+	--elseif percent >= 0.25 then
+		--return 1.0, (2*percent - 0.5), 0.0
+		
+	--elseif percent >= 0.30 then
+		--return 1.0, (2.22*percent - 0.66), 0.0	
+			
+	elseif percent >= 0.35 then
+		return 1.0, (1.54*percent - 0.546), 0.0	
+			
 	else
-		return 1.0, percent*2, 0.0
+		return 1.0, 0.0, 0.0
 	end
 end
 
@@ -1296,7 +1306,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 	self:SetWHP(f, frame_width, 40)
 	self:SetWHP(f.title, frame_width - 10, 16, "TOPLEFT", f, "TOPLEFT",  5, -6)
 	
-	self:SetWHP(f.aura1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
+	self:SetWHP(f.aura1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -5)
 	self:SetWHP(f.aura2, 12, 12, "RIGHT", f.aura1, "LEFT", 0, 0)
 	self:SetWHP(f.buff1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
 	self:SetWHP(f.buff2, 12, 12, "RIGHT", f.buff1, "LEFT", 0, 0)
@@ -1311,7 +1321,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
-		self:SetWHP(f.hpbar.indicator2, 5, 5, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+		self:SetWHP(f.hpbar.indicator2, 4, 4, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 	else
 		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
 			self:SetWHP(f.hpbar, frame_width - 10, 26, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
@@ -1319,7 +1329,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
-		self:SetWHP(f.hpbar.indicator1, 9, 9, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
+		self:SetWHP(f.hpbar.indicator1, 7, 7, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
 	end
 	
 	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -11)
