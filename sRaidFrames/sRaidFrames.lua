@@ -914,7 +914,9 @@ function sRaidFrames:UpdateBuffs(units)
 				f.mpbar.text:SetText()
 				
 				if self.opt.targeting and not UnitAffectingCombat("player") and self.targeting[unit] then
-					f.mpbar.text:SetText("|cffffffff Targeting You |r")
+					if not self.opt.show_txt_buff then
+						f.mpbar.text:SetText("|cffffffff Targeting You |r")
+					end	
 				
 				elseif not self.opt.show_txt_buff then
 					for i=1,32 do
