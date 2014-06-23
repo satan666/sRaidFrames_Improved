@@ -272,6 +272,7 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterEvent("oRA_PlayerCanResurrect")
 	self:RegisterEvent("oRA_PlayerResurrected")
 	self:RegisterEvent("oRA_PlayerNotResurrected")
+	self:RegisterEvent("HealComm_Ressupdate", "HealCommRez")
 
 	-- TODO: only updateunit
 	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.5, self)
@@ -469,6 +470,12 @@ function sRaidFrames:oRA_PlayerCanResurrect(msg, author)
 	local unit = roster:GetUnitIDFromName(author)
 	--self:Print("oRA_PlayerCanResurrect", UnitIsDead(unit), UnitIsGhost(unit), self.unavail[unit], msg, author, unit)
 	if unit then self.res[unit] = 1 end
+end
+
+function sRaidFrames:HealCommRez(author)
+	local unit = roster:GetUnitIDFromName(author)
+	--self:Print("oRA_PlayerResurrected", UnitIsDead(unit), UnitIsGhost(unit), self.unavail[unit], msg, author, unit)
+	if unit then self.res[unit] = 2 end
 end
 
 function sRaidFrames:oRA_PlayerResurrected(msg, author)
@@ -782,7 +789,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 									
 					if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
 					elseif self.res[unit] == 1 and dead then status = "|cffff8c00"..L["Can Recover"].."|r"
-					elseif self.res[unit] == 2 and (dead or ghost) then status = "|cffff8c00"..L["Resurrected"].."|r"
+					elseif self.res[unit] == 2 and (dead or ghost) then status = "|cffff8c00 Rezzed|r"
 					elseif ghost then status = "|cffff0000"..L["Ghost"].."|r"
 					elseif dead or UnitHealth(unit) <= 1 then status = "|cffff0000"..L["Dead"].."|r"
 					end				
