@@ -13,9 +13,6 @@ PACK CONTENT
 >> sRaidFrames
 - improved version of sRaidFrames
 
->> ag_UnitFrames
-- this version of ag_UnitFrames is modified to be compatible with sRaidFrames 40 yard check
-
 >> Zorlen
 - sRaidFrames mandatory dependancy library
 
@@ -25,6 +22,9 @@ PACK CONTENT
 
 >> Clique
 - everybody knows what clique is
+
+>>_LazySpell
+- auto spell rank scale for Clique and Classic Mouseover(check readme.txt in _LazySpell folder)
 
 
 more info: PACK_INFO.txt
