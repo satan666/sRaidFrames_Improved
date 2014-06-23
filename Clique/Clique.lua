@@ -30,6 +30,9 @@ Clique:SetModuleMixins("AceHook-2.0", "AceEvent-2.0", "AceDebug-2.0")
 ----------------------------------------------------------------------------------]]
 
 function Clique:OnInitialize()
+    
+	DEFAULT_CHAT_FRAME:AddMessage("Loading Clique : Relapsed version 1.0")
+    
     self:LevelDebug(2, "Clique:OnInitialize()")
     self:CheckProfile()
     
@@ -172,7 +175,10 @@ function Clique:OnClick(button, unit)
 	end
 
     Clique.unit = unit
+
+	-- DEFAULT_CHAT_FRAME:AddMessage("Clique:OnClick() -----------------------------------------")
 	-- DEFAULT_CHAT_FRAME:AddMessage("Clique:OnClick("..tostring(button)..", "..tostring(unit)..")")
+
     if not UnitExists(unit) then return end
 
     -- If the casting hand is up on the screen, cast the waiting spell on
@@ -248,6 +254,7 @@ end
 
 function Clique:CastSpell(spell, unit)
 	local restore = nil
+	local targettarget = nil
 	unit = unit or Clique.unit
     
     -- IMPORTANT: If the unit is targettarget or more, then we need to try
@@ -257,6 +264,10 @@ function Clique:CastSpell(spell, unit)
 	
 	self:LevelDebug(2, "Clique:CastSpell("..tostring(spell)..", "..tostring(unit) .. ")")
 
+	-- DEFAULT_CHAT_FRAME:AddMessage("Clique:CastSpell("..tostring(spell)..", "..tostring(unit)..")")
+
+	-- This could be buggy, we could be targettarget, or targettargettarget
+	-- or we could be easytarget
     if string.find(unit, "target") and string.len(unit) > 6 then
         local friendly = Clique:GetFriendlyUnit(unit)
 
@@ -270,27 +281,34 @@ function Clique:CastSpell(spell, unit)
     
     -- Lets resolve the targeting.  If this is a hostile target and its
     -- not currently our target, then we will need to target the unit
+    
     if UnitCanAttack("player", unit) then
         if not UnitIsUnit(unit, "target") then
             self:LevelDebug(2, "Changing to hostile target.")
+			-- DEFAULT_CHAT_FRAME:AddMessage("Clique:CastSpell() : Changing to hostile target")		            
             TargetUnit(unit)
         end
 
 	-- If we're looking at someone else's target, we have to change targets since
     -- ClearTarget() will get rid of the blahtarget unitID entirely.  We only do
 	-- this if this is a friendly target (since they will consume the spell)
+	
 	elseif targettarget and not UnitCanAttack("player", "target") then
 		self:LevelDebug(2, "Changing target due to friendly target.")
+		-- DEFAULT_CHAT_FRAME:AddMessage("Clique:CastSpell() : Changing target due to friendly target")		
 		TargetUnit(unit)
+		restore = true
     
     -- If the target is a friendly unit, and its not the unit we're casting on
     elseif UnitExists("target") and not UnitCanAttack("player", "target") and not UnitIsUnit(unit, "target") then
         self:LevelDebug(3, "Clearing the target")
+		-- DEFAULT_CHAT_FRAME:AddMessage("Clique:CastSpell() : ClearTarget()")        
         ClearTarget()
         restore = true
 	
     elseif UnitExists("target") and self:IsDualSpell(spell) and not UnitIsUnit(unit, "target") then
         self:LevelDebug(3, "Clearing target for this dual spell")
+		-- DEFAULT_CHAT_FRAME:AddMessage("Clique:CastSpell() : ClearTarget() for this dual spell")
         ClearTarget()
         restore = true
     end
@@ -309,6 +327,7 @@ function Clique:CastSpell(spell, unit)
 	
 	if restore then
         self:LevelDebug(3, "Restoring with TargetLastTarget")
+		-- DEFAULT_CHAT_FRAME:AddMessage("Clique:CastSpell() : Restoring with TargetLastTarget()")
 		TargetLastTarget()
 	end
 end

@@ -195,7 +195,7 @@ function sRaidFrames:OnInitialize()
 
 	
 	Zorlen_MakeFirstMacros = nil
-	DEFAULT_CHAT_FRAME:AddMessage("_SRaidFrames Improved by ".."|cff9900FF".."Ogrisch".."|cffffffff".. " loaded")
+	DEFAULT_CHAT_FRAME:AddMessage("_SRaidFrames Improved by ".."|cffFF0066".."Ogrisch".."|cffffffff".. " loaded")
 end
 
 function sRaidFrames:OnProfileEnable()
@@ -214,29 +214,40 @@ function sRaidFrames:OnEnable()
 	self:UpdateRoster()
 	
 	if LunaUnitFrames then
-		Luna_Target_Original = LunaUnitFrames.UpdateTargetFrame
-		LunaUnitFrames.UpdateTargetFrame = Luna_Target_Hook
+		LunaUnitFrames.UpdateTargetFrameOld = LunaUnitFrames.UpdateTargetFrame
+		LunaUnitFrames.UpdateTargetFrame = self.Luna_Target_Hook
+	end
+	
+	if aUF then
+		aUF.PLAYER_TARGET_CHANGED_OLD = aUF.PLAYER_TARGET_CHANGED
+		aUF.PLAYER_TARGET_CHANGED = self.ag_PLAYER_TARGET_CHANGED_Hook
 	end
 end
 
 function sRaidFrames:TargetFrame_OnEvent(event)
-	--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:TargetFrame_OnEvent")
 	if not self.TargetMonitor then
 		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:TargetFrame_OnEvent")
 		self.hooks.TargetFrame_OnEvent.orig(event)
 	end	
 end
 
-function Luna_Target_Hook()
+function sRaidFrames:Luna_Target_Hook()
 	if not sRaidFrames.TargetMonitor then
-		Luna_Target_Original()
+		--DEFAULT_CHAT_FRAME:AddMessage("LunaUnitFrames:UpdateTargetFrameOld")	
+		LunaUnitFrames:UpdateTargetFrameOld()
 	end	
+end
+
+function sRaidFrames:ag_PLAYER_TARGET_CHANGED_Hook()
+	if not sRaidFrames.TargetMonitor then
+		--DEFAULT_CHAT_FRAME:AddMessage("aUF:PLAYER_TARGET_CHANGED_OLD")	
+		aUF:PLAYER_TARGET_CHANGED_OLD()
+	end
 end
 
 function sRaidFrames:OnDisable()
 	self.master:Hide()
 end
-
 
 function sRaidFrames:JoinedRaid()
 	--self:Print("Joined a raid, enabling raid frames")
@@ -298,7 +309,6 @@ function sRaidFrames:PLAYER_TARGET_CHANGED()
 		self.TargetMonitor = nil
 		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:PLAYER_TARGET_CHANGED")
 	end
-	
 end
 
 function sRaidFrames:LeftRaid()

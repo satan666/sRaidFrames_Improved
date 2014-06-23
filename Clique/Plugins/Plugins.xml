@@ -7,8 +7,6 @@
 	<Script file="Clique_ArcHUD.lua"/>
 	<Script file="Clique_AUF.lua"/>
 	<Script file="Clique_agUnitFrames.lua"/>
-	<Script file="Clique_BlizzRaidFrames.lua"/>
-	<Script file="Clique_BlizzUnitFrames.lua"/>
 	<Script file="Clique_ClickToRes.lua"/>
 	<Script file="Clique_DUF.lua"/>
 	<Script file="Clique_EasyRaid.lua"/>   
