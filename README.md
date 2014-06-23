@@ -16,15 +16,6 @@ PACK CONTENT
 >> Zorlen
 - sRaidFrames mandatory dependancy library
 
->> ClassicMouseover
-- mouseover cast compatible with sRaidFrames
-- use example /cmast Flash of Light
-
->> Clique
-- everybody knows what clique is
-
->>_LazySpell
-- auto spell rank scale for Clique and Classic Mouseover(check readme.txt in _LazySpell folder)
 
 
 more info: PACK_INFO.txt

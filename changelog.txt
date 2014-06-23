@@ -51,23 +51,6 @@ patch 0.85 - visual improvements
 - implemented round healing indicators for better look when using borders 
 - this release requires to delete sRaidFrames.lua and sRaidFrames.bak from WTF/../SavedVariables to avoid various errors
 
->> ag_UnitFrames
-- this version of ag_UnitFrames is modified to be compatible with sRaidFrames 40 yard check
-
->> Zorlen
--sRaidFrames mandatory dependancy library
-
->> Classic Mouseover
-- mouseover cast compatible with sRaidFrames
-
->> Classic Snowfall
-- must have this addon accelerates key bindings so that they are activated by key press rather than key release.
-
-- use example /cmast Flash of Light
-
->> Clique
-- everybody knows what clique is
-
 
 -=cheers Ogrisch
 
