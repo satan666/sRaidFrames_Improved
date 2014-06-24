@@ -18,9 +18,7 @@ PACK CONTENT
 
 
 
-more info: PACK_INFO.txt
-
--=cheers Ogrisch
+cheers Ogrisch
 
 
 
