@@ -162,6 +162,10 @@ L:RegisterTranslations("enUS", function() return {
 	["Toggle the display of rage bars"] = true,
 	["Filter dispellable debuffs"] = true,
 	["Toggle display of dispellable debuffs only"] = true,
+	
+	["Filter dispellable debuffs within the range"] = true,
+	["Toggle display of dispellable debuffs within 28Y range"] = true,
+	
 	["Buff slot number"] = true,
 	["Set max number of buffs"] = true,
 	["Debuff slot number"] = true,

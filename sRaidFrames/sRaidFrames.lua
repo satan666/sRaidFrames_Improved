@@ -576,7 +576,7 @@ function sRaidFrames:RangeCheck()
 			local deadcheck = UnitIsDead(unit)
 			if unitcheck and UnitIsUnit("player", unit) then
 				--self.frames[unit]:SetAlpha(1)
-				self.UnitRangeArray[unit] = " 11Y"
+				self.UnitRangeArray[unit] = " 28Y"
 			elseif unitcheck and CheckInteractDistance(unit, 4) then
 				--self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = " 28Y"
@@ -890,8 +890,13 @@ function sRaidFrames:UpdateBuffs(units)
 				local cAura = nil
 				local f = self.frames[unit]
 				local debuffSlots = 0
+				
+				local dispellable = self.opt.ShowOnlyDispellable or self.opt.ShowOnlyDispellableRange
+				local dispellable_range = self.UnitRangeArray[unit] and string.find(self.UnitRangeArray[unit], "28Y")
+				local dispellable_range_show = not self.opt.ShowOnlyDispellableRange or self.opt.ShowOnlyDispellableRange and dispellable_range
+								
 				for i=1,16 do
-					local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, self.opt.ShowOnlyDispellable)
+					local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, dispellable)
 					if not debuffTexture then break end
 
 					if not self.opt.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
@@ -899,12 +904,12 @@ function sRaidFrames:UpdateBuffs(units)
 						sRaidFrames.debuff[unit] = debuffType
 					end
 
-					if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < self.opt.debuff_slots then
+					if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < self.opt.debuff_slots and dispellable_range_show then
 						debuffSlots = debuffSlots + 1
 						local debuffFrame = f["aura".. debuffSlots]
 						debuffFrame.unitid = unit
 						debuffFrame.debuffid = i
-						debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, self.opt.ShowOnlyDispellable) end);
+						debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, dispellable) end);
 						debuffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 						debuffFrame.count:SetText(debuffApplications > 1 and debuffApplications or nil);
 						debuffFrame.texture:SetTexture(debuffTexture)

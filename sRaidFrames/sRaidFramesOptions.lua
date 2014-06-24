@@ -976,9 +976,20 @@ sRaidFrames.options = {
 				end,
 				set = "chatToggleDispellable",
 				disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				order = 4
 			},
 		
-			
+			filterdebuffs_range = {
+				name = L["Filter dispellable debuffs within the range"],
+				type = "toggle",
+				desc = L["Toggle display of dispellable debuffs within 28Y range"],
+				get = function()
+					return sRaidFrames.opt.ShowOnlyDispellableRange
+				end,
+				set = "chatToggleDispellableRange",
+				disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				order = 5
+			},
 			
 		}
 		},
@@ -1586,7 +1597,17 @@ end
 
 function sRaidFrames:chatToggleDispellable(value)
 	self:S("ShowOnlyDispellable", value)
+	if value then
+		self:S("ShowOnlyDispellableRange", not value)
+	end	
+	self:UpdateBuffs(self.visible)
+end
 
+function sRaidFrames:chatToggleDispellableRange(value)
+	self:S("ShowOnlyDispellableRange", value)
+	if value then
+		self:S("ShowOnlyDispellable", not value)
+	end	
 	self:UpdateBuffs(self.visible)
 end
 
