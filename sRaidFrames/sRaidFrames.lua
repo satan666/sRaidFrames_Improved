@@ -131,7 +131,8 @@ function sRaidFrames:OnInitialize()
 		ExtendedRangeCheck = false,
 		ExtendedRangeCheckCombat = true,
 		fixed_count			= 5,
-		RangeFrequency 		= 0.25,
+		RangeFrequency 		= 0.20,
+		AccurateRangeFactor = 0.05,
 		RangeAlpha 			= 0.2,
 		srfhideparty		= true,
 		lock_focus			= false,
@@ -510,9 +511,9 @@ function sRaidFrames:IsSpellInRangeAndActionBar(SpellName)
 end
 
 function sRaidFrames:Freqcalc(num)
-	local val1 = (0.064*num + 0.936)
+	local factor = self.opt.AccurateRangeFactor or 0.05 
+	local val1 = (factor*num + 0.5)
 	local val2 = val1/num
-	--DEFAULT_CHAT_FRAME:AddMessage(num.." - "..val1.." - "..val2)
 	return val2, val1
 end
 
@@ -891,9 +892,8 @@ function sRaidFrames:UpdateBuffs(units)
 				local f = self.frames[unit]
 				local debuffSlots = 0
 				
-				local dispellable = self.opt.ShowOnlyDispellable or self.opt.ShowOnlyDispellableRange
-				local dispellable_range = self.UnitRangeArray[unit] and string.find(self.UnitRangeArray[unit], "28Y")
-				local dispellable_range_show = not self.opt.ShowOnlyDispellableRange or self.opt.ShowOnlyDispellableRange and dispellable_range
+				local dispellable = self.opt.ShowOnlyDispellable
+				local debuffs_range_show = not self.opt.ShowDebuffsOnlyRange or self.opt.ShowDebuffsOnlyRange and self.UnitRangeArray[unit] and string.find(self.UnitRangeArray[unit], "28Y")
 								
 				for i=1,16 do
 					local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, dispellable)
@@ -904,7 +904,7 @@ function sRaidFrames:UpdateBuffs(units)
 						sRaidFrames.debuff[unit] = debuffType
 					end
 
-					if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < self.opt.debuff_slots and dispellable_range_show then
+					if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < self.opt.debuff_slots and debuffs_range_show then
 						debuffSlots = debuffSlots + 1
 						local debuffFrame = f["aura".. debuffSlots]
 						debuffFrame.unitid = unit
@@ -1345,7 +1345,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
-		self:SetWHP(f.hpbar.indicator2, 5, 5, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+		self:SetWHP(f.hpbar.indicator2, 4.5, 4.5, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 	else
 		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
 			self:SetWHP(f.hpbar, frame_width - 10, 26, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
@@ -1353,7 +1353,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
-		self:SetWHP(f.hpbar.indicator1, 8, 8, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
+		self:SetWHP(f.hpbar.indicator1, 7.7, 7.7, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
 	end
 	
 	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -11)
@@ -1392,7 +1392,7 @@ function sRaidFrames:Sort_Force()
 	if self.opt.RangeCheck or self.opt.ExtendedRangeCheck or self.opt.ExtendedRangeCheckCombat then
 		for id = 1, MAX_RAID_MEMBERS do
 			if self.visible["raid" .. id] then
-				if self.UnitRangeArray["raid" .. id] ~= "" then
+				if self.UnitRangeArray["raid" .. id] ~= "" or UnitIsDeadOrGhost("player") then
 					self.frames["raid" .. id]:SetAlpha(1)
 				else
 					self.frames["raid" .. id]:SetAlpha(self.opt.RangeAlpha)

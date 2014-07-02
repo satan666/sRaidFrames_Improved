@@ -163,8 +163,8 @@ L:RegisterTranslations("enUS", function() return {
 	["Filter dispellable debuffs"] = true,
 	["Toggle display of dispellable debuffs only"] = true,
 	
-	["Filter dispellable debuffs within the range"] = true,
-	["Toggle display of dispellable debuffs within 28Y range"] = true,
+	["Filter debuffs within range"] = true,
+	["Toggle display debuffs within 28Y range"] = true,
 	
 	["Buff slot number"] = true,
 	["Set max number of buffs"] = true,
@@ -203,10 +203,10 @@ L:RegisterTranslations("enUS", function() return {
 	["Set about range"] = true,
 	
 	["Enable light range check"] = true,
-	["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - Suggested when you neither play healing class nor using Blizzard target frame or modified agUnitFrames"] = true,
+	["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - Suggested when you neither play healing class nor using Blizzard frames, agUnitFrames or LunaUnitFrames"] = true,
 	
 	["Enable accurate range check"] = true,
-	["Enable 40y range check that requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames to be present - Only healing classes can use accurate range check"] = true,
+	["Enable 40y range check that requires certain spells to be on actionbar and Blizzard frames, agUnitFrames or LunaUnitFrames to be present - Only healing classes can use accurate range check"] = true,
 	
 	["Enable combined range check"] = true,
 	["Enable 40y accurate range check only in combat otherwise light range check is active"] = true,
@@ -216,8 +216,12 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["Alpha"] = true,
 	["The alpha level for units who are out of range"] = true,
-	["Light range frequency"] = true,
+	
+	["Range frequency"] = true,
 	["The interval between which range checks are performed"] = true,
+	
+	["Accurate range frequency factor"] = true,
+	["Increase or decrease time needed for full units scan - if you experience performance drop please increase the value"] = true,
 
 	["Show Group/Class"] = true,
 	["Toggle the display of certain Groups/Classes - Active if frames are locked"] = true,

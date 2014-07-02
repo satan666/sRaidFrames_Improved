@@ -215,8 +215,6 @@ sRaidFrames.options = {
 			type = "group",
 			desc = L["Load predefined profiles"],
 			args = {
-				
-			
 				profile11 = {
 						name = L["Classic - 5 per column"],
 						type = "toggle",
@@ -917,6 +915,7 @@ sRaidFrames.options = {
 					},
 				},
 				disabled = function() return (sRaidFrames.opt.BuffType == "debuffs" or sRaidFrames.opt.BuffType == "nothing") end,
+				order = 4,
 			},
 			
 			
@@ -980,22 +979,18 @@ sRaidFrames.options = {
 			},
 		
 			filterdebuffs_range = {
-				name = L["Filter dispellable debuffs within the range"],
+				name = L["Filter debuffs within range"],
 				type = "toggle",
-				desc = L["Toggle display of dispellable debuffs within 28Y range"],
+				desc = L["Toggle display debuffs within 28Y range"],
 				get = function()
-					return sRaidFrames.opt.ShowOnlyDispellableRange
+					return sRaidFrames.opt.ShowDebuffsOnlyRange
 				end,
 				set = "chatToggleDispellableRange",
-				disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				disabled = function() return not sRaidFrames.opt.ShowOnlyDispellable end,
 				order = 5
-			},
-			
+			},	
 		}
 		},
-
-		
-		
 
 		powerfilter = {
 			name = L["Power type visiblity"],
@@ -1186,7 +1181,7 @@ sRaidFrames.options = {
 				enable = {
 					name = L["Enable light range check"],
 					type = "toggle",
-					desc = L["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - Suggested when you neither play healing class nor using Blizzard target frame or modified agUnitFrames"],
+					desc = L["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - Suggested when you neither play healing class nor using Blizzard frames, agUnitFrames or LunaUnitFrames"],
 					get = function() return sRaidFrames.opt.RangeCheck end,
 					set = function(value)
 						sRaidFrames:DisableRangeCheck()
@@ -1201,7 +1196,7 @@ sRaidFrames.options = {
 				enable40y = {
 					name = L["Enable accurate range check"],
 					type = "toggle",
-					desc = L["Enable 40y range check that requires certain spells to be on actionbar and Blizzard target frame or modifiied agUnitFrames to be present - Only healing classes can use accurate range check"],
+					desc = L["Enable 40y range check that requires certain spells to be on actionbar and Blizzard frames, agUnitFrames or LunaUnitFrames to be present - Only healing classes can use accurate range check"],
 					get = function() return sRaidFrames.opt.ExtendedRangeCheck end,
 					set = function(value)
 						sRaidFrames:DisableRangeCheck()
@@ -1252,10 +1247,11 @@ sRaidFrames.options = {
 					min  = 0,
 					max  = 1,
 					step = 0.1,
+					order = 5,
 					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
 				},
-				frequency = {
-					name = L["Light range frequency"],
+				frequency1 = {
+					name = L["Range frequency"],
 					type = "range",
 					desc = L["The interval between which range checks are performed"],
 					get = function() return sRaidFrames.opt.RangeFrequency end,
@@ -1263,9 +1259,25 @@ sRaidFrames.options = {
 						sRaidFrames.opt.RangeFrequency = value
 						sRaidFrames:UpdateRangeFrequency(value)
 					end,
-					min  = 0.25,
-					max  = 0.5,
-					step = 0.25,
+					min  = 0.2,
+					max  = 0.8,
+					step = 0.1,
+					order = 6,
+					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
+				},
+				
+				frequency2 = {
+					name = L["Accurate range frequency factor"],
+					type = "range",
+					desc = L["Increase or decrease time needed for full units scan - if you experience performance drop please increase the value"],
+					get = function() return sRaidFrames.opt.AccurateRangeFactor end,
+					set = function(value)
+						sRaidFrames.opt.AccurateRangeFactor = value
+					end,
+					min  = 0.04,
+					max  = 0.08,
+					step = 0.01,
+					order = 7,
 					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
 				},
 			},
@@ -1597,17 +1609,14 @@ end
 
 function sRaidFrames:chatToggleDispellable(value)
 	self:S("ShowOnlyDispellable", value)
-	if value then
-		self:S("ShowOnlyDispellableRange", not value)
-	end	
+	if not value then
+		self:S("ShowDebuffsOnlyRange", value)
+	end
 	self:UpdateBuffs(self.visible)
 end
 
 function sRaidFrames:chatToggleDispellableRange(value)
-	self:S("ShowOnlyDispellableRange", value)
-	if value then
-		self:S("ShowOnlyDispellable", not value)
-	end	
+	self:S("ShowDebuffsOnlyRange", value)
 	self:UpdateBuffs(self.visible)
 end
 
