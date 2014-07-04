@@ -980,7 +980,7 @@ sRaidFrames.options = {
 			--]]
 			
 			dispellable_debuffs = {
-				name = L["Show dispellable debuffs only"],
+				name = L["Filter dispellable debuffs"],
 				type = "toggle",
 				desc = L["Toggle display of dispellable debuffs"],
 				get = function()
@@ -992,7 +992,7 @@ sRaidFrames.options = {
 			},
 		
 			dispellable_debuffs_range = {
-				name = L["Show dispellable debuffs within range"],
+				name = L["Filter dispellable debuffs within range"],
 				type = "toggle",
 				desc = L["Toggle display debuffs within 28Y range"],
 				get = function()
