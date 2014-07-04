@@ -512,7 +512,8 @@ end
 
 function sRaidFrames:Freqcalc(num)
 	local factor = self.opt.AccurateRangeFactor or 0.05 
-	local val1 = (factor*num + 0.5)
+	local val1 = (factor*num + 0.6)
+	--local val1 = (0.064*num + 0.936)
 	local val2 = val1/num
 	return val2, val1
 end

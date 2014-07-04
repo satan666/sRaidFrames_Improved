@@ -160,11 +160,12 @@ L:RegisterTranslations("enUS", function() return {
 	["Toggle the display of energy and focus bars"] = true,
 	["Rage"] = true,
 	["Toggle the display of rage bars"] = true,
-	["Filter dispellable debuffs"] = true,
-	["Toggle display of dispellable debuffs only"] = true,
-	
-	["Filter debuffs within range"] = true,
+	["Show dispellable debuffs only"] = true,
+	["Toggle display of dispellable debuffs"] = true,
+	["Show dispellable debuffs within range"] = true,
 	["Toggle display debuffs within 28Y range"] = true,
+	["Show filtered debuffs"] = true,
+	["Toggle display of filtered debuffs"] = true,
 	
 	["Buff slot number"] = true,
 	["Set max number of buffs"] = true,

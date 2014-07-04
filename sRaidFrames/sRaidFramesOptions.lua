@@ -965,11 +965,11 @@ sRaidFrames.options = {
 				order = 3,
 			},
 			
-			
+			--[[
 			filterdebuffs = {
-				name = L["Filter dispellable debuffs"],
+				name = L["Show filtered debuffs"],
 				type = "toggle",
-				desc = L["Toggle display of dispellable debuffs only"],
+				desc = L["Toggle display of filtered debuffs"],
 				get = function()
 					return sRaidFrames.opt.ShowOnlyDispellable
 				end,
@@ -977,9 +977,22 @@ sRaidFrames.options = {
 				disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
 				order = 4
 			},
+			--]]
+			
+			dispellable_debuffs = {
+				name = L["Show dispellable debuffs only"],
+				type = "toggle",
+				desc = L["Toggle display of dispellable debuffs"],
+				get = function()
+					return sRaidFrames.opt.ShowOnlyDispellable
+				end,
+				set = "chatToggleDispellable",
+				disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				order = 5
+			},
 		
-			filterdebuffs_range = {
-				name = L["Filter debuffs within range"],
+			dispellable_debuffs_range = {
+				name = L["Show dispellable debuffs within range"],
 				type = "toggle",
 				desc = L["Toggle display debuffs within 28Y range"],
 				get = function()
@@ -987,7 +1000,7 @@ sRaidFrames.options = {
 				end,
 				set = "chatToggleDispellableRange",
 				disabled = function() return not sRaidFrames.opt.ShowOnlyDispellable end,
-				order = 5
+				order = 6
 			},	
 		}
 		},
