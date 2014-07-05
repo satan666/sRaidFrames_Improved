@@ -127,6 +127,12 @@ L:RegisterTranslations("enUS", function() return {
 	["Add buff"] = true,
 	["Add a buff"] = true,
 	["<name of buff>"] = true,
+	
+	["Debuff filter"] = true,
+	["Set debuff filter"] = true,
+	["Add debuff"] = true,
+	["Add a debuff"] = true,
+	["<name of debuff>"] = true,
 
 	["Show group titles"] = true,
 	["Toggle display of titles above each group frame"] = true,
@@ -160,9 +166,13 @@ L:RegisterTranslations("enUS", function() return {
 	["Toggle the display of energy and focus bars"] = true,
 	["Rage"] = true,
 	["Toggle the display of rage bars"] = true,
-	["Filter dispellable debuffs"] = true,
+	["Show dispellable debuffs"] = true,
 	["Toggle display of dispellable debuffs"] = true,
-	["Filter dispellable debuffs within range"] = true,
+	
+	["Show filtered buffs"] = true,
+	["Toggle display of filtered buffs"] = true,
+	
+	["Show dispellable debuffs within range"] = true,
 	["Toggle display debuffs within 28Y range"] = true,
 	["Show filtered debuffs"] = true,
 	["Toggle display of filtered debuffs"] = true,

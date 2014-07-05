@@ -2,6 +2,7 @@
 local BS = AceLibrary("Babble-Spell-2.2")
 local Compost = AceLibrary("Compost-2.0")
 local Banzai = AceLibrary("Banzai-1.0")
+local HealComm = AceLibrary("HealComm-1.0") 
 
 --local proximity = ProximityLib:GetInstance("1")
 local surface = AceLibrary("Surface-1.0") 
@@ -11,12 +12,20 @@ surface:Register("Otravi", "Interface\\AddOns\\sRaidFrames\\textures\\otravi")
 surface:Register("Smooth", "Interface\\AddOns\\sRaidFrames\\textures\\smooth")
 surface:Register("Striped", "Interface\\AddOns\\sRaidFrames\\textures\\striped")
 surface:Register("BantoBar", "Interface\\AddOns\\sRaidFrames\\textures\\bantobar")
-
-surface:Register("Grid", "Interface\\AddOns\\sRaidFrames\\textures\\Grid")
-surface:Register("Bumps", "Interface\\AddOns\\sRaidFrames\\textures\\Bumps")
-surface:Register("Button", "Interface\\AddOns\\sRaidFrames\\textures\\Button")
-surface:Register("Cloud", "Interface\\AddOns\\sRaidFrames\\textures\\Cloud")
+surface:Register("Gradient", "Interface\\AddOns\\sRaidFrames\\textures\\gradient32x32")
+surface:Register("RenaitreMinion", "Interface\\AddOns\\sRaidFrames\\textures\\RenaitreMinion.tga")
+surface:Register("Smelly", "Interface\\AddOns\\sRaidFrames\\textures\\Smelly.tga")
+surface:Register("Minimalist", "Interface\\AddOns\\sRaidFrames\\textures\\Minimalist.tga")
+surface:Register("HiContrast", "Interface\\AddOns\\sRaidFrames\\textures\\bar15.tga")
+surface:Register("LiteStepLite", "Interface\\AddOns\\sRaidFrames\\textures\\LiteStepLite")
+surface:Register("Aluminium", "Interface\\AddOns\\sRaidFrames\\textures\\Aluminium")
 surface:Register("DarkBottom", "Interface\\AddOns\\sRaidFrames\\textures\\DarkBottom")
+surface:Register("Progressbar", "Interface\\AddOns\\sRaidFrames\\textures\\progressbar.tga")
+surface:Register("Flat", "Interface\\AddOns\\sRaidFrames\\textures\\bar17.tga")
+surface:Register("Club", "Interface\\AddOns\\sRaidFrames\\textures\\bar5.tga")
+--surface:Register("Bumps", "Interface\\AddOns\\sRaidFrames\\textures\\Bumps")
+--surface:Register("Button", "Interface\\AddOns\\sRaidFrames\\textures\\Button")
+surface:Register("Cloud", "Interface\\AddOns\\sRaidFrames\\textures\\Cloud")
 surface:Register("Diagonal", "Interface\\AddOns\\sRaidFrames\\textures\\Diagonal")
 surface:Register("Fifths", "Interface\\AddOns\\sRaidFrames\\textures\\Fifths")
 surface:Register("Fourths", "Interface\\AddOns\\sRaidFrames\\textures\\Fourths")
@@ -25,37 +34,28 @@ surface:Register("Hatched", "Interface\\AddOns\\sRaidFrames\\textures\\Hatched")
 surface:Register("Paint", "Interface\\AddOns\\sRaidFrames\\textures\\Paint")
 surface:Register("Skewed", "Interface\\AddOns\\sRaidFrames\\textures\\Skewed")
 surface:Register("Water", "Interface\\AddOns\\sRaidFrames\\textures\\Water")
-surface:Register("Charcoal", "Interface\\AddOns\\sRaidFrames\\textures\\Charcoal")
+--surface:Register("Charcoal", "Interface\\AddOns\\sRaidFrames\\textures\\Charcoal")
 surface:Register("Glaze", "Interface\\AddOns\\sRaidFrames\\textures\\glaze")
-surface:Register("Metal", "Interface\\AddOns\\sRaidFrames\\textures\\BEB-BarFill-Metal")
+--surface:Register("Metal", "Interface\\AddOns\\sRaidFrames\\textures\\BEB-BarFill-Metal")
 surface:Register("Wood", "Interface\\AddOns\\sRaidFrames\\textures\\BEB-BarFill-Wood")
-surface:Register("Gradient", "Interface\\AddOns\\sRaidFrames\\textures\\gradient32x32")
-surface:Register("Aluminium", "Interface\\AddOns\\sRaidFrames\\textures\\Aluminium")
 surface:Register("Rupture", "Interface\\AddOns\\sRaidFrames\\textures\\Rupture")
 surface:Register("Highlight", "Interface\\AddOns\\sRaidFrames\\textures\\debuffHighlight")
 surface:Register("TukuiBar", "Interface\\AddOns\\sRaidFrames\\textures\\tukuibar")
-surface:Register("LiteStepLite", "Interface\\AddOns\\sRaidFrames\\textures\\LiteStepLite")
 surface:Register("Blur", "Interface\\AddOns\\sRaidFrames\\textures\\bar1.tga")
 surface:Register("VuhDo", "Interface\\AddOns\\sRaidFrames\\textures\\bar3.tga")
-surface:Register("Club", "Interface\\AddOns\\sRaidFrames\\textures\\bar5.tga")
 surface:Register("Force", "Interface\\AddOns\\sRaidFrames\\textures\\bar8.tga")
-surface:Register("CoffeShop", "Interface\\AddOns\\sRaidFrames\\textures\\bar13.tga")
-surface:Register("Toxic", "Interface\\AddOns\\sRaidFrames\\textures\\bar14.tga")
-surface:Register("HiContrast", "Interface\\AddOns\\sRaidFrames\\textures\\bar15.tga")
-surface:Register("Flat", "Interface\\AddOns\\sRaidFrames\\textures\\bar17.tga")
-surface:Register("Tube", "Interface\\AddOns\\sRaidFrames\\textures\\Tube.tga")
+--surface:Register("CoffeShop", "Interface\\AddOns\\sRaidFrames\\textures\\bar13.tga")
+--surface:Register("Toxic", "Interface\\AddOns\\sRaidFrames\\textures\\bar14.tga")
+--surface:Register("Tube", "Interface\\AddOns\\sRaidFrames\\textures\\Tube.tga")
 surface:Register("Stoned", "Interface\\AddOns\\sRaidFrames\\textures\\metal.tga")
-surface:Register("Minimalist", "Interface\\AddOns\\sRaidFrames\\textures\\Minimalist.tga")
-surface:Register("Glow", "Interface\\AddOns\\sRaidFrames\\textures\\glowTex.tga")
+--surface:Register("Glow", "Interface\\AddOns\\sRaidFrames\\textures\\glowTex.tga")
 surface:Register("Ray", "Interface\\AddOns\\sRaidFrames\\textures\\highlightTex.tga")
 surface:Register("Neal", "Interface\\AddOns\\sRaidFrames\\textures\\Neal.blp")
-surface:Register("Smelly", "Interface\\AddOns\\sRaidFrames\\textures\\Smelly.tga")
 surface:Register("Ruben", "Interface\\AddOns\\sRaidFrames\\textures\\Ruben.tga")
-surface:Register("RenaitreMinion", "Interface\\AddOns\\sRaidFrames\\textures\\RenaitreMinion.tga")
-surface:Register("Progressbar", "Interface\\AddOns\\sRaidFrames\\textures\\progressbar.tga")
 surface:Register("Orient", "Interface\\AddOns\\sRaidFrames\\textures\\Orient.tga")
 surface:Register("Ghost", "Interface\\AddOns\\sRaidFrames\\textures\\Ghost.tga")
-surface:Register("Lap", "Interface\\AddOns\\sRaidFrames\\textures\\Lap.tga")
+--surface:Register("Lap", "Interface\\AddOns\\sRaidFrames\\textures\\Lap.tga")
+--surface:Register("Grid", "Interface\\AddOns\\sRaidFrames\\textures\\Grid")
 
 local math_mod = math.fmod or math.mod 
 
@@ -125,6 +125,7 @@ function sRaidFrames:OnInitialize()
 		ClassFilter			= {["WARRIOR"] = true, ["PALADIN"] = true, ["SHAMAN"] = true, ["HUNTER"] = true, ["WARLOCK"] = true, ["MAGE"] = true, ["DRUID"] = true, ["ROGUE"] = true, ["PRIEST"] = true},
 		GroupFilter			= {true, true, true, true, true, true, true, true},
 		BuffFilter			= {},
+		DebuffFilter		= {},
 		PowerFilter			= {[0] = true,[1] = true,[2] = true,[3] = true},
 		aggro				= false,
 		RangeCheck 			= false,
@@ -204,8 +205,11 @@ function sRaidFrames:OnProfileEnable()
 end
 
 function sRaidFrames:OnEnable()
+	self:PatchUpdate()
+	
 	self:SetPosition()
 	
+	self:chatUpdateDebuffMenu()
 	self:chatUpdateBuffMenu()
 
 	self:RegisterBucketEvent("RAID_ROSTER_UPDATE", 0.1, "UpdateRoster")
@@ -223,6 +227,13 @@ function sRaidFrames:OnEnable()
 		aUF.PLAYER_TARGET_CHANGED_OLD = aUF.PLAYER_TARGET_CHANGED
 		aUF.PLAYER_TARGET_CHANGED = self.ag_PLAYER_TARGET_CHANGED_Hook
 	end
+end
+
+function sRaidFrames:PatchUpdate()
+	if not self.opt.DebuffFilter then
+		self.opt.DebuffFilter = {}
+	end
+
 end
 
 function sRaidFrames:TargetFrame_OnEvent(event)
@@ -476,7 +487,7 @@ end
 function sRaidFrames:HealCommRez(author)
 	local unit = roster:GetUnitIDFromName(author)
 	--self:Print("oRA_PlayerResurrected", UnitIsDead(unit), UnitIsGhost(unit), self.unavail[unit], msg, author, unit)
-	if unit then self.res[unit] = 2 end
+	if unit and HealComm:UnitisResurrecting(GetUnitName(unit)) then self.res[unit] = 2 end
 end
 
 function sRaidFrames:oRA_PlayerResurrected(msg, author)
@@ -787,8 +798,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				
 				
 				if not self.feign[unit] then
-					local status, dead, ghost = nil, UnitIsDead(unit) or UnitHealth(unit) <= 1, UnitIsGhost(unit)
-									
+					local status, dead, ghost = nil, UnitIsDead(unit) or UnitHealth(unit) <= 1, UnitIsGhost(unit)				
 					if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
 					elseif self.res[unit] == 1 and dead then status = "|cffff8c00"..L["Can Recover"].."|r"
 					elseif self.res[unit] == 2 and (dead or ghost) then status = "|cffff8c00 Rezzed|r"
@@ -892,12 +902,22 @@ function sRaidFrames:UpdateBuffs(units)
 				local cAura = nil
 				local f = self.frames[unit]
 				local debuffSlots = 0
+				local debuff_mask = nil
 				
-				local dispellable = self.opt.ShowOnlyDispellable
 				local debuffs_range_show = not self.opt.ShowDebuffsOnlyRange or self.opt.ShowDebuffsOnlyRange and self.UnitRangeArray[unit] and string.find(self.UnitRangeArray[unit], "28Y")
 								
 				for i=1,16 do
-					local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, dispellable)
+					
+					local filter_debuff = self.opt.ShowFilteredDebuffs and self.opt.DebuffFilter[self:GetDebuffName(unit, i)]
+					local debuffs_filter_show = not self.opt.ShowFilteredDebuffs or filter_debuff
+					
+					if filter_debuff  then
+						debuff_mask = nil
+					else
+						debuff_mask = self.opt.ShowOnlyDispellable
+					end
+					
+					local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, debuff_mask)
 					if not debuffTexture then break end
 
 					if not self.opt.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
@@ -905,12 +925,12 @@ function sRaidFrames:UpdateBuffs(units)
 						sRaidFrames.debuff[unit] = debuffType
 					end
 
-					if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < self.opt.debuff_slots and debuffs_range_show then
+					if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < self.opt.debuff_slots and debuffs_range_show and debuffs_filter_show then
 						debuffSlots = debuffSlots + 1
 						local debuffFrame = f["aura".. debuffSlots]
 						debuffFrame.unitid = unit
 						debuffFrame.debuffid = i
-						debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, dispellable) end);
+						debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, debuff_mask) end);
 						debuffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 						debuffFrame.count:SetText(debuffApplications > 1 and debuffApplications or nil);
 						debuffFrame.texture:SetTexture(debuffTexture)
@@ -988,7 +1008,8 @@ function sRaidFrames:UpdateBuffs(units)
 				if self.opt.BuffType == "buffs" or (self.opt.BuffType == "buffsifnotdebuffed" and debuffSlots == 0) then
 					local buffSlots = 0
 					local showOnlyCastable = 1
-					if next(self.opt.BuffFilter) then
+					--if next(self.opt.BuffFilter) then
+					if self.opt.ShowFilteredBuffs then 
 						showOnlyCastable = 0
 					end
 					for i=1,32 do
@@ -1020,6 +1041,11 @@ end
 
 function sRaidFrames:GetBuffName(unit, i)
 	sRaidFramesTooltip:SetUnitBuff(unit, i)
+  return sRaidFramesTooltipTextLeft1:GetText() or ""
+end
+
+function sRaidFrames:GetDebuffName(unit, i)
+	sRaidFramesTooltip:SetUnitDebuff(unit, i)
   return sRaidFramesTooltipTextLeft1:GetText() or ""
 end
 

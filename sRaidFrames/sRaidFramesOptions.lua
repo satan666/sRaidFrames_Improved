@@ -918,7 +918,28 @@ sRaidFrames.options = {
 				order = 4,
 			},
 			
-			
+			debufffilter = {
+				name = L["Debuff filter"],
+				type = "group",
+				desc = L["Set debuff filter"],
+				args = {
+					add = {
+						name = L["Add debuff"],
+						type = "text",
+						desc = L["Add a debuff"],
+						get = false,
+						set = function(value)
+							if not sRaidFrames.opt.DebuffFilter[value] then
+								sRaidFrames.opt.DebuffFilter[value] = true
+								sRaidFrames:chatUpdateDebuffMenu()
+							end
+						end,
+						usage = L["<name of debuff>"],
+					},
+				},
+				disabled = function() return (sRaidFrames.opt.BuffType == "buffs" or sRaidFrames.opt.BuffType == "nothing") end,
+				order = 4,
+			},
 			
 			
 			bufftype = {
@@ -965,22 +986,39 @@ sRaidFrames.options = {
 				order = 3,
 			},
 			
-			--[[
+
+			
+			filterbuffs = {
+				name = L["Show filtered buffs"],
+				type = "toggle",
+				desc = L["Toggle display of filtered buffs"],
+				get = function()
+					return sRaidFrames.opt.ShowFilteredBuffs
+				end,
+				set = function(set)
+					sRaidFrames:S("ShowFilteredBuffs", set)
+				end,	
+				--disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				order = 4
+			},
+			
 			filterdebuffs = {
 				name = L["Show filtered debuffs"],
 				type = "toggle",
 				desc = L["Toggle display of filtered debuffs"],
 				get = function()
-					return sRaidFrames.opt.ShowOnlyDispellable
+					return sRaidFrames.opt.ShowFilteredDebuffs
 				end,
-				set = "chatToggleDispellable",
-				disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
-				order = 4
+				set = function(set)
+					sRaidFrames:S("ShowFilteredDebuffs", set)
+				end,	
+				--disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				order = 5
 			},
-			--]]
+
 			
 			dispellable_debuffs = {
-				name = L["Filter dispellable debuffs"],
+				name = L["Show dispellable debuffs"],
 				type = "toggle",
 				desc = L["Toggle display of dispellable debuffs"],
 				get = function()
@@ -988,11 +1026,11 @@ sRaidFrames.options = {
 				end,
 				set = "chatToggleDispellable",
 				disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
-				order = 5
+				order = 6
 			},
 		
 			dispellable_debuffs_range = {
-				name = L["Filter dispellable debuffs within range"],
+				name = L["Show dispellable debuffs within range"],
 				type = "toggle",
 				desc = L["Toggle display debuffs within 28Y range"],
 				get = function()
@@ -1000,7 +1038,7 @@ sRaidFrames.options = {
 				end,
 				set = "chatToggleDispellableRange",
 				disabled = function() return not sRaidFrames.opt.ShowOnlyDispellable end,
-				order = 6
+				order = 7
 			},	
 		}
 		},
@@ -1605,6 +1643,25 @@ function sRaidFrames:chatUpdateBuffMenu()
 		self.options.args.buffsdebuffs.args.bufffilter.args["remove"].args["buff" .. i].name = buffName
 		self.options.args.buffsdebuffs.args.bufffilter.args["remove"].args["buff" .. i].desc = 'Remove '.. buffName .. ' from the buff list'
 		self.options.args.buffsdebuffs.args.bufffilter.args["remove"].args["buff" .. i].func = function() self.opt.BuffFilter[buffName] = nil self:chatUpdateBuffMenu()  end
+		i = i + 1
+	end
+end
+
+function sRaidFrames:chatUpdateDebuffMenu()
+	self.options.args.buffsdebuffs.args.debufffilter.args["remove"] = {}
+	self.options.args.buffsdebuffs.args.debufffilter.args["remove"].type = 'group'
+	self.options.args.buffsdebuffs.args.debufffilter.args["remove"].name = 'Remove debuff'
+	self.options.args.buffsdebuffs.args.debufffilter.args["remove"].desc = 'Remove debuffs from the list'
+	self.options.args.buffsdebuffs.args.debufffilter.args["remove"].args = {}
+	local i = 1
+	--for buff in self.opt.debufffilter do
+	for debuff in pairs(self.opt.DebuffFilter) do
+		local debuffName = debuff -- Odd hack, don't know
+		self.options.args.buffsdebuffs.args.debufffilter.args["remove"].args["debuff" .. i] = {}
+		self.options.args.buffsdebuffs.args.debufffilter.args["remove"].args["debuff" .. i].type = 'execute'
+		self.options.args.buffsdebuffs.args.debufffilter.args["remove"].args["debuff" .. i].name = debuffName
+		self.options.args.buffsdebuffs.args.debufffilter.args["remove"].args["debuff" .. i].desc = 'Remove '.. debuffName .. ' from the debuff list'
+		self.options.args.buffsdebuffs.args.debufffilter.args["remove"].args["debuff" .. i].func = function() self.opt.DebuffFilter[debuffName] = nil self:chatUpdateDebuffMenu()  end
 		i = i + 1
 	end
 end
