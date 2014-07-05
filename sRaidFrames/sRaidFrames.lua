@@ -923,9 +923,18 @@ function sRaidFrames:UpdateBuffs(units)
 						if not debuffTexture then break end
 						local debuffName = self:GetDebuffName(unit, i, debuff_mask)
 						
+						--[[
+							if not self.opt.ShowFilteredDebuffs then
+								DEFAULT_CHAT_FRAME:AddMessage("x1 ")
+							end
+							if not self.opt.ShowOnlyDispellable then
+								DEFAULT_CHAT_FRAME:AddMessage("x2 ")
+							end
+						--]]
+						
 						if j == 1 then
 							process1 = self.opt.ShowFilteredDebuffs or not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable
-							process2 = self.opt.ShowFilteredDebuffs and self.opt.DebuffFilter[debuffName] and not self.TempTooltipDebuffs[debuffName] or not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable
+							process2 = not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable or self.opt.ShowFilteredDebuffs and self.opt.DebuffFilter[debuffName] and not self.TempTooltipDebuffs[debuffName]
 							
 						elseif j == 2 then
 							process1 = self.opt.ShowOnlyDispellable
