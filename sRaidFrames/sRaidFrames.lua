@@ -40,7 +40,7 @@ surface:Register("Glaze", "Interface\\AddOns\\sRaidFrames\\textures\\glaze")
 surface:Register("Wood", "Interface\\AddOns\\sRaidFrames\\textures\\BEB-BarFill-Wood")
 surface:Register("Rupture", "Interface\\AddOns\\sRaidFrames\\textures\\Rupture")
 surface:Register("Highlight", "Interface\\AddOns\\sRaidFrames\\textures\\debuffHighlight")
-surface:Register("TukuiBar", "Interface\\AddOns\\sRaidFrames\\textures\\tukuibar")
+--surface:Register("TukuiBar", "Interface\\AddOns\\sRaidFrames\\textures\\tukuibar")
 surface:Register("Blur", "Interface\\AddOns\\sRaidFrames\\textures\\bar1.tga")
 surface:Register("VuhDo", "Interface\\AddOns\\sRaidFrames\\textures\\bar3.tga")
 surface:Register("Force", "Interface\\AddOns\\sRaidFrames\\textures\\bar8.tga")
@@ -49,7 +49,7 @@ surface:Register("Force", "Interface\\AddOns\\sRaidFrames\\textures\\bar8.tga")
 --surface:Register("Tube", "Interface\\AddOns\\sRaidFrames\\textures\\Tube.tga")
 surface:Register("Stoned", "Interface\\AddOns\\sRaidFrames\\textures\\metal.tga")
 --surface:Register("Glow", "Interface\\AddOns\\sRaidFrames\\textures\\glowTex.tga")
-surface:Register("Ray", "Interface\\AddOns\\sRaidFrames\\textures\\highlightTex.tga")
+--surface:Register("Ray", "Interface\\AddOns\\sRaidFrames\\textures\\highlightTex.tga")
 surface:Register("Neal", "Interface\\AddOns\\sRaidFrames\\textures\\Neal.blp")
 surface:Register("Ruben", "Interface\\AddOns\\sRaidFrames\\textures\\Ruben.tga")
 surface:Register("Orient", "Interface\\AddOns\\sRaidFrames\\textures\\Orient.tga")
@@ -359,6 +359,7 @@ function sRaidFrames:Variables()
 	self.frames, self.visible, self.groupframes = {}, {}, {}
 	self.feign, self.unavail, self.res = {}, {}, {}
 	
+	self.TempTooltipDebuffs = {}
 	self.UnitSortOrder = {}
 	self.UnitFocusHPArray = {}
 	self.UnitFocusArray = {}
@@ -903,41 +904,73 @@ function sRaidFrames:UpdateBuffs(units)
 				local f = self.frames[unit]
 				local debuffSlots = 0
 				local debuff_mask = nil
+				local process1 = nil
+				local process2 = nil
 				
+
+				--[[
 				local debuffs_range_show = not self.opt.ShowDebuffsOnlyRange or self.opt.ShowDebuffsOnlyRange and self.UnitRangeArray[unit] and string.find(self.UnitRangeArray[unit], "28Y")
-								
-				for i=1,16 do
-					
-					local filter_debuff = self.opt.ShowFilteredDebuffs and self.opt.DebuffFilter[self:GetDebuffName(unit, i)]
-					local debuffs_filter_show = not self.opt.ShowFilteredDebuffs or filter_debuff
-					
-					if filter_debuff  then
-						debuff_mask = nil
-					else
-						debuff_mask = self.opt.ShowOnlyDispellable
-					end
-					
-					local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, debuff_mask)
-					if not debuffTexture then break end
+				local filter_debuff = self.opt.ShowFilteredDebuffs and self.opt.DebuffFilter[self:GetDebuffName(unit, i)]
+				local debuffs_filter_show = not self.opt.ShowFilteredDebuffs or filter_debuff
+						
+				DEFAULT_CHAT_FRAME:AddMessage(i.." - "..self:GetDebuffName(unit, i))
 
-					if not self.opt.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
-						cAura = self.debuffColors[debuffType]
-						sRaidFrames.debuff[unit] = debuffType
-					end
-
-					if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < self.opt.debuff_slots and debuffs_range_show and debuffs_filter_show then
-						debuffSlots = debuffSlots + 1
-						local debuffFrame = f["aura".. debuffSlots]
-						debuffFrame.unitid = unit
-						debuffFrame.debuffid = i
-						debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, debuff_mask) end);
-						debuffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
-						debuffFrame.count:SetText(debuffApplications > 1 and debuffApplications or nil);
-						debuffFrame.texture:SetTexture(debuffTexture)
-						debuffFrame:SetFrameLevel(5)
-						debuffFrame:Show()
-					end
+				if filter_debuff  then	
+					debuff_mask = nil
+				else
+					debuff_mask = self.opt.ShowOnlyDispellable
 				end
+				--]]
+				--local TempTooltipDebuffs = {}
+				
+				
+				for blockindex,blockmatch in pairs(self.TempTooltipDebuffs) do
+					self.TempTooltipDebuffs[blockindex] = nil
+				end
+
+				for j=1,2 do
+					for i=1,16 do
+						local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, debuff_mask)
+						if not debuffTexture then break end				
+						
+						if j == 1 then
+							debuff_mask = nil
+							process1 = self.opt.ShowFilteredDebuffs or not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable
+							process2 = self.opt.ShowFilteredDebuffs and self.opt.DebuffFilter[self:GetDebuffName(unit, i, debuff_mask)] and not self.TempTooltipDebuffs[self:GetDebuffName(unit, i, debuff_mask)] or not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable
+							
+						elseif j == 2 then
+							debuff_mask = true
+							process1 = self.opt.ShowOnlyDispellable
+							process2 = not self.opt.ShowDebuffsOnlyRange or self.opt.ShowDebuffsOnlyRange and self.UnitRangeArray[unit] and string.find(self.UnitRangeArray[unit], "28Y")
+							process2 = process2 and not self.TempTooltipDebuffs[self:GetDebuffName(unit, i, debuff_mask)]
+							
+						end
+						
+						if not process1 then
+							break
+						end
+
+						if not self.opt.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
+							cAura = self.debuffColors[debuffType]
+							sRaidFrames.debuff[unit] = debuffType
+						end
+
+						if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < self.opt.debuff_slots and process2 then
+							debuffSlots = debuffSlots + 1
+							local debuffFrame = f["aura".. debuffSlots]
+							debuffFrame.unitid = unit
+							debuffFrame.debuffid = i
+							debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, debuff_mask) end);
+							debuffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+							debuffFrame.count:SetText(debuffApplications > 1 and debuffApplications or nil);
+							debuffFrame.texture:SetTexture(debuffTexture)
+							debuffFrame:SetFrameLevel(5)
+							debuffFrame:Show()
+							
+							self.TempTooltipDebuffs[self:GetDebuffName(unit, i, debuff_mask)] = true
+						end
+					end
+				end	
 				
 				local dead = UnitIsDeadOrGhost(unit) or UnitHealth(unit) <= 1
 				if self.opt.aggro_aura and not dead and Banzai:GetUnitAggroByUnitId(unit) then
@@ -1044,8 +1077,8 @@ function sRaidFrames:GetBuffName(unit, i)
   return sRaidFramesTooltipTextLeft1:GetText() or ""
 end
 
-function sRaidFrames:GetDebuffName(unit, i)
-	sRaidFramesTooltip:SetUnitDebuff(unit, i)
+function sRaidFrames:GetDebuffName(unit, i, filter)
+	sRaidFramesTooltip:SetUnitDebuff(unit, i, filter)
   return sRaidFramesTooltipTextLeft1:GetText() or ""
 end
 
