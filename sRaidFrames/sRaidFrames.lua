@@ -905,24 +905,7 @@ function sRaidFrames:UpdateBuffs(units)
 				local debuffSlots = 0
 				local debuff_mask = nil
 				local process1 = nil
-				local process2 = nil
-				
-
-				--[[
-				local debuffs_range_show = not self.opt.ShowDebuffsOnlyRange or self.opt.ShowDebuffsOnlyRange and self.UnitRangeArray[unit] and string.find(self.UnitRangeArray[unit], "28Y")
-				local filter_debuff = self.opt.ShowFilteredDebuffs and self.opt.DebuffFilter[self:GetDebuffName(unit, i)]
-				local debuffs_filter_show = not self.opt.ShowFilteredDebuffs or filter_debuff
-						
-				DEFAULT_CHAT_FRAME:AddMessage(i.." - "..self:GetDebuffName(unit, i))
-
-				if filter_debuff  then	
-					debuff_mask = nil
-				else
-					debuff_mask = self.opt.ShowOnlyDispellable
-				end
-				--]]
-				--local TempTooltipDebuffs = {}
-				
+				local process2 = nil		
 				
 				for blockindex,blockmatch in pairs(self.TempTooltipDebuffs) do
 					self.TempTooltipDebuffs[blockindex] = nil
@@ -930,19 +913,24 @@ function sRaidFrames:UpdateBuffs(units)
 
 				for j=1,2 do
 					for i=1,16 do
-						local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, debuff_mask)
-						if not debuffTexture then break end				
-						
 						if j == 1 then
 							debuff_mask = nil
-							process1 = self.opt.ShowFilteredDebuffs or not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable
-							process2 = self.opt.ShowFilteredDebuffs and self.opt.DebuffFilter[self:GetDebuffName(unit, i, debuff_mask)] and not self.TempTooltipDebuffs[self:GetDebuffName(unit, i, debuff_mask)] or not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable
-							
 						elseif j == 2 then
 							debuff_mask = true
+						end
+						
+						local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, debuff_mask)
+						if not debuffTexture then break end
+						local debuffName = self:GetDebuffName(unit, i, debuff_mask)
+						
+						if j == 1 then
+							process1 = self.opt.ShowFilteredDebuffs or not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable
+							process2 = self.opt.ShowFilteredDebuffs and self.opt.DebuffFilter[debuffName] and not self.TempTooltipDebuffs[debuffName] or not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable
+							
+						elseif j == 2 then
 							process1 = self.opt.ShowOnlyDispellable
 							process2 = not self.opt.ShowDebuffsOnlyRange or self.opt.ShowDebuffsOnlyRange and self.UnitRangeArray[unit] and string.find(self.UnitRangeArray[unit], "28Y")
-							process2 = process2 and not self.TempTooltipDebuffs[self:GetDebuffName(unit, i, debuff_mask)]
+							process2 = process2 and not self.TempTooltipDebuffs[debuffName]
 							
 						end
 						
@@ -956,6 +944,9 @@ function sRaidFrames:UpdateBuffs(units)
 						end
 
 						if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < self.opt.debuff_slots and process2 then
+							
+							--DEFAULT_CHAT_FRAME:AddMessage("j: "..j.." - "..debuffName)
+							
 							debuffSlots = debuffSlots + 1
 							local debuffFrame = f["aura".. debuffSlots]
 							debuffFrame.unitid = unit
@@ -967,7 +958,7 @@ function sRaidFrames:UpdateBuffs(units)
 							debuffFrame:SetFrameLevel(5)
 							debuffFrame:Show()
 							
-							self.TempTooltipDebuffs[self:GetDebuffName(unit, i, debuff_mask)] = true
+							self.TempTooltipDebuffs[debuffName] = true
 						end
 					end
 				end	
@@ -1078,6 +1069,7 @@ function sRaidFrames:GetBuffName(unit, i)
 end
 
 function sRaidFrames:GetDebuffName(unit, i, filter)
+	
 	sRaidFramesTooltip:SetUnitDebuff(unit, i, filter)
   return sRaidFramesTooltipTextLeft1:GetText() or ""
 end
