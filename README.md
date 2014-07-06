@@ -1,4 +1,5 @@
->> sRaidFrames Improved with working 
+>> sRaidFrames Improved WOW 1.12.1 with
+- highly customizable GUI 
 - unique 40y range check
 - grid like healing indicators
 - aggro status
@@ -21,6 +22,7 @@ PACK CONTENT
 
 
 For cast supporting addons check this project: https://github.com/satan666/LazySpell
+Improved ag_UnitFrames by Skela https://github.com/satan666/ag_UnitFrames_Improved
 
 cheers Ogrisch
 
