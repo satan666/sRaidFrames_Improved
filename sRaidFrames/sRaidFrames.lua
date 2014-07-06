@@ -147,6 +147,7 @@ function sRaidFrames:OnInitialize()
 		targeting 			= true,
 		buff_slots			= 2,
 		debuff_slots		= 2,
+		Buff_Growth			= "left",
 		
 	})
 
@@ -893,7 +894,7 @@ function sRaidFrames:UpdateBuffs(units)
 		if self.visible[unit] then
 			local f = self.frames[unit]
 			for i = 1, 2 do
-				f["aura".. i]:Hide()
+				--f["aura".. i]:Hide()
 			end
 			for i = 1, 4 do
 				f["buff".. i]:Hide()
@@ -943,18 +944,20 @@ function sRaidFrames:UpdateBuffs(units)
 							sRaidFrames.debuff[unit] = debuffType
 						end
 
-						if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsifnotdebuffed") and debuffSlots < self.opt.debuff_slots and process2 then
+						if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsanddebuffs") and debuffSlots < self.opt.buff_slots and process2 then
 							debuffSlots = debuffSlots + 1
-							local debuffFrame = f["aura".. debuffSlots]
+							
+							local debuffFrame = f["buff".. debuffSlots]
 							debuffFrame.unitid = unit
 							debuffFrame.debuffid = i
-							debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, debuff_mask) end);
+							debuffFrame.mask = debuff_mask
+							debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, this.mask) end);
 							debuffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 							debuffFrame.count:SetText(debuffApplications > 1 and debuffApplications or nil);
 							debuffFrame.texture:SetTexture(debuffTexture)
 							debuffFrame:SetFrameLevel(5)
 							debuffFrame:Show()
-							
+						
 							self.TempTooltipDebuffs[debuffName] = true
 						end
 					end
@@ -1026,14 +1029,16 @@ function sRaidFrames:UpdateBuffs(units)
 					end	
 				end
 
-				if self.opt.BuffType == "buffs" or (self.opt.BuffType == "buffsifnotdebuffed" and debuffSlots == 0) then
-					local buffSlots = 0
+				if self.opt.BuffType == "buffs" or self.opt.BuffType == "buffsanddebuffs" then
+					local buffSlots = debuffSlots
 					local showOnlyCastable = 1
 					--if next(self.opt.BuffFilter) then
 					if self.opt.ShowFilteredBuffs then 
 						showOnlyCastable = 0
 					end
 					for i=1,32 do
+						if buffSlots == self.opt.buff_slots then break end
+						
 						local buffTexture, buffApplications = UnitBuff(unit, i, showOnlyCastable)
 						if not buffTexture then break end
 						if showOnlyCastable == 1 or self.opt.BuffFilter[self:GetBuffName(unit, i)] then
@@ -1050,7 +1055,7 @@ function sRaidFrames:UpdateBuffs(units)
 							
 						end
 
-						if buffSlots == self.opt.buff_slots then break end
+						
 					end
 				end
 			else
@@ -1066,7 +1071,6 @@ function sRaidFrames:GetBuffName(unit, i)
 end
 
 function sRaidFrames:GetDebuffName(unit, i, filter)
-	
 	sRaidFramesTooltip:SetUnitDebuff(unit, i, filter)
   return sRaidFramesTooltipTextLeft1:GetText() or ""
 end
@@ -1381,10 +1385,19 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 	
 	self:SetWHP(f.aura1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -5)
 	self:SetWHP(f.aura2, 12, 12, "RIGHT", f.aura1, "LEFT", 0, 0)
-	self:SetWHP(f.buff1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -4)
-	self:SetWHP(f.buff2, 12, 12, "RIGHT", f.buff1, "LEFT", 0, 0)
-	self:SetWHP(f.buff3, 12, 12, "RIGHT", f.buff2, "LEFT", 0, 0)
-	self:SetWHP(f.buff4, 12, 12, "RIGHT", f.buff3, "LEFT", 0, 0)
+	
+	self:SetWHP(f.buff1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4.1, -4.1)
+	
+	
+	if self.opt.Buff_Growth == "left" then
+		self:SetWHP(f.buff2, 12, 12, "RIGHT", f.buff1, "LEFT", 0, 0)
+		self:SetWHP(f.buff3, 12, 12, "RIGHT", f.buff2, "LEFT", 0, 0)
+		self:SetWHP(f.buff4, 12, 12, "RIGHT", f.buff3, "LEFT", 0, 0)
+	else
+		self:SetWHP(f.buff2, 12, 12, "TOP", f.buff1, "BOTTOM", 0, 0)
+		self:SetWHP(f.buff3, 12, 12, "TOP", f.buff2, "BOTTOM", 0, 0)
+		self:SetWHP(f.buff4, 12, 12, "TOP", f.buff3, "BOTTOM", 0, 0)
+	end	
 	
 		
 	if not sRaidFrames.opt.Border then

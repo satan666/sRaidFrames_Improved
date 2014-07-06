@@ -156,7 +156,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Show buffs or debuffs on the raid frames"] = true,
 	["Only buffs"] = true,
 	["Only debuffs"] = true,
-	["Buffs if not debuffed"] = true,
+	["Buffs and debuffs"] = true,
 	["Nothing"] = true,
 	["Power type visiblity"] = true,
 	["Toggle the display of certain power types (Mana, Rage, Energy)"] = true,
@@ -177,10 +177,11 @@ L:RegisterTranslations("enUS", function() return {
 	["Show filtered debuffs"] = true,
 	["Toggle display of filtered debuffs"] = true,
 	
-	["Buff slot number"] = true,
-	["Set max number of buffs"] = true,
-	["Debuff slot number"] = true,
-	["Set max number of debuffs"] = true,
+	["Buff/debuff slot number"] = true,
+	["Set max number of buffs and debuffs"] = true,
+
+	["Set the growth of the buffs/debuffs"] = true,
+
 	["Buffs/Debuffs"] = true,
 	["_Buffs/Debuffs"] = true,
 	["Bar textures"] = true,

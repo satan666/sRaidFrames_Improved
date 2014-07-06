@@ -578,9 +578,9 @@ sRaidFrames.options = {
 						name = L["Scale"],
 						type = "range",
 						desc = L["Scale"],
-						min = 0.5,
+						min = 0.1,
 						max = 3,
-						step = 0.1,
+						step = 0.05,
 						get = function()
 							return sRaidFrames.opt.ScaleFocus
 						end,
@@ -950,14 +950,14 @@ sRaidFrames.options = {
 					return sRaidFrames.opt.BuffType
 				end,
 				set = "chatBuffType",
-				validate = {["buffs"] = L["Only buffs"], ["debuffs"] = L["Only debuffs"], ["nothing"] = L["Nothing"], ["buffsifnotdebuffed"] = L["Buffs if not debuffed"]},
+				validate = {["buffs"] = L["Only buffs"], ["debuffs"] = L["Only debuffs"], ["nothing"] = L["Nothing"], ["buffsanddebuffs"] = L["Buffs and debuffs"]},
 				order = 1,
 			},
 			
 			buff_slot = {
-						name = L["Buff slot number"],
+						name = L["Buff/debuff slot number"],
 						type = "range",
-						desc = L["Set max number of buffs"],
+						desc = L["Set max number of buffs and debuffs"],
 						min = 1,
 						max = 4,
 						step = 1,
@@ -969,23 +969,21 @@ sRaidFrames.options = {
 						end,
 						order = 2,
 					},
-					
-			debuff_slot = {
-				name = L["Debuff slot number"],
-				type = "range",
-				desc = L["Set max number of debuffs"],
-				min = 1,
-				max = 2,
-				step = 1,
+			
+			growth = {
+				name = L["Growth"],
+				type = "text",
+				desc = L["Set the growth of the buffs/debuffs"],
 				get = function()
-					return sRaidFrames.opt.debuff_slots
+					return sRaidFrames.opt.Buff_Growth
 				end,
-				set = function(set)
-					sRaidFrames:S("debuff_slots", set)
+				set = function(value)
+					sRaidFrames:S("Buff_Growth", value)
+					sRaidFrames:LoadStyle()
 				end,
+				validate = {["down"] = L["Down"], ["left"] = L["Left"]},
 				order = 3,
 			},
-			
 
 			
 			filterbuffs = {
