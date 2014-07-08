@@ -281,6 +281,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Down"] = true,
 	["Left"] = true,
 	["Right"] = true,
+	["Combined"] = true,
 
 	["Border"] = true,
 	["Toggle the display of borders around the raid frames"] = true,

@@ -981,7 +981,7 @@ sRaidFrames.options = {
 					sRaidFrames:S("Buff_Growth", value)
 					sRaidFrames:LoadStyle()
 				end,
-				validate = {["down"] = L["Down"], ["left"] = L["Left"]},
+				validate = {["down"] = L["Down"], ["left"] = L["Left"], ["combined"] = L["Combined"]},
 				order = 3,
 			},
 

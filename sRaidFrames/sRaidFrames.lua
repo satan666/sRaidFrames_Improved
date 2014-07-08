@@ -893,9 +893,6 @@ function sRaidFrames:UpdateBuffs(units)
 	for unit in pairs(units) do
 		if self.visible[unit] then
 			local f = self.frames[unit]
-			for i = 1, 2 do
-				--f["aura".. i]:Hide()
-			end
 			for i = 1, 4 do
 				f["buff".. i]:Hide()
 			end
@@ -946,7 +943,6 @@ function sRaidFrames:UpdateBuffs(units)
 
 						if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsanddebuffs") and debuffSlots < self.opt.buff_slots and process2 then
 							debuffSlots = debuffSlots + 1
-							
 							local debuffFrame = f["buff".. debuffSlots]
 							debuffFrame.unitid = unit
 							debuffFrame.debuffid = i
@@ -1393,10 +1389,16 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 		self:SetWHP(f.buff2, 12, 12, "RIGHT", f.buff1, "LEFT", 0, 0)
 		self:SetWHP(f.buff3, 12, 12, "RIGHT", f.buff2, "LEFT", 0, 0)
 		self:SetWHP(f.buff4, 12, 12, "RIGHT", f.buff3, "LEFT", 0, 0)
-	else
+	
+	elseif self.opt.Buff_Growth == "down" then
 		self:SetWHP(f.buff2, 12, 12, "TOP", f.buff1, "BOTTOM", 0, 0)
 		self:SetWHP(f.buff3, 12, 12, "TOP", f.buff2, "BOTTOM", 0, 0)
 		self:SetWHP(f.buff4, 12, 12, "TOP", f.buff3, "BOTTOM", 0, 0)
+		
+	else
+		self:SetWHP(f.buff2, 12, 12, "RIGHT", f.buff1, "LEFT", 0, 0)
+		self:SetWHP(f.buff3, 12, 12, "TOP", f.buff1, "BOTTOM", 0, 0)
+		self:SetWHP(f.buff4, 12, 12, "TOP", f.buff2, "BOTTOM", 0, 0)
 	end	
 	
 		
