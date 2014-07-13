@@ -616,7 +616,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.dynamic_sort = value
 								sRaidFrames.opt.dynamic_range_sort = value
 
-								sRaidFrames:UpdateAll()
+								sRaidFrames:UpdateAllUnits()
 								sRaidFrames:Sort()
 								
 								sRaidFrames.opt.profile2 = not value
@@ -644,7 +644,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.hp_limit = 1
 								sRaidFrames.opt.units_limit = 5
 								
-								sRaidFrames:UpdateAll()
+								sRaidFrames:UpdateAllUnits()
 								sRaidFrames:Sort()
 								
 								sRaidFrames.opt.profile1 = not value
@@ -675,7 +675,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.hp_limit = 100
 								sRaidFrames.opt.units_limit = 5
 								
-								sRaidFrames:UpdateAll()
+								sRaidFrames:UpdateAllUnits()
 								sRaidFrames:Sort()
 
 								sRaidFrames.opt.profile1 = not value
@@ -706,7 +706,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.hp_limit = 100
 								sRaidFrames.opt.units_limit = 5
 								
-								sRaidFrames:UpdateAll()
+								sRaidFrames:UpdateAllUnits()
 								sRaidFrames:Sort()
 
 								sRaidFrames.opt.profile1 = not value
@@ -1055,7 +1055,7 @@ sRaidFrames.options = {
 					end,
 					set = function(value)
 						sRaidFrames.opt.PowerFilter[0] = value
-						sRaidFrames:UpdateAll()
+						sRaidFrames:UpdateAllUnits()
 						sRaidFrames:LoadStyle()
 					end,
 					map = {[false] = L["hidden"], [true] = L["shown"]},
@@ -1071,7 +1071,7 @@ sRaidFrames.options = {
 					set = function(value)
 						sRaidFrames.opt.PowerFilter[2] = value
 						sRaidFrames.opt.PowerFilter[3] = value
-						sRaidFrames:UpdateAll()
+						sRaidFrames:UpdateAllUnits()
 						sRaidFrames:LoadStyle()
 					end,
 					map = {[false] = L["hidden"], [true] = L["shown"]},
@@ -1085,7 +1085,7 @@ sRaidFrames.options = {
 					end,
 					set = function(value)
 						sRaidFrames.opt.PowerFilter[1] = value
-						sRaidFrames:UpdateAll()
+						sRaidFrames:UpdateAllUnits()
 						sRaidFrames:LoadStyle()
 					end,
 					map = {[false] = L["hidden"], [true] = L["shown"]},

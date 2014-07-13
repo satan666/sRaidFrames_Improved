@@ -1055,7 +1055,6 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 					end
 					
 					self.debuffSlots[unit] = debuffSlots
-				--	DEFAULT_CHAT_FRAME:AddMessage("End of debuffs - "..GetUnitName(unit).." - "..debuffSlots)
 				end
 
 				if not update_counter or update_counter == 2 then
