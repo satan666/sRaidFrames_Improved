@@ -43,7 +43,7 @@ surface:Register("Highlight", "Interface\\AddOns\\sRaidFrames\\textures\\debuffH
 --surface:Register("TukuiBar", "Interface\\AddOns\\sRaidFrames\\textures\\tukuibar")
 surface:Register("Blur", "Interface\\AddOns\\sRaidFrames\\textures\\bar1.tga")
 surface:Register("VuhDo", "Interface\\AddOns\\sRaidFrames\\textures\\bar3.tga")
-surface:Register("Force", "Interface\\AddOns\\sRaidFrames\\textures\\bar8.tga")
+--surface:Register("Force", "Interface\\AddOns\\sRaidFrames\\textures\\bar8.tga")
 --surface:Register("CoffeShop", "Interface\\AddOns\\sRaidFrames\\textures\\bar13.tga")
 --surface:Register("Toxic", "Interface\\AddOns\\sRaidFrames\\textures\\bar14.tga")
 --surface:Register("Tube", "Interface\\AddOns\\sRaidFrames\\textures\\Tube.tga")
@@ -85,6 +85,8 @@ sRaidFrames.SpellCheck = false
 sRaidFrames.MenuOpen = false
 sRaidFrames.MapEnable = false
 
+sRaidFrames.debuffSlots = {}
+sRaidFrames.buffsupdatecounter = 0
 sRaidFrames.JoiningWorld = 0
 sRaidFrames.NextScan = 0
 sRaidFrames.MapScale = 0
@@ -173,6 +175,7 @@ function sRaidFrames:OnInitialize()
 	--self:LoadProfile()
 
 	for i = 1, MAX_RAID_MEMBERS do
+		sRaidFrames.debuffSlots["raid"..i] = 0
 		self:CreateUnitFrame(i)
 	end
 
@@ -234,7 +237,6 @@ function sRaidFrames:PatchUpdate()
 	if not self.opt.DebuffFilter then
 		self.opt.DebuffFilter = {}
 	end
-
 end
 
 function sRaidFrames:TargetFrame_OnEvent(event)
@@ -276,7 +278,6 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterBucketEvent("PLAYER_REGEN_DISABLED", 2, "ResetHealIndicators")
 	self:RegisterBucketEvent("PLAYER_DEAD", 2, "ResetHealIndicators")
 
-	--self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterBucketEvent("PLAYER_TARGET_CHANGED", 0.01)
 
 	self:RegisterEvent("Banzai_UnitGainedAggro")
@@ -292,12 +293,14 @@ function sRaidFrames:JoinedRaid()
 	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, self.opt.RangeFrequency, self)
 	
 	
-	self:ScheduleRepeatingEvent("sRaidFramesUpdateAll", self.UpdateAll, 1, self)
-	
+	self:ScheduleRepeatingEvent("sRaidFramesUpdateAllUnits", self.UpdateAllUnits, 1, self)
+	self:ScheduleRepeatingEvent("sRaidFramesUpdateAllBuffs", self.UpdateAllBuffs, 0.33, self)
 
 	self:UpdateRoster()
-	self:UpdateAll()
-
+	
+	self:UpdateAllUnits()
+	self:UpdateAllBuffs()
+	
 	self.master:Show()
 	self:ZoneCheck()
 	self:UpdateParty()
@@ -340,7 +343,9 @@ function sRaidFrames:LeftRaid()
 	self:UnregisterEvent("oRA_PlayerResurrected")
 	self:UnregisterEvent("oRA_PlayerNotResurrected")
 
-	self:CancelScheduledEvent("sRaidFramesUpdateAll")
+	self:CancelScheduledEvent("sRaidFramesUpdateAllBuffs")
+	self:CancelScheduledEvent("sRaidFramesUpdateAllUnits")
+	
 	self:CancelScheduledEvent("sRaidFramesRangeCheck")
 
 	for id = 1, MAX_RAID_MEMBERS do
@@ -350,9 +355,12 @@ function sRaidFrames:LeftRaid()
 	self.master:Hide()
 end
 
-function sRaidFrames:UpdateAll()
+function sRaidFrames:UpdateAllUnits()
 	self:UpdateUnit(self.visible)
-	self:UpdateBuffs(self.visible)
+end
+
+function sRaidFrames:UpdateAllBuffs()
+	self:UpdateBuffsGroup(self.visible)
 end
 
 function sRaidFrames:Variables()
@@ -360,7 +368,10 @@ function sRaidFrames:Variables()
 	self.frames, self.visible, self.groupframes = {}, {}, {}
 	self.feign, self.unavail, self.res = {}, {}, {}
 	
+
+	
 	self.TempTooltipDebuffs = {}
+
 	self.UnitSortOrder = {}
 	self.UnitFocusHPArray = {}
 	self.UnitFocusArray = {}
@@ -585,8 +596,7 @@ function sRaidFrames:RangeCheck()
 		self:ExtendedRangeArrayUtilize("reset")
 
 		local counter = 1		
-		for unit in pairs(self.visible) do	
-		 
+		for unit in pairs(self.visible) do
 			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and UnitIsConnected(unit) and not UnitIsGhost(unit)
 			local deadcheck = UnitIsDead(unit)
 			if unitcheck and UnitIsUnit("player", unit) then
@@ -889,171 +899,202 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 	end
 end
 
-function sRaidFrames:UpdateBuffs(units)
+function sRaidFrames:UpdateBuffsGroup(units)
+	sRaidFrames:UpdateBuffs(units,self.buffsupdatecounter)
+	self.buffsupdatecounter = self.buffsupdatecounter + 1
+	if self.buffsupdatecounter == 3 then
+		self.buffsupdatecounter = 0
+	end
+end
+
+function sRaidFrames:UpdateBuffs(units, update_counter)
 	for unit in pairs(units) do
 		if self.visible[unit] then
+			
 			local f = self.frames[unit]
-			for i = 1, 4 do
-				f["buff".. i]:Hide()
+			if not update_counter or update_counter == 1 then
+				for i = 1, self.debuffSlots[unit] do
+					f["buff".. i]:Hide()
+				end
+			end
+			if not update_counter or update_counter == 2 then	
+				for i = (self.debuffSlots[unit] + 1), 4 do
+					f["buff".. i]:Hide()
+				end
 			end
 			
-			if UnitExists(unit) and UnitIsVisible(unit) then
-				local cAura = nil
-				local f = self.frames[unit]
-				local debuffSlots = 0
-				local debuff_mask = nil
-				local process1 = nil
-				local process2 = nil		
-				
-				for blockindex,blockmatch in pairs(self.TempTooltipDebuffs) do
-					self.TempTooltipDebuffs[blockindex] = nil
-				end
-
-				for j=1,2 do
-					for i=1,16 do
-						if j == 1 then
-							debuff_mask = nil
-						elseif j == 2 then
-							debuff_mask = true
-						end
-						
-						local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, debuff_mask)
-						if not debuffTexture then break end
-						local debuffName = self:GetDebuffName(unit, i, debuff_mask)
-
-						if j == 1 then
-							process1 = self.opt.ShowFilteredDebuffs or not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable
-							process2 = not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable or self.opt.ShowFilteredDebuffs and self.opt.DebuffFilter[debuffName] and not self.TempTooltipDebuffs[debuffName]
-							
-						elseif j == 2 then
-							process1 = self.opt.ShowOnlyDispellable
-							process2 = not self.opt.ShowDebuffsOnlyRange or self.opt.ShowDebuffsOnlyRange and self.UnitRangeArray[unit] and string.find(self.UnitRangeArray[unit], "28Y")
-							process2 = process2 and not self.TempTooltipDebuffs[debuffName]
-							
-						end
-						
-						if not process1 then
-							break
-						end
-
-						if not self.opt.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
-							cAura = self.debuffColors[debuffType]
-							sRaidFrames.debuff[unit] = debuffType
-						end
-
-						if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsanddebuffs") and debuffSlots < self.opt.buff_slots and process2 then
-							debuffSlots = debuffSlots + 1
-							local debuffFrame = f["buff".. debuffSlots]
-							debuffFrame.unitid = unit
-							debuffFrame.debuffid = i
-							debuffFrame.mask = debuff_mask
-							debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, this.mask) end);
-							debuffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
-							debuffFrame.count:SetText(debuffApplications > 1 and debuffApplications or nil);
-							debuffFrame.texture:SetTexture(debuffTexture)
-							debuffFrame:SetFrameLevel(5)
-							debuffFrame:Show()
-						
-							self.TempTooltipDebuffs[debuffName] = true
-						end
+			if UnitExists(unit) and UnitIsVisible(unit) then		
+				if not update_counter or update_counter == 0 then
+					f.mpbar.text:SetText()
+					
+					if self.opt.targeting and not UnitAffectingCombat("player") and self.targeting[unit] then
+						if not self.opt.show_txt_buff then
+							f.mpbar.text:SetText("|cffffffff Targeting You |r")
+						end	
+					
+					elseif not self.opt.show_txt_buff then
+						for i=1,32 do
+							local texture = UnitBuff(unit, i)
+							if not texture then break end
+							--INV_BannerPVP_01
+							-- First we match the texture, then we pull the name of the debuff from a tooltip, and compare it to BabbleSpell
+							-- The idea is that we do a simple string match, and only if that string match triggers something, then we do the extra check
+							-- This should prevent unnessesary calls to functions and lookups
+							if texture == "Interface\\Icons\\INV_BannerPVP_01" then
+								f.mpbar.text:SetText("|cffff00ffCarrier|r")
+							elseif texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
+								f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
+								f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
+								f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
+							elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
+								f.mpbar.text:SetText("|cffffffff"..BS["Shield Wall"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then
+								f.mpbar.text:SetText("|cffffffff"..BS["Last Stand"].."|r")
+							elseif texture == "Interface\\Icons\\INV_Misc_Gem_Pearl_05" then
+								f.mpbar.text:SetText("|cffffffff"..L["Gift of Life"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Frost_Frost" and self:GetBuffName(unit, i) == BS["Ice Block"] then
+								f.mpbar.text:SetText("|cffbfefff"..BS["Ice Block"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Holy_SealOfProtection" and self:GetBuffName(unit, i) == BS["Blessing of Protection"] then
+								f.mpbar.text:SetText("|cffffffff"..L["Protection"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Holy_DivineIntervention" and self:GetBuffName(unit, i) == BS["Divine Shield"] then
+								f.mpbar.text:SetText("|cffffffff"..BS["Divine Shield"].."|r")
+							elseif texture == "Interface\\Icons\\Ability_Vanish" and self:GetBuffName(unit, i) == BS["Vanish"] then
+								f.mpbar.text:SetText("|cffffffff"..L["Vanished"].."|r")
+							elseif texture == "Interface\\Icons\\Ability_Stealth" and self:GetBuffName(unit, i) == BS["Stealth"] then
+								f.mpbar.text:SetText("|cffffffff"..L["Stealthed"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Holy_PowerInfusion" and self:GetBuffName(unit, i) == BS["Power Infusion"] then
+								f.mpbar.text:SetText("|cffffffff"..L["Infused"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Holy_Excorcism" and self:GetBuffName(unit, i) == BS["Fear Ward"] then
+								f.mpbar.text:SetText("|cffffff00"..BS["Fear Ward"].."|r")
+							elseif UnitClass("player") == "Priest" and texture == "Interface\\Icons\\Spell_Holy_Renew" and self:GetBuffName(unit, i) == BS["Renew"] then
+								f.mpbar.text:SetText("|cff00ff00"..BS["Renew"].."|r")
+							elseif UnitClass("player") == "Druid" and texture == "Interface\\Icons\\Spell_Nature_Rejuvenation" and self:GetBuffName(unit, i) == BS["Rejuvenation"] then
+								f.mpbar.text:SetText("|cff00ff00"..BS["Rejuvenation"].."|r")
+							end
+						end	
 					end
 				end	
 				
-				local dead = UnitIsDeadOrGhost(unit) or UnitHealth(unit) <= 1
-				if self.opt.aggro_aura and not dead and Banzai:GetUnitAggroByUnitId(unit) then
-					sRaidFrames.debuff[unit] = "Red"
-					cAura = self.debuffColors["Red"]
-					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
+				if not update_counter or update_counter == 1 then
+					local cAura = nil			
+					local debuff_mask = nil
+					local process1 = nil
+					local process2 = nil
+					local debuffSlots = 0
 					
-				elseif cAura and not dead then
-					f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
-						
-				else
-					sRaidFrames.debuff[unit] = nil
-					f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
-				end
-		
-
-				f.mpbar.text:SetText()
-				
-				if self.opt.targeting and not UnitAffectingCombat("player") and self.targeting[unit] then
-					if not self.opt.show_txt_buff then
-						f.mpbar.text:SetText("|cffffffff Targeting You |r")
-					end	
-				
-				elseif not self.opt.show_txt_buff then
-					for i=1,32 do
-						local texture = UnitBuff(unit, i)
-						if not texture then break end
-						--INV_BannerPVP_01
-						-- First we match the texture, then we pull the name of the debuff from a tooltip, and compare it to BabbleSpell
-						-- The idea is that we do a simple string match, and only if that string match triggers something, then we do the extra check
-						-- This should prevent unnessesary calls to functions and lookups
-						if texture == "Interface\\Icons\\INV_BannerPVP_01" then
-							f.mpbar.text:SetText("|cffff00ffCarrier|r")
-						elseif texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
-							f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
-						elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
-							f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
-						elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
-							f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
-						elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
-							f.mpbar.text:SetText("|cffffffff"..BS["Shield Wall"].."|r")
-						elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then
-							f.mpbar.text:SetText("|cffffffff"..BS["Last Stand"].."|r")
-						elseif texture == "Interface\\Icons\\INV_Misc_Gem_Pearl_05" then
-							f.mpbar.text:SetText("|cffffffff"..L["Gift of Life"].."|r")
-						elseif texture == "Interface\\Icons\\Spell_Frost_Frost" and self:GetBuffName(unit, i) == BS["Ice Block"] then
-							f.mpbar.text:SetText("|cffbfefff"..BS["Ice Block"].."|r")
-						elseif texture == "Interface\\Icons\\Spell_Holy_SealOfProtection" and self:GetBuffName(unit, i) == BS["Blessing of Protection"] then
-							f.mpbar.text:SetText("|cffffffff"..L["Protection"].."|r")
-						elseif texture == "Interface\\Icons\\Spell_Holy_DivineIntervention" and self:GetBuffName(unit, i) == BS["Divine Shield"] then
-							f.mpbar.text:SetText("|cffffffff"..BS["Divine Shield"].."|r")
-						elseif texture == "Interface\\Icons\\Ability_Vanish" and self:GetBuffName(unit, i) == BS["Vanish"] then
-							f.mpbar.text:SetText("|cffffffff"..L["Vanished"].."|r")
-						elseif texture == "Interface\\Icons\\Ability_Stealth" and self:GetBuffName(unit, i) == BS["Stealth"] then
-							f.mpbar.text:SetText("|cffffffff"..L["Stealthed"].."|r")
-						elseif texture == "Interface\\Icons\\Spell_Holy_PowerInfusion" and self:GetBuffName(unit, i) == BS["Power Infusion"] then
-							f.mpbar.text:SetText("|cffffffff"..L["Infused"].."|r")
-						elseif texture == "Interface\\Icons\\Spell_Holy_Excorcism" and self:GetBuffName(unit, i) == BS["Fear Ward"] then
-							f.mpbar.text:SetText("|cffffff00"..BS["Fear Ward"].."|r")
-						elseif UnitClass("player") == "Priest" and texture == "Interface\\Icons\\Spell_Holy_Renew" and self:GetBuffName(unit, i) == BS["Renew"] then
-							f.mpbar.text:SetText("|cff00ff00"..BS["Renew"].."|r")
-						elseif UnitClass("player") == "Druid" and texture == "Interface\\Icons\\Spell_Nature_Rejuvenation" and self:GetBuffName(unit, i) == BS["Rejuvenation"] then
-							f.mpbar.text:SetText("|cff00ff00"..BS["Rejuvenation"].."|r")
-						end
-					end	
-				end
-
-				if self.opt.BuffType == "buffs" or self.opt.BuffType == "buffsanddebuffs" then
-					local buffSlots = debuffSlots
-					local showOnlyCastable = 1
-					--if next(self.opt.BuffFilter) then
-					if self.opt.ShowFilteredBuffs then 
-						showOnlyCastable = 0
+					for blockindex,blockmatch in pairs(self.TempTooltipDebuffs) do
+						self.TempTooltipDebuffs[blockindex] = nil
 					end
-					for i=1,32 do
-						if buffSlots == self.opt.buff_slots then break end
-						
-						local buffTexture, buffApplications = UnitBuff(unit, i, showOnlyCastable)
-						if not buffTexture then break end
-						if showOnlyCastable == 1 or self.opt.BuffFilter[self:GetBuffName(unit, i)] then
-							buffSlots = buffSlots + 1
-							local buffFrame = f["buff".. buffSlots]
-							buffFrame.buffid = i
-							buffFrame.unitid = unit
-							buffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(buffFrame) GameTooltip:SetUnitBuff(this.unitid, this.buffid, showOnlyCastable) end)
-							buffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
-							buffFrame.count:SetText(buffApplications > 1 and buffApplications or nil)
-							buffFrame.texture:SetTexture(buffTexture)
-							--buffFrame:SetFrameLevel(10)
-							buffFrame:Show()
+					
+
+					for j=1,2 do
+						for i=1,16 do
+							if j == 1 then
+								debuff_mask = nil
+							elseif j == 2 then
+								debuff_mask = true
+							end
 							
-						end
+							local debuffTexture, debuffApplications, debuffType = UnitDebuff(unit, i, debuff_mask)
+							if not debuffTexture then break end
+							local debuffName = self:GetDebuffName(unit, i, debuff_mask)
 
+							if j == 1 then
+								process1 = self.opt.ShowFilteredDebuffs or not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable
+								process2 = not self.opt.ShowFilteredDebuffs and not self.opt.ShowOnlyDispellable or self.opt.ShowFilteredDebuffs and self.opt.DebuffFilter[debuffName] and not self.TempTooltipDebuffs[debuffName]
+								
+							elseif j == 2 then
+								process1 = self.opt.ShowOnlyDispellable
+								process2 = not self.opt.ShowDebuffsOnlyRange or self.opt.ShowDebuffsOnlyRange and self.UnitRangeArray[unit] and string.find(self.UnitRangeArray[unit], "28Y")
+								process2 = process2 and not self.TempTooltipDebuffs[debuffName]
+								
+							end
+							
+							if not process1 then
+								break
+							end
+
+							if not self.opt.unit_debuff_aura and debuffType ~= nil and self.debuffColors[debuffType] and ((cAura and cAura.priority < self.debuffColors[debuffType].priority) or not cAura) then
+								cAura = self.debuffColors[debuffType]
+								sRaidFrames.debuff[unit] = debuffType
+							end
+
+							if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsanddebuffs") and debuffSlots < self.opt.buff_slots and process2 then
+								debuffSlots = debuffSlots + 1
+
+								local debuffFrame = f["buff".. debuffSlots]
+								debuffFrame.unitid = unit
+								debuffFrame.debuffid = i
+								debuffFrame.mask = debuff_mask
+								debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, this.mask) end);
+								debuffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+								debuffFrame.count:SetText(debuffApplications > 1 and debuffApplications or nil);
+								debuffFrame.texture:SetTexture(debuffTexture)
+								debuffFrame:SetFrameLevel(5)
+								debuffFrame:Show()
+							
+								self.TempTooltipDebuffs[debuffName] = true
+							end
+						end
+					end	
+					
+					local dead = UnitIsDeadOrGhost(unit) or UnitHealth(unit) <= 1
+					if self.opt.aggro_aura and not dead and Banzai:GetUnitAggroByUnitId(unit) then
+						sRaidFrames.debuff[unit] = "Red"
+						cAura = self.debuffColors["Red"]
+						f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
 						
+					elseif cAura and not dead then
+						f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
+							
+					else
+						sRaidFrames.debuff[unit] = nil
+						f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
 					end
+					
+					self.debuffSlots[unit] = debuffSlots
+				--	DEFAULT_CHAT_FRAME:AddMessage("End of debuffs - "..GetUnitName(unit).." - "..debuffSlots)
 				end
+
+				if not update_counter or update_counter == 2 then
+					local buffSlots = self.debuffSlots[unit]
+					
+					
+					--DEFAULT_CHAT_FRAME:AddMessage("buffSlots - "..GetUnitName(unit).." - "..buffSlots)
+					for i = (buffSlots + 1), 4 do
+						f["buff".. i]:Hide()
+					end
+					
+					if self.opt.BuffType == "buffs" or self.opt.BuffType == "buffsanddebuffs" then
+						local showOnlyCastable = 1
+						--if next(self.opt.BuffFilter) then
+						if self.opt.ShowFilteredBuffs then 
+							showOnlyCastable = 0
+						end
+						for i=1,32 do
+							if buffSlots == self.opt.buff_slots then break end
+							
+							local buffTexture, buffApplications = UnitBuff(unit, i, showOnlyCastable)
+							if not buffTexture then break end
+							if showOnlyCastable == 1 or self.opt.BuffFilter[self:GetBuffName(unit, i)] then
+								buffSlots = buffSlots + 1
+								local buffFrame = f["buff".. buffSlots]
+								buffFrame.buffid = i
+								buffFrame.unitid = unit
+								buffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(buffFrame) GameTooltip:SetUnitBuff(this.unitid, this.buffid, showOnlyCastable) end)
+								buffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+								buffFrame.count:SetText(buffApplications > 1 and buffApplications or nil)
+								buffFrame.texture:SetTexture(buffTexture)
+								--buffFrame:SetFrameLevel(10)
+								buffFrame:Show()
+								
+							end	
+						end
+					end
+					
+				end	
 			else
 				f.mpbar.text:SetText()
 			end
@@ -1183,6 +1224,7 @@ function sRaidFrames:CreateUnitFrame(id)
 	f.title:SetFontObject(GameFontNormalSmall)
 	f.title:SetJustifyH("LEFT")
 
+	--[[
 	f.aura1 = CreateFrame("Button", nil, f)
 	f.aura1.texture = f.aura1:CreateTexture(nil, "ARTWORK")
 	f.aura1.texture:SetAllPoints(f.aura1);
@@ -1200,6 +1242,7 @@ function sRaidFrames:CreateUnitFrame(id)
 	f.aura2.count:SetJustifyH("CENTER")
 	f.aura2.count:SetPoint("CENTER", f.aura2, "CENTER", 0, 0);
 	f.aura2:Hide()
+	--]]
 
 	f.buff1 = CreateFrame("Button", nil, f)
 	f.buff1.texture = f.buff1:CreateTexture(nil, "ARTWORK")
@@ -1371,19 +1414,14 @@ function sRaidFrames:SetBackdrop(f, unit, aggro)
 end
 
 function sRaidFrames:SetStyle(f, unit, width, aggro)
-	
-	--f.hpbar.highlight
-	
+
 	local frame_width = width or self.opt.Width
 	
 	self:SetWHP(f, frame_width, 40)
 	self:SetWHP(f.title, frame_width - 10, 16, "TOPLEFT", f, "TOPLEFT",  5, -6)
-	
-	self:SetWHP(f.aura1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -5)
-	self:SetWHP(f.aura2, 12, 12, "RIGHT", f.aura1, "LEFT", 0, 0)
-	
+	--self:SetWHP(f.aura1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -5)
+	--self:SetWHP(f.aura2, 12, 12, "RIGHT", f.aura1, "LEFT", 0, 0)
 	self:SetWHP(f.buff1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4.1, -4.1)
-	
 	
 	if self.opt.Buff_Growth == "left" then
 		self:SetWHP(f.buff2, 12, 12, "RIGHT", f.buff1, "LEFT", 0, 0)
@@ -1423,7 +1461,6 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -11)
 	self:SetWHP(f.hpbar.highlight, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35) -- highlight
 	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f, "CENTER", 0, -4)
-	
 	
 	f.mpbar.text:SetTextHeight(7.5)
 	f.hpbar.text:SetTextHeight(8)
@@ -1511,16 +1548,7 @@ function sRaidFrames:Sort(force_sort)
 		end
 	end
 	
-	--[[
-	if self.opt.SubSort == "name" then
-		table.sort(sort, function(a,b) return UnitName("raid" .. a) < UnitName("raid" ..b) end)
-	elseif self.opt.SubSort == "class" then
-		table.sort(sort, function(a,b) return UnitClass("raid" .. a) < UnitClass("raid" ..b) end)
-	end
-	--]]
-
 	table.sort(sort, function(a,b) return self:MembersSortBy(a) < self:MembersSortBy(b) end)
-
 
 	if self.opt.SortBy == "class" then
 		frameAssignments["WARRIOR"] = 1;
@@ -1657,7 +1685,7 @@ function sRaidFrames:Sort(force_sort)
 			end
 		end
 
-		self:UpdateAll()
+		self:UpdateAllUnits()
 	else
 		self:UpdateUnit(self.visible, force_sort)
 	end	
@@ -1723,7 +1751,7 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 			xMod = 0
 		elseif layout == "vertical" then
 			if i ~= 0 and math_mod(i, 2) == 0 then
-				xMod = xMod + (-1*MEMBERS_PER_RAID_GROUP*frameHeight)
+				xMod = xMod + (-1*self.opt.fixed_count*frameHeight)
 				yMod = 0
 				i = 0
 			else
@@ -1735,7 +1763,7 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 				xMod = 0
 				i = 0
 			else
-				xMod = i * (-1*MEMBERS_PER_RAID_GROUP*frameHeight)
+				xMod = i * (-1*self.opt.fixed_count*frameHeight)
 			end
 		end
 
