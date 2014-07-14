@@ -305,7 +305,11 @@ L:RegisterTranslations("enUS", function() return {
 	["Rogue"] = true,
 	["Warlock"] = true,
 	["Priest"] = true,
-
+	
+	["Shield"] = true,
+	["Carrier"] = true,
+	["Rezzed"] = true,
+	["Soulstoned"] = true,
 	["Intervened"] = true,
 	["Innervating"] = true,
 	["Spirit"] = true,

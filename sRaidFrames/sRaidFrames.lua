@@ -366,7 +366,7 @@ end
 function sRaidFrames:Variables()
 	self.enabled = false
 	self.frames, self.visible, self.groupframes = {}, {}, {}
-	self.feign, self.unavail, self.res = {}, {}, {}
+	self.feign, self.unavail, self.res, self.hpaura = {}, {}, {}, {}
 	
 
 	
@@ -813,7 +813,8 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 					local status, dead, ghost = nil, UnitIsDead(unit) or UnitHealth(unit) <= 1, UnitIsGhost(unit)				
 					if not UnitIsConnected(unit) then status = "|cff858687"..L["Offline"].."|r"
 					elseif self.res[unit] == 1 and dead then status = "|cffff8c00"..L["Can Recover"].."|r"
-					elseif self.res[unit] == 2 and (dead or ghost) then status = "|cffff8c00 Rezzed|r"
+					elseif self.res[unit] == 2 and (dead or ghost) then status = "|cffff8c00"..L["Rezzed"].."|r"
+					elseif self.hpaura[unit] then status = "|cffff8c00"..self.hpaura[unit].."|r"
 					elseif ghost then status = "|cffff0000"..L["Ghost"].."|r"
 					elseif dead or UnitHealth(unit) <= 1 then status = "|cffff0000"..L["Dead"].."|r"
 					end				
@@ -822,8 +823,8 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 						self.unavail[unit] = true
 						f.hpbar.text:SetText(status)
 						f.hpbar:SetValue(0)
-						f.mpbar.text:SetText()
-						f.mpbar:SetValue(0)
+						--f.mpbar.text:SetText()
+						--f.mpbar:SetValue(0)
 						--f:SetBackdropColor(0.3, 0.3, 0.3, 1)
 					
 						self:HideHealIndicator(unit, true)
@@ -910,7 +911,6 @@ end
 function sRaidFrames:UpdateBuffs(units, update_counter)
 	for unit in pairs(units) do
 		if self.visible[unit] then
-			
 			local f = self.frames[unit]
 			if not update_counter or update_counter == 1 then
 				for i = 1, self.debuffSlots[unit] do
@@ -929,10 +929,10 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 					
 					if self.opt.targeting and not UnitAffectingCombat("player") and self.targeting[unit] then
 						if not self.opt.show_txt_buff then
-							f.mpbar.text:SetText("|cffffffff Targeting You |r")
+							f.mpbar.text:SetText("|cffffffff Targeting|r")
 						end	
 					
-					elseif not self.opt.show_txt_buff then
+					else
 						for i=1,32 do
 							local texture = UnitBuff(unit, i)
 							if not texture then break end
@@ -940,39 +940,49 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 							-- First we match the texture, then we pull the name of the debuff from a tooltip, and compare it to BabbleSpell
 							-- The idea is that we do a simple string match, and only if that string match triggers something, then we do the extra check
 							-- This should prevent unnessesary calls to functions and lookups
-							if texture == "Interface\\Icons\\INV_BannerPVP_01" then
-								f.mpbar.text:SetText("|cffff00ffCarrier|r")
-							elseif texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
-								f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
-							elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
-								f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
+							
+							if texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
+								--f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
+								self.hpaura[unit] = L["Intervened"]
 							elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
-								f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
-							elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
-								f.mpbar.text:SetText("|cffffffff"..BS["Shield Wall"].."|r")
-							elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then
-								f.mpbar.text:SetText("|cffffffff"..BS["Last Stand"].."|r")
-							elseif texture == "Interface\\Icons\\INV_Misc_Gem_Pearl_05" then
-								f.mpbar.text:SetText("|cffffffff"..L["Gift of Life"].."|r")
-							elseif texture == "Interface\\Icons\\Spell_Frost_Frost" and self:GetBuffName(unit, i) == BS["Ice Block"] then
-								f.mpbar.text:SetText("|cffbfefff"..BS["Ice Block"].."|r")
-							elseif texture == "Interface\\Icons\\Spell_Holy_SealOfProtection" and self:GetBuffName(unit, i) == BS["Blessing of Protection"] then
-								f.mpbar.text:SetText("|cffffffff"..L["Protection"].."|r")
-							elseif texture == "Interface\\Icons\\Spell_Holy_DivineIntervention" and self:GetBuffName(unit, i) == BS["Divine Shield"] then
-								f.mpbar.text:SetText("|cffffffff"..BS["Divine Shield"].."|r")
-							elseif texture == "Interface\\Icons\\Ability_Vanish" and self:GetBuffName(unit, i) == BS["Vanish"] then
-								f.mpbar.text:SetText("|cffffffff"..L["Vanished"].."|r")
-							elseif texture == "Interface\\Icons\\Ability_Stealth" and self:GetBuffName(unit, i) == BS["Stealth"] then
-								f.mpbar.text:SetText("|cffffffff"..L["Stealthed"].."|r")
-							elseif texture == "Interface\\Icons\\Spell_Holy_PowerInfusion" and self:GetBuffName(unit, i) == BS["Power Infusion"] then
-								f.mpbar.text:SetText("|cffffffff"..L["Infused"].."|r")
-							elseif texture == "Interface\\Icons\\Spell_Holy_Excorcism" and self:GetBuffName(unit, i) == BS["Fear Ward"] then
-								f.mpbar.text:SetText("|cffffff00"..BS["Fear Ward"].."|r")
-							elseif UnitClass("player") == "Priest" and texture == "Interface\\Icons\\Spell_Holy_Renew" and self:GetBuffName(unit, i) == BS["Renew"] then
-								f.mpbar.text:SetText("|cff00ff00"..BS["Renew"].."|r")
-							elseif UnitClass("player") == "Druid" and texture == "Interface\\Icons\\Spell_Nature_Rejuvenation" and self:GetBuffName(unit, i) == BS["Rejuvenation"] then
-								f.mpbar.text:SetText("|cff00ff00"..BS["Rejuvenation"].."|r")
+								--f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
+								self.hpaura[unit] = L["Spirit"]
+							else
+								self.hpaura[unit] = nil
 							end
+							
+						
+							if not self.opt.show_txt_buff then
+								if texture == "Interface\\Icons\\INV_BannerPVP_01" then
+									f.mpbar.text:SetText("|cffff0000"..L["Carrier"].."|r")
+								elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
+									f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
+								elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
+									f.mpbar.text:SetText("|cffffffff"..BS["Shield Wall"].."|r")
+								elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then
+									f.mpbar.text:SetText("|cffffffff"..BS["Last Stand"].."|r")
+								elseif texture == "Interface\\Icons\\INV_Misc_Gem_Pearl_05" then
+									f.mpbar.text:SetText("|cffffffff"..L["Gift of Life"].."|r")
+								elseif texture == "Interface\\Icons\\Spell_Frost_Frost" and self:GetBuffName(unit, i) == BS["Ice Block"] then
+									f.mpbar.text:SetText("|cffbfefff"..BS["Ice Block"].."|r")
+								elseif texture == "Interface\\Icons\\Spell_Holy_SealOfProtection" and self:GetBuffName(unit, i) == BS["Blessing of Protection"] then
+									f.mpbar.text:SetText("|cffffffff"..L["Protection"].."|r")
+								elseif texture == "Interface\\Icons\\Spell_Holy_DivineIntervention" and self:GetBuffName(unit, i) == BS["Divine Shield"] then
+									f.mpbar.text:SetText("|cffffffff"..L["Shield"].."|r")
+								elseif texture == "Interface\\Icons\\Ability_Vanish" and self:GetBuffName(unit, i) == BS["Vanish"] then
+									f.mpbar.text:SetText("|cffffffff"..L["Vanished"].."|r")
+								elseif texture == "Interface\\Icons\\Ability_Stealth" and self:GetBuffName(unit, i) == BS["Stealth"] then
+									f.mpbar.text:SetText("|cffffffff"..L["Stealthed"].."|r")
+								elseif texture == "Interface\\Icons\\Spell_Holy_PowerInfusion" and self:GetBuffName(unit, i) == BS["Power Infusion"] then
+									f.mpbar.text:SetText("|cffffffff"..L["Infused"].."|r")
+								elseif texture == "Interface\\Icons\\Spell_Holy_Excorcism" and self:GetBuffName(unit, i) == BS["Fear Ward"] then
+									f.mpbar.text:SetText("|cffffff00"..BS["Fear Ward"].."|r")
+								elseif UnitClass("player") == "Priest" and texture == "Interface\\Icons\\Spell_Holy_Renew" and self:GetBuffName(unit, i) == BS["Renew"] then
+									f.mpbar.text:SetText("|cff00ff00"..BS["Renew"].."|r")
+								elseif UnitClass("player") == "Druid" and texture == "Interface\\Icons\\Spell_Nature_Rejuvenation" and self:GetBuffName(unit, i) == BS["Rejuvenation"] then
+									f.mpbar.text:SetText("|cff00ff00"..BS["Rejuvenation"].."|r")
+								end
+							end	
 						end	
 					end
 				end	
@@ -988,7 +998,6 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 						self.TempTooltipDebuffs[blockindex] = nil
 					end
 					
-
 					for j=1,2 do
 						for i=1,16 do
 							if j == 1 then
@@ -1047,8 +1056,8 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 						f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
 						
 					elseif cAura and not dead then
-						f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);
-							
+						f:SetBackdropColor(cAura.r, cAura.g, cAura.b, cAura.a);	
+						
 					else
 						sRaidFrames.debuff[unit] = nil
 						f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
@@ -1059,9 +1068,6 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 
 				if not update_counter or update_counter == 2 then
 					local buffSlots = self.debuffSlots[unit]
-					
-					
-					--DEFAULT_CHAT_FRAME:AddMessage("buffSlots - "..GetUnitName(unit).." - "..buffSlots)
 					for i = (buffSlots + 1), 4 do
 						f["buff".. i]:Hide()
 					end
@@ -1420,7 +1426,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 	self:SetWHP(f.title, frame_width - 10, 16, "TOPLEFT", f, "TOPLEFT",  5, -6)
 	--self:SetWHP(f.aura1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -5)
 	--self:SetWHP(f.aura2, 12, 12, "RIGHT", f.aura1, "LEFT", 0, 0)
-	self:SetWHP(f.buff1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4.1, -4.1)
+	self:SetWHP(f.buff1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4.3, -4.3)
 	
 	if self.opt.Buff_Growth == "left" then
 		self:SetWHP(f.buff2, 12, 12, "RIGHT", f.buff1, "LEFT", 0, 0)
@@ -1441,17 +1447,17 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 		
 	if not sRaidFrames.opt.Border then
 		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
-			self:SetWHP(f.hpbar, frame_width - 10, 27, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+			self:SetWHP(f.hpbar, frame_width - 9.8, 27, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		else
-			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+			self:SetWHP(f.hpbar, frame_width - 9.8, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
 		self:SetWHP(f.hpbar.indicator2, 4.5, 4.5, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 	else
 		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
-			self:SetWHP(f.hpbar, frame_width - 10, 26, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+			self:SetWHP(f.hpbar, frame_width - 9.8, 26, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		else
-			self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+			self:SetWHP(f.hpbar, frame_width - 9.8, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
 		self:SetWHP(f.hpbar.indicator1, 7.7, 7.7, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
