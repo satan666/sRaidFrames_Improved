@@ -789,7 +789,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				self.feign[unit] = nil
 				
 				-- Silly hunters, why do you have to be so annoying
-				if UnitExists(unit.."target") and UnitIsUnit(unit.."target", "player") and not UnitIsUnit(unit, "player") then
+				if UnitExists(unit.."target") and not UnitAffectingCombat(unit) and UnitIsUnit(unit.."target", "player") and not UnitIsUnit(unit, "player") then
 					self.targeting[unit] = true
 				else
 					self.targeting[unit] = nil
@@ -1465,7 +1465,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 	
 	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -11)
 	self:SetWHP(f.hpbar.highlight, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35) -- highlight
-	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f, "CENTER", 0, -4)
+	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f, "CENTER", 0, -3)
 	
 	f.mpbar.text:SetTextHeight(7.5)
 	f.hpbar.text:SetTextHeight(8)
