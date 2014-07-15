@@ -824,7 +824,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 						f.hpbar.text:SetText(status)
 						f.hpbar:SetValue(0)
 						--f.mpbar.text:SetText()
-						--f.mpbar:SetValue(0)
+						f.mpbar:SetValue(0)
 						--f:SetBackdropColor(0.3, 0.3, 0.3, 1)
 					
 						self:HideHealIndicator(unit, true)
