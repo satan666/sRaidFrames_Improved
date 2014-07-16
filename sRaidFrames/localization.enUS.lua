@@ -38,7 +38,8 @@ L:RegisterTranslations("enUS", function() return {
 	["Classic - 5 per column"] = true,
 	["Classic - 8 per column"] = true,
 	["Classic - 20 per column"] = true,
-	["Grid - 5 per column"] = true,
+	["Grid - Vertical 5 per column"] = true,
+	["Grid - Horizontal 5 per column"] = true,
 	
 	["_Focus frame"] = true,
 	["Use keybinding to add/remove units manually or select Polpulate with range feature"] = true,
@@ -316,7 +317,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Spirit"] = true,
 	["Shield Wall"] = true,
 	["Last stand"] = true,
-	["Gift of Life"] = true,
+	["Gifted"] = true,
 	["Ice block"] = true,
 	["Vanished"] = true,
 	["Stealthed"] = true,

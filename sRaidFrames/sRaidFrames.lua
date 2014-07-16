@@ -963,7 +963,7 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 								elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then
 									f.mpbar.text:SetText("|cffffffff"..BS["Last Stand"].."|r")
 								elseif texture == "Interface\\Icons\\INV_Misc_Gem_Pearl_05" then
-									f.mpbar.text:SetText("|cffffffff"..L["Gift of Life"].."|r")
+									f.mpbar.text:SetText("|cffffffff"..L["Gifted"].."|r")
 								elseif texture == "Interface\\Icons\\Spell_Frost_Frost" and self:GetBuffName(unit, i) == BS["Ice Block"] then
 									f.mpbar.text:SetText("|cffbfefff"..BS["Ice Block"].."|r")
 								elseif texture == "Interface\\Icons\\Spell_Holy_SealOfProtection" and self:GetBuffName(unit, i) == BS["Blessing of Protection"] then
@@ -1753,13 +1753,13 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 	
 	for k,v in pairs(self.groupframes) do
 		i = i + 1
-		if layout == "horizontal" then
+		
+		if k == 9 then
+			yMod = -1*(v:GetWidth()*self.master:GetScale()+self.opt.Spacing)
+			xMod = 0
+		elseif layout == "horizontal" then
 			yMod = (i) * v:GetWidth()
 			xMod = 0
-			
-			v:ClearAllPoints()
-			v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
-			
 		elseif layout == "vertical" then
 			if i ~= 0 and math_mod(i, 2) == 0 then
 				xMod = xMod + (-1*self.opt.fixed_count*frameHeight)
@@ -1768,10 +1768,6 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 			else
 				yMod = i * v:GetWidth()
 			end
-			
-			v:ClearAllPoints()
-			v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
-			
 		elseif layout == "ctra" then
 			if i ~= 0 and math_mod(i, 2) == 0 then
 				yMod = yMod + v:GetWidth()
@@ -1780,25 +1776,21 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 			else
 				xMod = i * (-1*self.opt.fixed_count*frameHeight)
 			end
-			
-			v:ClearAllPoints()
-			v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
-			
 		elseif layout == "sticky" then
 			local growth = self.opt.Growth
 			if growth == "right" or growth == "left" then
-				xMod = -1*(f:GetWidth()*self.master:GetScale()+self.opt.Spacing)*k
 				yMod = 0
+				xMod = -1*(f:GetHeight()*self.master:GetScale()+self.opt.Spacing)*k
 			else
 				yMod = (f:GetWidth()*self.master:GetScale()+self.opt.Spacing)*k
 				xMod = 0
 			end
+		end
 			v:ClearAllPoints()
 			v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
-		end
 	end
 	if not self.MultidragInfo then
-		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag frames press Alt key then click left Mouse button on group name."); 
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag unlock the frames, hold Alt key then click left Mouse button on any frame name."); 
 		self.MultidragInfo = true
 	end	
 	self:SavePosition()

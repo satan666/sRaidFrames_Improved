@@ -215,6 +215,40 @@ sRaidFrames.options = {
 			type = "group",
 			desc = L["Load predefined profiles"],
 			args = {
+	
+				profile00 = {
+						name = L["Grid - Horizontal 5 per column"],
+						type = "toggle",
+						desc = L["Load predefined settings"],
+						get = function()
+							return sRaidFrames.opt.profile00
+						end,
+						set = function(value)
+							if value then
+								sRaidFrames:chatToggleBorder(value)
+								sRaidFrames.opt.profile11 = not value
+								sRaidFrames.opt.profile22 = not value
+								sRaidFrames.opt.profile33 = not value
+								sRaidFrames.opt.profile44 = not value
+								sRaidFrames:S("Spacing", -4)
+								sRaidFrames:S("fixed_count", 8)
+								if sRaidFrames.opt.Width ~= 40 then
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 75)
+								end	
+								sRaidFrames:S("Width", 40)
+								sRaidFrames:S("unit_name_lenght", true)
+								sRaidFrames:S("debuff_slots", 2)
+								sRaidFrames:S("buff_slots", 2)
+								sRaidFrames:S("vertical_hp", nil)
+								sRaidFrames:S("Growth", "right")
+								sRaidFrames:S("vertical_hp", true)
+							end
+							sRaidFrames:S("profile00", value)
+							sRaidFrames:ProfileFeed()
+						end,
+						order = 5,
+					},
+
 				profile11 = {
 						name = L["Classic - 5 per column"],
 						type = "toggle",
@@ -225,16 +259,20 @@ sRaidFrames.options = {
 						set = function(value)
 							if value then
 								sRaidFrames:chatToggleBorder(value)
+								sRaidFrames.opt.profile00 = not value
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 5)
-								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+								if sRaidFrames.opt.Width == 40 then
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("debuff_slots", 2)
 								sRaidFrames:S("buff_slots", 2)
 								sRaidFrames:S("vertical_hp", nil)
+								sRaidFrames:S("Growth", "down")
 							end
 							sRaidFrames:S("profile11", value)
 							sRaidFrames:ProfileFeed()
@@ -243,7 +281,7 @@ sRaidFrames.options = {
 					},
 				
 				profile22 = {
-						name = L["Grid - 5 per column"],
+						name = L["Grid - Vertical 5 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -252,6 +290,7 @@ sRaidFrames.options = {
 						set = function(value)
 							if value then
 								sRaidFrames:chatToggleBorder(value)
+								sRaidFrames.opt.profile00 = not value
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames.opt.profile44 = not value
@@ -265,6 +304,7 @@ sRaidFrames.options = {
 								sRaidFrames:S("debuff_slots", 1)
 								sRaidFrames:S("buff_slots", 1)
 								sRaidFrames:S("vertical_hp", true)
+								sRaidFrames:S("Growth", "down")
 							end
 							sRaidFrames:S("profile22", value)
 							sRaidFrames:ProfileFeed()
@@ -282,16 +322,20 @@ sRaidFrames.options = {
 						set = function(value)
 							if value then
 								sRaidFrames:chatToggleBorder(value)
+								sRaidFrames.opt.profile00 = not value
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 8)
-								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+								if sRaidFrames.opt.Width == 40 then
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("debuff_slots", 2)
 								sRaidFrames:S("buff_slots", 2)
 								sRaidFrames:S("vertical_hp", nil)
+								sRaidFrames:S("Growth", "down")
 							end
 							sRaidFrames:S("profile33", value)
 							sRaidFrames:ProfileFeed()
@@ -310,16 +354,20 @@ sRaidFrames.options = {
 						set = function(value)
 							if value then
 								sRaidFrames:chatToggleBorder(value)
+								sRaidFrames.opt.profile00 = not value
 								sRaidFrames.opt.profile11 = not value
 								sRaidFrames.opt.profile22 = not value
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 20)
-								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+								if sRaidFrames.opt.Width == 40 then
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("debuff_slots", 2)
 								sRaidFrames:S("buff_slots", 2)
 								sRaidFrames:S("vertical_hp", nil)
+								sRaidFrames:S("Growth", "down")
 							end
 							sRaidFrames:S("profile44", value)
 							sRaidFrames:ProfileFeed()
@@ -1771,7 +1819,7 @@ function sRaidFrames:ProfileFeed()
 	sRaidFrames:S("aggro", true)
 	sRaidFrames:S("red", true)
 	sRaidFrames:S("redbar", false)
-	sRaidFrames:S("Growth", "down")
+	
 	
 	sRaidFrames:S("Texture", "Gradient")
 
