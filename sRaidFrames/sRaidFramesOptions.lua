@@ -1161,6 +1161,9 @@ sRaidFrames.options = {
 		}
 		},
 
+				
+				
+
 		layout = {
 			name = L["Layout"],
 			type = "group",
@@ -1179,7 +1182,7 @@ sRaidFrames.options = {
 					desc = L["Set a predefined layout for the raid frames"],
 					get = function() return nil end,
 					set = "chatSetLayout",
-					validate = {["ctra"] = L["CT_RaidAssist"], ["horizontal"] = L["Horizontal"], ["vertical"] = L["Vertical"]},
+					validate = {["grid"] = L["Grid"],["ctra"] = L["CT_RaidAssist"], ["horizontal"] = L["Horizontal"], ["vertical"] = L["Vertical"]},
 				},
 			},
 		},
@@ -1721,7 +1724,7 @@ function sRaidFrames:chatBorderColor(r, g, b, a)
 end
 
 function sRaidFrames:chatSetLayout(layout)
-	self:PositionLayout(layout, self.groupframes[1]:GetLeft(), self.groupframes[1]:GetTop()-UIParent:GetTop())
+	self:PositionLayout(layout, 200, -200)
 end
 
 function sRaidFrames:chatToggleBorder(value)

@@ -1743,17 +1743,25 @@ end
 
 function sRaidFrames:ResetPosition()
 	self:PositionLayout("ctra", 200, -200)
+	--self:PositionLayout("grid", 200, -200)
+	DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag frames press Alt key then click left Mouse button on group name."); 
 end
 
 function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 	local xMod, yMod, i = 0, 0, -1
 	local frameHeight = self.frames["raid1"]:GetHeight()+3
-
+	local f = self.frames["raid1"]
+	
 	for k,v in pairs(self.groupframes) do
 		i = i + 1
 		if layout == "horizontal" then
+			
 			yMod = (i) * v:GetWidth()
 			xMod = 0
+			
+			v:ClearAllPoints()
+			v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
+			
 		elseif layout == "vertical" then
 			if i ~= 0 and math_mod(i, 2) == 0 then
 				xMod = xMod + (-1*self.opt.fixed_count*frameHeight)
@@ -1762,6 +1770,10 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 			else
 				yMod = i * v:GetWidth()
 			end
+			
+			v:ClearAllPoints()
+			v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
+			
 		elseif layout == "ctra" then
 			if i ~= 0 and math_mod(i, 2) == 0 then
 				yMod = yMod + v:GetWidth()
@@ -1770,14 +1782,24 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 			else
 				xMod = i * (-1*self.opt.fixed_count*frameHeight)
 			end
+			
+			v:ClearAllPoints()
+			v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
+			
+		elseif layout == "grid" then
+			yMod = (f:GetWidth()*self.master:GetScale()+self.opt.Spacing)*k
+			xMod = 0
+
+			v:ClearAllPoints()
+			v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
+
 		end
 
-		v:ClearAllPoints()
-		v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
 	end
 
 	self:SavePosition()
 end
+
 
 local Tablet = AceLibrary("Tablet-2.0")
 function sRaidFrames:OnTooltipUpdate()
