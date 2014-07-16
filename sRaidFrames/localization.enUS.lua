@@ -195,7 +195,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Reset the position of sRaidFrames"] = true,
 	["Predefined Layout"] = true,
 	["Set a predefined layout for the raid frames"] = true,
-	["Grid"] = true,
+	["Sticky"] = true,
 	["CT_RaidAssist"] = true,
 	["Horizontal"] = true,
 	["Vertical"] = true,

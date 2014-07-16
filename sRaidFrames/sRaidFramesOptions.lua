@@ -230,7 +230,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 5)
-								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
+								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("debuff_slots", 2)
 								sRaidFrames:S("buff_slots", 2)
@@ -257,7 +257,9 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 5)
-								sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 70)
+								if sRaidFrames.opt.Width ~= 40 then
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 75)
+								end	
 								sRaidFrames:S("Width", 40)
 								sRaidFrames:S("unit_name_lenght", true)
 								sRaidFrames:S("debuff_slots", 1)
@@ -285,7 +287,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile44 = not value
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 8)
-								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
+								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("debuff_slots", 2)
 								sRaidFrames:S("buff_slots", 2)
@@ -313,7 +315,7 @@ sRaidFrames.options = {
 								sRaidFrames.opt.profile33 = not value
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 20)
-								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
+								sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("debuff_slots", 2)
 								sRaidFrames:S("buff_slots", 2)
@@ -1182,7 +1184,7 @@ sRaidFrames.options = {
 					desc = L["Set a predefined layout for the raid frames"],
 					get = function() return nil end,
 					set = "chatSetLayout",
-					validate = {["grid"] = L["Grid"],["ctra"] = L["CT_RaidAssist"], ["horizontal"] = L["Horizontal"], ["vertical"] = L["Vertical"]},
+					validate = {["sticky"] = L["Sticky"],["ctra"] = L["CT_RaidAssist"], ["horizontal"] = L["Horizontal"], ["vertical"] = L["Vertical"]},
 				},
 			},
 		},
@@ -1769,10 +1771,12 @@ function sRaidFrames:ProfileFeed()
 	sRaidFrames:S("aggro", true)
 	sRaidFrames:S("red", true)
 	sRaidFrames:S("redbar", false)
-
+	sRaidFrames:S("Growth", "down")
+	
 	sRaidFrames:S("Texture", "Gradient")
 
 	sRaidFrames:LoadStyle()
+	sRaidFrames:PositionLayout("sticky", 200, -200)
 end
 
 					

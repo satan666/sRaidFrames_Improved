@@ -84,6 +84,7 @@ sRaidFrames.ClassCheck = false
 sRaidFrames.SpellCheck = false
 sRaidFrames.MenuOpen = false
 sRaidFrames.MapEnable = false
+sRaidFrames.MultidragInfo = false
 
 sRaidFrames.debuffSlots = {}
 sRaidFrames.buffsupdatecounter = 0
@@ -1743,8 +1744,6 @@ end
 
 function sRaidFrames:ResetPosition()
 	self:PositionLayout("ctra", 200, -200)
-	--self:PositionLayout("grid", 200, -200)
-	DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag frames press Alt key then click left Mouse button on group name."); 
 end
 
 function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
@@ -1755,7 +1754,6 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 	for k,v in pairs(self.groupframes) do
 		i = i + 1
 		if layout == "horizontal" then
-			
 			yMod = (i) * v:GetWidth()
 			xMod = 0
 			
@@ -1786,17 +1784,23 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 			v:ClearAllPoints()
 			v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
 			
-		elseif layout == "grid" then
-			yMod = (f:GetWidth()*self.master:GetScale()+self.opt.Spacing)*k
-			xMod = 0
-
+		elseif layout == "sticky" then
+			local growth = self.opt.Growth
+			if growth == "right" or growth == "left" then
+				xMod = -1*(f:GetWidth()*self.master:GetScale()+self.opt.Spacing)*k
+				yMod = 0
+			else
+				yMod = (f:GetWidth()*self.master:GetScale()+self.opt.Spacing)*k
+				xMod = 0
+			end
 			v:ClearAllPoints()
 			v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
-
 		end
-
 	end
-
+	if not self.MultidragInfo then
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag frames press Alt key then click left Mouse button on group name."); 
+		self.MultidragInfo = true
+	end	
 	self:SavePosition()
 end
 
