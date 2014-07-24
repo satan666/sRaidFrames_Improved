@@ -1871,7 +1871,7 @@ function sRaidFrames:ProfileFeedClassic()
 	sRaidFrames:S("red", true)
 	sRaidFrames:S("redbar", false)
 	
-	sRaidFrames:S("healthDisplayType", "percent")
+	sRaidFrames:S("healthDisplayType", "none")
 	sRaidFrames:S("show_txt_buff", nil)
 	sRaidFrames:S("Buff_Growth", "vertical")
 	sRaidFrames:S("Buff_Anchor", "topright")
