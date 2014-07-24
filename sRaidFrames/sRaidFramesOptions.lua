@@ -210,8 +210,13 @@ sRaidFrames.options = {
 				
 			
 				
-			profiles = {
-			name = L["Load pure view profiles"],
+			
+			}
+		},		
+						
+						
+		profiles = {
+			name = L["_Load profiles"],
 			type = "group",
 			desc = L["Load predefined profiles"],
 			args = {
@@ -221,32 +226,26 @@ sRaidFrames.options = {
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
-							return sRaidFrames.opt.profile00
+							return nil
 						end,
 						set = function(value)
 							if value then
 								sRaidFrames:chatToggleBorder(value)
-								sRaidFrames.opt.profile11 = not value
-								sRaidFrames.opt.profile22 = not value
-								sRaidFrames.opt.profile33 = not value
-								sRaidFrames.opt.profile44 = not value
+
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 8)
 								if sRaidFrames.opt.Width ~= 40 then
-									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 75)
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 79)
 								end	
 								sRaidFrames:S("Width", 40)
 								sRaidFrames:S("unit_name_lenght", true)
-								sRaidFrames:S("debuff_slots", 2)
-								sRaidFrames:S("buff_slots", 2)
 								sRaidFrames:S("vertical_hp", nil)
 								sRaidFrames:S("Growth", "right")
 								sRaidFrames:S("vertical_hp", true)
 							end
-							sRaidFrames:S("profile00", value)
-							sRaidFrames:ProfileFeed()
+							sRaidFrames:ProfileFeedGrid()
 						end,
-						order = 5,
+						order = 6,
 					},
 
 				profile11 = {
@@ -254,28 +253,22 @@ sRaidFrames.options = {
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
-							return sRaidFrames.opt.profile11
+							return nil
 						end,
 						set = function(value)
 							if value then
 								sRaidFrames:chatToggleBorder(value)
-								sRaidFrames.opt.profile00 = not value
-								sRaidFrames.opt.profile22 = not value
-								sRaidFrames.opt.profile33 = not value
-								sRaidFrames.opt.profile44 = not value
+	
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 5)
 								if sRaidFrames.opt.Width == 40 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 79)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
-								sRaidFrames:S("debuff_slots", 2)
-								sRaidFrames:S("buff_slots", 2)
 								sRaidFrames:S("vertical_hp", nil)
 								sRaidFrames:S("Growth", "down")
 							end
-							sRaidFrames:S("profile11", value)
-							sRaidFrames:ProfileFeed()
+							sRaidFrames:ProfileFeedClassic()
 						end,
 						order = 1,
 					},
@@ -285,31 +278,25 @@ sRaidFrames.options = {
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
-							return sRaidFrames.opt.profile22
+							return nil
 						end,
 						set = function(value)
 							if value then
 								sRaidFrames:chatToggleBorder(value)
-								sRaidFrames.opt.profile00 = not value
-								sRaidFrames.opt.profile11 = not value
-								sRaidFrames.opt.profile33 = not value
-								sRaidFrames.opt.profile44 = not value
+		
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 5)
 								if sRaidFrames.opt.Width ~= 40 then
-									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 75)
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 79)
 								end	
 								sRaidFrames:S("Width", 40)
 								sRaidFrames:S("unit_name_lenght", true)
-								sRaidFrames:S("debuff_slots", 1)
-								sRaidFrames:S("buff_slots", 1)
 								sRaidFrames:S("vertical_hp", true)
 								sRaidFrames:S("Growth", "down")
 							end
-							sRaidFrames:S("profile22", value)
-							sRaidFrames:ProfileFeed()
+							sRaidFrames:ProfileFeedGrid()
 						end,
-						order = 4,
+						order = 5,
 					},
 					
 				profile33 = {
@@ -317,73 +304,85 @@ sRaidFrames.options = {
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
-							return sRaidFrames.opt.profile33
+							return nil
 						end,
 						set = function(value)
 							if value then
 								sRaidFrames:chatToggleBorder(value)
-								sRaidFrames.opt.profile00 = not value
-								sRaidFrames.opt.profile11 = not value
-								sRaidFrames.opt.profile22 = not value
-								sRaidFrames.opt.profile44 = not value
+
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 8)
 								if sRaidFrames.opt.Width == 40 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 79)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
-								sRaidFrames:S("debuff_slots", 2)
-								sRaidFrames:S("buff_slots", 2)
 								sRaidFrames:S("vertical_hp", nil)
 								sRaidFrames:S("Growth", "down")
 							end
-							sRaidFrames:S("profile33", value)
-							sRaidFrames:ProfileFeed()
+							sRaidFrames:ProfileFeedClassic()
 
 						end,
 						order = 2,
 					},	
 					
+				
 				profile44 = {
 						name = L["Classic - 20 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
-							return sRaidFrames.opt.profile44
+							return nil
 						end,
 						set = function(value)
 							if value then
 								sRaidFrames:chatToggleBorder(value)
-								sRaidFrames.opt.profile00 = not value
-								sRaidFrames.opt.profile11 = not value
-								sRaidFrames.opt.profile22 = not value
-								sRaidFrames.opt.profile33 = not value
+	
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 20)
 								if sRaidFrames.opt.Width == 40 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 79)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
-								sRaidFrames:S("debuff_slots", 2)
-								sRaidFrames:S("buff_slots", 2)
 								sRaidFrames:S("vertical_hp", nil)
 								sRaidFrames:S("Growth", "down")
 							end
-							sRaidFrames:S("profile44", value)
-							sRaidFrames:ProfileFeed()
+							sRaidFrames:ProfileFeedClassic()
 						end,
-						order = 3,
+						order = 5,
 					},		
+					
+					
+				
+				profile55 = {
+						name = L["Classic - 10 per column"],
+						type = "toggle",
+						desc = L["Load predefined settings"],
+						get = function()
+							return nil
+						end,
+						set = function(value)
+							if value then
+								sRaidFrames:chatToggleBorder(value)
+	
+								sRaidFrames:S("Spacing", -4)
+								sRaidFrames:S("fixed_count", 10)
+								if sRaidFrames.opt.Width == 40 then
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 79)
+								end	
+								sRaidFrames:S("unit_name_lenght", nil)
+								sRaidFrames:S("vertical_hp", nil)
+								sRaidFrames:S("Growth", "down")
+							end
+							sRaidFrames:ProfileFeedClassic()
+						end,
+						order = 4,
+					},			
+				
 					
 								
 					}
 					
-				},
-			}
-		},		
-						
-						
-						
+				},				
 						
 
 		focus = {
@@ -859,26 +858,13 @@ sRaidFrames.options = {
 			order = 2,
 		},
 
-		subsort = {
-			name = L["Member sort order"],
-			type = "text",
-			desc = L["Select how you wish to sort the members of each group"],
-			get = function()
-				return sRaidFrames.opt.SubSort
-			end,
-			set = function(value)
-				sRaidFrames:S("SubSort", value)
-				sRaidFrames:Sort()
-			end,
-			validate = {["name"] = L["By name"], ["class"] = L["By class"], ["none"] = L["By group"]},
-			order = 4,
-		},
+
 
 
 
 
 		sorting_method = {
-			name = L["Group by"],
+			name = L["Group method"],
 			type = "group",
 			desc = L["Select how you wish to show the groups"],
 			order = 3,
@@ -896,24 +882,60 @@ sRaidFrames.options = {
 				set = "chatSortBy",
 				validate = {["group"] = L["By group"], ["class"] = L["By class"], ["fixed"] = L["Grid like"]},
 			},
+				
+			subsort = {
+				name = L["Member sort order"],
+				type = "text",
+				desc = L["Select how you wish to sort the members of each group"],
+				get = function()
+					return sRaidFrames.opt.SubSort
+				end,
+				set = function(value)
+					sRaidFrames:S("SubSort", value)
+					sRaidFrames:Sort()
+				end,
+				validate = {["name"] = L["By name"], ["class"] = L["By class"], ["none"] = L["By group"]},
+				order = 2,
+			},
 			
-			
-			per_column = {
-					name = L["Units per column"],
-					type = "range",
-					desc = L["Set max number of units in column - effect only if Grid like group sort is enabled"],
-					min = 2,
-					max = 20,
-					step = 1,
-					get = function()
-						return sRaidFrames.opt.fixed_count
-					end,
-					set = function(set)
-						sRaidFrames:S("fixed_count", set)
-						sRaidFrames:LoadStyle()
-					end,
-					order = 2,
+			growth = {
+				name = L["Growth"],
+				type = "text",
+				desc = L["Set the growth of the raid frames"],
+				get = function()
+					return sRaidFrames.opt.Growth
+				end,
+				set = function(value)
+					sRaidFrames:S("Growth", value)
+					sRaidFrames:UpdateVisibility()
+				end,
+				validate = {["up"] = L["Up"], ["down"] = L["Down"], ["left"] = L["Left"], ["right"] = L["Right"]},
+				order = 5,
+			},
+
+			layout = {
+				name = L["Layout"],
+				type = "group",
+				desc = L["Set the layout of the raid frames"],
+				order = 6,
+				args = {
+					reset = {
+						name = L["Reset layout"],
+						type = "execute",
+						desc = L["Reset the position of sRaidFrames"],
+						func = "ResetPosition"
+					},
+					predefined = {
+						name = L["Predefined Layout"],
+						type = "text",
+						desc = L["Set a predefined layout for the raid frames"],
+						get = function() return nil end,
+						set = "chatSetLayout",
+						validate = {["sticky"] = L["Sticky"],["ctra"] = L["CT_RaidAssist"], ["horizontal"] = L["Horizontal"], ["vertical"] = L["Vertical"]},
+					},
 				},
+			},
+
 				
 			dead_sort = {
 				name = L["Dead and offline units sub sort"],
@@ -925,470 +947,35 @@ sRaidFrames.options = {
 				set = function(value)
 					sRaidFrames:S("dead_sort", value)
 				end,
-				order = 3,
+				order = 9,
 			},	
 				
-			
-		}
-		},
-
-
-
-
-
-
-		buffsdebuffs = {
-			name = L["_Buffs/Debuffs"],
-			type = "group",
-			desc = L["Buffs/Debuffs"],
-			args = {
-			
-			
-			
-			bufffilter = {
-				name = L["Buff filter"],
-				type = "group",
-				desc = L["Set buff filter"],
-				args = {
-					add = {
-						name = L["Add buff"],
-						type = "text",
-						desc = L["Add a buff"],
-						get = false,
-						set = function(value)
-							if not sRaidFrames.opt.BuffFilter[value] then
-								sRaidFrames.opt.BuffFilter[value] = true
-								sRaidFrames:chatUpdateBuffMenu()
-							end
-						end,
-						usage = L["<name of buff>"],
-					},
-				},
-				disabled = function() return (sRaidFrames.opt.BuffType == "debuffs" or sRaidFrames.opt.BuffType == "nothing") end,
-				order = 4,
-			},
-			
-			debufffilter = {
-				name = L["Debuff filter"],
-				type = "group",
-				desc = L["Set debuff filter"],
-				args = {
-					add = {
-						name = L["Add debuff"],
-						type = "text",
-						desc = L["Add a debuff"],
-						get = false,
-						set = function(value)
-							if not sRaidFrames.opt.DebuffFilter[value] then
-								sRaidFrames.opt.DebuffFilter[value] = true
-								sRaidFrames:chatUpdateDebuffMenu()
-							end
-						end,
-						usage = L["<name of debuff>"],
-					},
-				},
-				disabled = function() return (sRaidFrames.opt.BuffType == "buffs" or sRaidFrames.opt.BuffType == "nothing") end,
-				order = 4,
-			},
-			
-			
-			bufftype = {
-				name = L["Buff/Debuff visibility"],
-				type = "text",
-				desc = L["Show buffs or debuffs on the raid frames"],
-				get = function()
-					return sRaidFrames.opt.BuffType
-				end,
-				set = "chatBuffType",
-				validate = {["buffs"] = L["Only buffs"], ["debuffs"] = L["Only debuffs"], ["nothing"] = L["Nothing"], ["buffsanddebuffs"] = L["Buffs and debuffs"]},
-				order = 1,
-			},
-			
-			buff_slot = {
-						name = L["Buff/debuff slot number"],
-						type = "range",
-						desc = L["Set max number of buffs and debuffs"],
-						min = 1,
-						max = 4,
-						step = 1,
-						get = function()
-							return sRaidFrames.opt.buff_slots
-						end,
-						set = function(set)
-							sRaidFrames:S("buff_slots", set)
-						end,
-						order = 2,
-					},
-			
-			growth = {
-				name = L["Growth"],
-				type = "text",
-				desc = L["Set the growth of the buffs/debuffs"],
-				get = function()
-					return sRaidFrames.opt.Buff_Growth
-				end,
-				set = function(value)
-					sRaidFrames:S("Buff_Growth", value)
-					sRaidFrames:LoadStyle()
-				end,
-				validate = {["down"] = L["Down"], ["left"] = L["Left"], ["combined"] = L["Combined"]},
-				order = 3,
-			},
-
-			
-			filterbuffs = {
-				name = L["Show filtered buffs"],
-				type = "toggle",
-				desc = L["Toggle display of filtered buffs"],
-				get = function()
-					return sRaidFrames.opt.ShowFilteredBuffs
-				end,
-				set = function(set)
-					sRaidFrames:S("ShowFilteredBuffs", set)
-				end,	
-				--disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
-				order = 4
-			},
-			
-			filterdebuffs = {
-				name = L["Show filtered debuffs"],
-				type = "toggle",
-				desc = L["Toggle display of filtered debuffs"],
-				get = function()
-					return sRaidFrames.opt.ShowFilteredDebuffs
-				end,
-				set = function(set)
-					sRaidFrames:S("ShowFilteredDebuffs", set)
-				end,	
-				--disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
-				order = 5
-			},
-
-			
-			dispellable_debuffs = {
-				name = L["Show dispellable debuffs"],
-				type = "toggle",
-				desc = L["Toggle display of dispellable debuffs"],
-				get = function()
-					return sRaidFrames.opt.ShowOnlyDispellable
-				end,
-				set = "chatToggleDispellable",
-				disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
-				order = 6
-			},
-		
-			dispellable_debuffs_range = {
-				name = L["Show dispellable debuffs within range"],
-				type = "toggle",
-				desc = L["Toggle display debuffs within 28Y range"],
-				get = function()
-					return sRaidFrames.opt.ShowDebuffsOnlyRange
-				end,
-				set = "chatToggleDispellableRange",
-				disabled = function() return not sRaidFrames.opt.ShowOnlyDispellable end,
-				order = 7
-			},	
-		}
-		},
-
-		powerfilter = {
-			name = L["Power type visiblity"],
-			type = "group",
-			desc = L["Toggle the display of certain power types (Mana, Rage, Energy)"],
-			args = {
-				mana = {
-					name = L["Mana"],
-					type = "toggle",
-					desc = L["Toggle the display of mana bars"],
-					get = function()
-						return sRaidFrames.opt.PowerFilter[0]
-					end,
-					set = function(value)
-						sRaidFrames.opt.PowerFilter[0] = value
-						sRaidFrames:UpdateAllUnits()
-						sRaidFrames:LoadStyle()
-					end,
-					map = {[false] = L["hidden"], [true] = L["shown"]},
-
-				},
-				energy = {
-					name = L["Energy & Focus"],
-					type = "toggle",
-					desc = L["Toggle the display of energy and focus bars"],
-					get = function()
-						return sRaidFrames.opt.PowerFilter[2]
-					end,
-					set = function(value)
-						sRaidFrames.opt.PowerFilter[2] = value
-						sRaidFrames.opt.PowerFilter[3] = value
-						sRaidFrames:UpdateAllUnits()
-						sRaidFrames:LoadStyle()
-					end,
-					map = {[false] = L["hidden"], [true] = L["shown"]},
-				},
-				rage = {
-					name = L["Rage"],
-					type = "toggle",
-					desc = L["Toggle the display of rage bars"],
-					get = function()
-						return sRaidFrames.opt.PowerFilter[1]
-					end,
-					set = function(value)
-						sRaidFrames.opt.PowerFilter[1] = value
-						sRaidFrames:UpdateAllUnits()
-						sRaidFrames:LoadStyle()
-					end,
-					map = {[false] = L["hidden"], [true] = L["shown"]},
-				},
-			},
-		},
-
-		
-		invert = {
-			name = L["Invert health bars"],
-			type = "toggle",
-			desc = L["Invert the growth of the health bars"],
-			get = function()
-				return sRaidFrames.opt.Invert
-			end,
-			set = function(value)
-				sRaidFrames.opt.Invert = value
-				sRaidFrames:UpdateUnit(sRaidFrames.visible)
-			end,
-		},
-
-		texture = {
-			name = L["Bar textures"],
-			type = "text",
-			desc = L["Set the texture used on health and mana bars"],
-			get = function()
-				return sRaidFrames.opt.Texture
-			end,
-			set = "chatTexture",
-			validate = surface:List(),
-			order = 6,
-		},
-
-		
-		size = {
-				name = L["Frame size"],
-				type = "group",
-				desc = L["Size of the raid frames"],
-				order = 6, 
-				args = {
-		
-			width = {
-				name = L["Width"],
+				
+			per_column = {
+				name = L["Units per column"],
 				type = "range",
-				desc = L["Width"],
-				min = 40,
-				max = 150,
+				desc = L["Set max number of units in column - effect only if Grid like group sort is enabled"],
+				min = 2,
+				max = 20,
 				step = 1,
 				get = function()
-					return sRaidFrames.opt.Width
+					return sRaidFrames.opt.fixed_count
 				end,
 				set = function(set)
-					sRaidFrames:S("Width", set)
+					sRaidFrames:S("fixed_count", set)
 					sRaidFrames:LoadStyle()
 				end,
-			},
-		
-		
-			scale = {
-				name = L["Scale"],
-				type = "range",
-				desc = L["Set the scale of the raid frames"],
-				min = 0.1,
-				max = 3.0,
-				step = 0.05,
-				get = function()
-					return sRaidFrames.opt.Scale
-				end,
-				set = "chatScale",
-			},
-			
-			
-		}
-		},
-
+				order = 8,
+			},	
 				
 				
-
-		layout = {
-			name = L["Layout"],
-			type = "group",
-			desc = L["Set the layout of the raid frames"],
-			order = 5,
-			args = {
-				reset = {
-					name = L["Reset layout"],
-					type = "execute",
-					desc = L["Reset the position of sRaidFrames"],
-					func = "ResetPosition"
-				},
-				predefined = {
-					name = L["Predefined Layout"],
-					type = "text",
-					desc = L["Set a predefined layout for the raid frames"],
-					get = function() return nil end,
-					set = "chatSetLayout",
-					validate = {["sticky"] = L["Sticky"],["ctra"] = L["CT_RaidAssist"], ["horizontal"] = L["Horizontal"], ["vertical"] = L["Vertical"]},
-				},
-			},
-		},
-
-		backgroundcolor = {
-			type = "color",
-			name = L["Background color"],
-			desc = L["Change the background color"],
-			get = function()
-				local s = sRaidFrames.opt.BackgroundColor
-				return s.r, s.g, s.b, s.a
-			end,
-			set = "chatBackgroundColor",
-			hasAlpha = true,
-			order = 7,
-		},
-
-		bordercolor = {
-			type = "color",
-			name = L["Border color"],
-			desc = L["Change the border color"],
-			get = function()
-				local s = sRaidFrames.opt.BorderColor
-				return s.r, s.g, s.b, s.a
-			end,
-			set = "chatBorderColor",
-			hasAlpha = true,
-			disabled = function() return not sRaidFrames.opt.Border end,
-			order = 8
-		},
-
-		tooltip = {
-			name = L["Tooltip display"],
-			type = "text",
-			desc = L["Determine when a tooltip is displayed"],
-			get = function() return sRaidFrames.opt.TooltipMethod end,
-			set = function(value)
-				sRaidFrames:S("TooltipMethod", value)
-			end,
-			validate = {["never"] = L["Never"], ["notincombat"] = L["Only when not in combat"], ["always"] = L["Always"]},
-		},
-
-		range = {
-			name = L["_Range"],
-			type = "group",
-			desc = L["Set about range"],
-			args = {
-				enable = {
-					name = L["Enable light range check"],
-					type = "toggle",
-					desc = L["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - Suggested when you neither play healing class nor using Blizzard frames, agUnitFrames or LunaUnitFrames"],
-					get = function() return sRaidFrames.opt.RangeCheck end,
-					set = function(value)
-						sRaidFrames:DisableRangeCheck()
-						sRaidFrames.opt.RangeCheck = value
-						if value then
-							sRaidFrames.opt.ExtendedRangeCheck = not value
-							sRaidFrames.opt.ExtendedRangeCheckCombat = not value
-						end
-					end,
-					order = 1,
-				},
-				enable40y = {
-					name = L["Enable accurate range check"],
-					type = "toggle",
-					desc = L["Enable 40y range check that requires certain spells to be on actionbar and Blizzard frames, agUnitFrames or LunaUnitFrames to be present - Only healing classes can use accurate range check"],
-					get = function() return sRaidFrames.opt.ExtendedRangeCheck end,
-					set = function(value)
-						sRaidFrames:DisableRangeCheck()
-						sRaidFrames.opt.ExtendedRangeCheck = value
-						if value  then
-							sRaidFrames.opt.RangeCheck = not value
-							sRaidFrames.opt.ExtendedRangeCheckCombat = not value
-						end	
-					end,
-					order = 2,
-				},
 				
-				enable40ycombat = {
-					name = L["Enable combined range check"],
-					type = "toggle",
-					desc = L["Enable 40y accurate range check only in combat otherwise light range check is active"],
-					get = function() return sRaidFrames.opt.ExtendedRangeCheckCombat end,
-					set = function(value)
-						sRaidFrames:DisableRangeCheck()
-						sRaidFrames.opt.ExtendedRangeCheckCombat = value
-						if value  then
-							sRaidFrames.opt.RangeCheck = not value
-							sRaidFrames.opt.ExtendedRangeCheck = not value
-						end	
-					end,
-					order = 3,		
-				},
 				
-					debug = {
-					name = L["Enable debug"],
-					type = "toggle",
-					desc = L["Range accuracy calculation, only for testing"],
-					get = function() return sRaidFrames.opt.Debug end,
-					set = function(value)
-						sRaidFrames.opt.Debug = value
-					end,
-					order = 4,
-				},
-				
-				alpha = {
-					name = L["Alpha"],
-					type = "range",
-					desc = L["The alpha level for units who are out of range"],
-					get = function() return sRaidFrames.opt.RangeAlpha end,
-					set = function(value)
-						sRaidFrames.opt.RangeAlpha = value
-					end,
-					min  = 0,
-					max  = 1,
-					step = 0.1,
-					order = 5,
-					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
-				},
-				frequency1 = {
-					name = L["Range frequency"],
-					type = "range",
-					desc = L["The interval between which range checks are performed"],
-					get = function() return sRaidFrames.opt.RangeFrequency end,
-					set = function(value)
-						sRaidFrames.opt.RangeFrequency = value
-						sRaidFrames:UpdateRangeFrequency(value)
-					end,
-					min  = 0.2,
-					max  = 0.8,
-					step = 0.1,
-					order = 6,
-					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
-				},
-				
-				frequency2 = {
-					name = L["Accurate range frequency factor"],
-					type = "range",
-					desc = L["Increase or decrease time needed for full units scan - if you experience performance drop please increase the value"],
-					get = function() return sRaidFrames.opt.AccurateRangeFactor end,
-					set = function(value)
-						sRaidFrames.opt.AccurateRangeFactor = value
-					end,
-					min  = 0.04,
-					max  = 0.08,
-					step = 0.01,
-					order = 7,
-					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
-				},
-			},
-		},
-
-		filter = {
+			filter = {
 			name = L["Show Group/Class"],
 			type = "group",
 			desc = L["Toggle the display of certain Groups/Classes - Active if frames are locked"],
+			order = 3,
 			args = {
 				classes = {
 					name = L["Classes"],
@@ -1628,22 +1215,478 @@ sRaidFrames.options = {
 					},
 				},
 			},
+		},	
+				
+				
+				
+				
+				
+			
+		}
 		},
 
-		growth = {
-			name = L["Growth"],
-			type = "text",
-			desc = L["Set the growth of the raid frames"],
+
+
+
+
+
+		buffsdebuffs = {
+			name = L["_Buffs/Debuffs"],
+			type = "group",
+			desc = L["Buffs/Debuffs"],
+			args = {
+			
+			
+			
+			bufffilter = {
+				name = L["Buff filter"],
+				type = "group",
+				desc = L["Set buff filter"],
+				args = {
+					add = {
+						name = L["Add buff"],
+						type = "text",
+						desc = L["Add a buff"],
+						get = false,
+						set = function(value)
+							if not sRaidFrames.opt.BuffFilter[value] then
+								sRaidFrames.opt.BuffFilter[value] = true
+								sRaidFrames:chatUpdateBuffMenu()
+							end
+						end,
+						usage = L["<name of buff>"],
+					},
+				},
+				disabled = function() return (sRaidFrames.opt.BuffType == "debuffs" or sRaidFrames.opt.BuffType == "nothing") end,
+				order = 4,
+			},
+			
+			debufffilter = {
+				name = L["Debuff filter"],
+				type = "group",
+				desc = L["Set debuff filter"],
+				args = {
+					add = {
+						name = L["Add debuff"],
+						type = "text",
+						desc = L["Add a debuff"],
+						get = false,
+						set = function(value)
+							if not sRaidFrames.opt.DebuffFilter[value] then
+								sRaidFrames.opt.DebuffFilter[value] = true
+								sRaidFrames:chatUpdateDebuffMenu()
+							end
+						end,
+						usage = L["<name of debuff>"],
+					},
+				},
+				disabled = function() return (sRaidFrames.opt.BuffType == "buffs" or sRaidFrames.opt.BuffType == "nothing") end,
+				order = 4,
+			},
+			
+			
+			bufftype = {
+				name = L["Buff/Debuff visibility"],
+				type = "text",
+				desc = L["Show buffs or debuffs on the raid frames"],
+				get = function()
+					return sRaidFrames.opt.BuffType
+				end,
+				set = "chatBuffType",
+				validate = {["buffs"] = L["Only buffs"], ["debuffs"] = L["Only debuffs"], ["nothing"] = L["Nothing"], ["buffsanddebuffs"] = L["Buffs and debuffs"]},
+				order = 1,
+			},
+			
+			buff_slot = {
+						name = L["Buff/debuff slot number"],
+						type = "range",
+						desc = L["Set max number of buffs and debuffs"],
+						min = 1,
+						max = 4,
+						step = 1,
+						get = function()
+							return sRaidFrames.opt.buff_slots
+						end,
+						set = function(set)
+							sRaidFrames:S("buff_slots", set)
+						end,
+						order = 2,
+					},
+			buff_size = {
+						name = L["Buff/debuff texture size"],
+						type = "range",
+						desc = L["Set size of buff/debuff texture"],
+						min = 10,
+						max = 35,
+						step = 0.1,
+						get = function()
+							return sRaidFrames.opt.buff_size
+						end,
+						set = function(set)
+							sRaidFrames:S("buff_size", set)
+							sRaidFrames:LoadStyle()
+						end,
+						order = 2,
+					},		
+					
+			
+			growth = {
+				name = L["Growth"],
+				type = "text",
+				desc = L["Set the growth of the buffs/debuffs"],
+				get = function()
+					return sRaidFrames.opt.Buff_Growth
+				end,
+				set = function(value)
+					sRaidFrames:S("Buff_Growth", value)
+					sRaidFrames:LoadStyle()
+				end,
+				validate = {["vertical"] = L["Vertical"], ["horizontal"] = L["Horizontal"], ["combined"] = L["Combined"]},
+				order = 3,
+			},
+
+			anchor = {
+				name = L["Anchor"],
+				type = "text",
+				desc = L["Set the anchor of buffs/debuffs"],
+				get = function()
+					return sRaidFrames.opt.Buff_Anchor
+				end,
+				set = function(value)
+					sRaidFrames:S("Buff_Anchor", value)
+					sRaidFrames:LoadStyle()
+				end,
+				validate = {["topright"] = L["TopRight"], ["bottomright"] = L["BottomRight"]},
+				order = 3,
+			},
+			
+			
+			filterbuffs = {
+				name = L["Show filtered buffs"],
+				type = "toggle",
+				desc = L["Toggle display of filtered buffs"],
+				get = function()
+					return sRaidFrames.opt.ShowFilteredBuffs
+				end,
+				set = function(set)
+					sRaidFrames:S("ShowFilteredBuffs", set)
+				end,	
+				--disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				order = 4
+			},
+			
+			filterdebuffs = {
+				name = L["Show filtered debuffs"],
+				type = "toggle",
+				desc = L["Toggle display of filtered debuffs"],
+				get = function()
+					return sRaidFrames.opt.ShowFilteredDebuffs
+				end,
+				set = function(set)
+					sRaidFrames:S("ShowFilteredDebuffs", set)
+				end,	
+				--disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				order = 5
+			},
+
+			
+			dispellable_debuffs = {
+				name = L["Show dispellable debuffs"],
+				type = "toggle",
+				desc = L["Toggle display of dispellable debuffs"],
+				get = function()
+					return sRaidFrames.opt.ShowOnlyDispellable
+				end,
+				set = "chatToggleDispellable",
+				disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				order = 6
+			},
+		
+			dispellable_debuffs_range = {
+				name = L["Show dispellable debuffs within range"],
+				type = "toggle",
+				desc = L["Toggle display debuffs within 28Y range"],
+				get = function()
+					return sRaidFrames.opt.ShowDebuffsOnlyRange
+				end,
+				set = "chatToggleDispellableRange",
+				disabled = function() return not sRaidFrames.opt.ShowOnlyDispellable end,
+				order = 7
+			},	
+		}
+		},
+
+		powerfilter = {
+			name = L["Power type visiblity"],
+			type = "group",
+			desc = L["Toggle the display of certain power types (Mana, Rage, Energy)"],
+			args = {
+				mana = {
+					name = L["Mana"],
+					type = "toggle",
+					desc = L["Toggle the display of mana bars"],
+					get = function()
+						return sRaidFrames.opt.PowerFilter[0]
+					end,
+					set = function(value)
+						sRaidFrames.opt.PowerFilter[0] = value
+						sRaidFrames:UpdateAllUnits()
+						sRaidFrames:LoadStyle()
+					end,
+					map = {[false] = L["hidden"], [true] = L["shown"]},
+
+				},
+				energy = {
+					name = L["Energy & Focus"],
+					type = "toggle",
+					desc = L["Toggle the display of energy and focus bars"],
+					get = function()
+						return sRaidFrames.opt.PowerFilter[2]
+					end,
+					set = function(value)
+						sRaidFrames.opt.PowerFilter[2] = value
+						sRaidFrames.opt.PowerFilter[3] = value
+						sRaidFrames:UpdateAllUnits()
+						sRaidFrames:LoadStyle()
+					end,
+					map = {[false] = L["hidden"], [true] = L["shown"]},
+				},
+				rage = {
+					name = L["Rage"],
+					type = "toggle",
+					desc = L["Toggle the display of rage bars"],
+					get = function()
+						return sRaidFrames.opt.PowerFilter[1]
+					end,
+					set = function(value)
+						sRaidFrames.opt.PowerFilter[1] = value
+						sRaidFrames:UpdateAllUnits()
+						sRaidFrames:LoadStyle()
+					end,
+					map = {[false] = L["hidden"], [true] = L["shown"]},
+				},
+			},
+		},
+
+		
+		invert = {
+			name = L["Invert health bars"],
+			type = "toggle",
+			desc = L["Invert the growth of the health bars"],
 			get = function()
-				return sRaidFrames.opt.Growth
+				return sRaidFrames.opt.Invert
 			end,
 			set = function(value)
-				sRaidFrames:S("Growth", value)
-				sRaidFrames:UpdateVisibility()
+				sRaidFrames.opt.Invert = value
+				sRaidFrames:UpdateUnit(sRaidFrames.visible)
 			end,
-			validate = {["up"] = L["Up"], ["down"] = L["Down"], ["left"] = L["Left"], ["right"] = L["Right"]},
-			order = 5,
 		},
+
+		texture = {
+			name = L["Bar textures"],
+			type = "text",
+			desc = L["Set the texture used on health and mana bars"],
+			get = function()
+				return sRaidFrames.opt.Texture
+			end,
+			set = "chatTexture",
+			validate = surface:List(),
+			order = 6,
+		},
+
+		
+		size = {
+				name = L["Frame size"],
+				type = "group",
+				desc = L["Size of the raid frames"],
+				order = 6, 
+				args = {
+		
+			width = {
+				name = L["Width"],
+				type = "range",
+				desc = L["Width"],
+				min = 40,
+				max = 150,
+				step = 1,
+				get = function()
+					return sRaidFrames.opt.Width
+				end,
+				set = function(set)
+					sRaidFrames:S("Width", set)
+					sRaidFrames:LoadStyle()
+				end,
+			},
+		
+		
+			scale = {
+				name = L["Scale"],
+				type = "range",
+				desc = L["Set the scale of the raid frames"],
+				min = 0.1,
+				max = 3.0,
+				step = 0.05,
+				get = function()
+					return sRaidFrames.opt.Scale
+				end,
+				set = "chatScale",
+			},
+			
+			
+		}
+		},
+
+		backgroundcolor = {
+			type = "color",
+			name = L["Background color"],
+			desc = L["Change the background color"],
+			get = function()
+				local s = sRaidFrames.opt.BackgroundColor
+				return s.r, s.g, s.b, s.a
+			end,
+			set = "chatBackgroundColor",
+			hasAlpha = true,
+			order = 7,
+		},
+
+		bordercolor = {
+			type = "color",
+			name = L["Border color"],
+			desc = L["Change the border color"],
+			get = function()
+				local s = sRaidFrames.opt.BorderColor
+				return s.r, s.g, s.b, s.a
+			end,
+			set = "chatBorderColor",
+			hasAlpha = true,
+			disabled = function() return not sRaidFrames.opt.Border end,
+			order = 8
+		},
+
+		tooltip = {
+			name = L["Tooltip display"],
+			type = "text",
+			desc = L["Determine when a tooltip is displayed"],
+			get = function() return sRaidFrames.opt.TooltipMethod end,
+			set = function(value)
+				sRaidFrames:S("TooltipMethod", value)
+			end,
+			validate = {["never"] = L["Never"], ["notincombat"] = L["Only when not in combat"], ["always"] = L["Always"]},
+		},
+
+		range = {
+			name = L["_Range"],
+			type = "group",
+			desc = L["Set about range"],
+			args = {
+				enable = {
+					name = L["Enable light range check"],
+					type = "toggle",
+					desc = L["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - Suggested when you neither play healing class nor using Blizzard frames, agUnitFrames or LunaUnitFrames"],
+					get = function() return sRaidFrames.opt.RangeCheck end,
+					set = function(value)
+						sRaidFrames:DisableRangeCheck()
+						sRaidFrames.opt.RangeCheck = value
+						if value then
+							sRaidFrames.opt.ExtendedRangeCheck = not value
+							sRaidFrames.opt.ExtendedRangeCheckCombat = not value
+						end
+					end,
+					order = 1,
+				},
+				enable40y = {
+					name = L["Enable accurate range check"],
+					type = "toggle",
+					desc = L["Enable 40y range check that requires certain spells to be on actionbar and Blizzard frames, agUnitFrames or LunaUnitFrames to be present - Only healing classes can use accurate range check"],
+					get = function() return sRaidFrames.opt.ExtendedRangeCheck end,
+					set = function(value)
+						sRaidFrames:DisableRangeCheck()
+						sRaidFrames.opt.ExtendedRangeCheck = value
+						if value  then
+							sRaidFrames.opt.RangeCheck = not value
+							sRaidFrames.opt.ExtendedRangeCheckCombat = not value
+						end	
+					end,
+					order = 2,
+				},
+				
+				enable40ycombat = {
+					name = L["Enable combined range check"],
+					type = "toggle",
+					desc = L["Enable 40y accurate range check only in combat otherwise light range check is active"],
+					get = function() return sRaidFrames.opt.ExtendedRangeCheckCombat end,
+					set = function(value)
+						sRaidFrames:DisableRangeCheck()
+						sRaidFrames.opt.ExtendedRangeCheckCombat = value
+						if value  then
+							sRaidFrames.opt.RangeCheck = not value
+							sRaidFrames.opt.ExtendedRangeCheck = not value
+						end	
+					end,
+					order = 3,		
+				},
+				
+					debug = {
+					name = L["Enable debug"],
+					type = "toggle",
+					desc = L["Range accuracy calculation, only for testing"],
+					get = function() return sRaidFrames.opt.Debug end,
+					set = function(value)
+						sRaidFrames.opt.Debug = value
+					end,
+					order = 4,
+				},
+				
+				alpha = {
+					name = L["Alpha"],
+					type = "range",
+					desc = L["The alpha level for units who are out of range"],
+					get = function() return sRaidFrames.opt.RangeAlpha end,
+					set = function(value)
+						sRaidFrames.opt.RangeAlpha = value
+					end,
+					min  = 0,
+					max  = 1,
+					step = 0.1,
+					order = 5,
+					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
+				},
+				frequency1 = {
+					name = L["Range frequency"],
+					type = "range",
+					desc = L["The interval between which range checks are performed"],
+					get = function() return sRaidFrames.opt.RangeFrequency end,
+					set = function(value)
+						sRaidFrames.opt.RangeFrequency = value
+						sRaidFrames:UpdateRangeFrequency(value)
+					end,
+					min  = 0.2,
+					max  = 0.8,
+					step = 0.1,
+					order = 6,
+					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
+				},
+				
+				frequency2 = {
+					name = L["Accurate range frequency factor"],
+					type = "range",
+					desc = L["Increase or decrease time needed for full units scan - if you experience performance drop please increase the value"],
+					get = function() return sRaidFrames.opt.AccurateRangeFactor end,
+					set = function(value)
+						sRaidFrames.opt.AccurateRangeFactor = value
+					end,
+					min  = 0.04,
+					max  = 0.08,
+					step = 0.01,
+					order = 7,
+					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
+				},
+			},
+		},
+
+		
+
+		
 
 		border = {
 			name = L["Border"],
@@ -1773,7 +1816,15 @@ function sRaidFrames:chatBorderColor(r, g, b, a)
 	end
 end
 
+function sRaidFrames:MultidragMsg()
+	if not self.MultidragInfo then
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag unlock the frames, hold Alt key then click left Mouse button on any frame name."); 
+		self.MultidragInfo = true
+	end	
+end
+
 function sRaidFrames:chatSetLayout(layout)
+	self:MultidragMsg()
 	self:PositionLayout(layout, 200, -200)
 end
 
@@ -1797,7 +1848,7 @@ function sRaidFrames:DisableRangeCheck()
 	--end					
 end		
 
-function sRaidFrames:ProfileFeed()
+function sRaidFrames:ProfileFeedClassic()
 	sRaidFrames:chatSortBy("fixed")
 	sRaidFrames.opt.SubSort = "class"
 	
@@ -1820,9 +1871,49 @@ function sRaidFrames:ProfileFeed()
 	sRaidFrames:S("red", true)
 	sRaidFrames:S("redbar", false)
 	
-	
+	sRaidFrames:S("healthDisplayType", "percent")
+	sRaidFrames:S("show_txt_buff", nil)
+	sRaidFrames:S("Buff_Growth", "vertical")
+	sRaidFrames:S("Buff_Anchor", "topright")
+	sRaidFrames:S("buff_slots", 2)
 	sRaidFrames:S("Texture", "Gradient")
+	sRaidFrames:S("statusbar_color", true)
+	sRaidFrames:MultidragMsg()
+	sRaidFrames:LoadStyle()
+	sRaidFrames:PositionLayout("sticky", 200, -200)
+end
 
+function sRaidFrames:ProfileFeedGrid()
+	sRaidFrames:chatSortBy("fixed")
+	sRaidFrames.opt.SubSort = "class"
+	
+	sRaidFrames.opt.heal = true
+	sRaidFrames.opt.RangeAlpha = 0.25
+				
+	sRaidFrames.opt.PowerFilter[0] = false
+	sRaidFrames.opt.PowerFilter[1] = false
+	sRaidFrames.opt.PowerFilter[2] = false
+	sRaidFrames.opt.PowerFilter[3] = false
+								
+	sRaidFrames.opt.BackgroundColor.r = 0.3
+	sRaidFrames.opt.BackgroundColor.g = 0.3
+	sRaidFrames.opt.BackgroundColor.b = 0.3
+	sRaidFrames.opt.BackgroundColor.a = 1
+	
+	
+	sRaidFrames:S("unitname_color", true)
+	sRaidFrames:S("aggro", true)
+	sRaidFrames:S("red", true)
+	sRaidFrames:S("redbar", false)
+	
+	sRaidFrames:S("healthDisplayType", "none")
+	sRaidFrames:S("show_txt_buff", true)
+	sRaidFrames:S("Buff_Growth", "horizontal")
+	sRaidFrames:S("Buff_Anchor", "bottomright")
+	sRaidFrames:S("buff_slots", 2)
+	sRaidFrames:S("Texture", "Gradient")
+	sRaidFrames:S("statusbar_color", true)
+	sRaidFrames:MultidragMsg()
 	sRaidFrames:LoadStyle()
 	sRaidFrames:PositionLayout("sticky", 200, -200)
 end

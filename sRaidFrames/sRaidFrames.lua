@@ -109,15 +109,15 @@ function sRaidFrames:OnInitialize()
 		SortBy				= "fixed",
 		healthDisplayType	= 'percent',
 		Invert = false,
-		Scale				= 1,
-		Width				= 75,
+		Scale				= 1.15,
+		Width				= 79,
 		ScaleFocus 			= 1.3,
 		WidthFocus 			= 85,
-		Width_OLD			= 75,
+		Width_OLD			= 79,
 		Border				= true,
 		Texture				= "Gradient",
 		BuffType			= "debuffs",
-		ShowOnlyDispellable	= 1,
+		ShowOnlyDispellable	= nil,
 		BackgroundColor		= {r = 0.3, g = 0.3, b = 0.3, a = 0.7},
 		BorderColor			= {r = 1, g = 1, b = 1, a = 1},
 		Growth				= "down",
@@ -129,7 +129,7 @@ function sRaidFrames:OnInitialize()
 		GroupFilter			= {true, true, true, true, true, true, true, true},
 		BuffFilter			= {},
 		DebuffFilter		= {},
-		PowerFilter			= {[0] = true,[1] = true,[2] = true,[3] = true},
+		PowerFilter			= {[0] = false,[1] = false,[2] = false,[3] = false},
 		aggro				= false,
 		RangeCheck 			= false,
 		ExtendedRangeCheck = false,
@@ -138,6 +138,7 @@ function sRaidFrames:OnInitialize()
 		RangeFrequency 		= 0.20,
 		AccurateRangeFactor = 0.05,
 		RangeAlpha 			= 0.2,
+		buff_size			= 15.3,
 		srfhideparty		= true,
 		lock_focus			= false,
 		ShowGroupTitles_Focus = true,
@@ -146,11 +147,11 @@ function sRaidFrames:OnInitialize()
 		hp_limit 			= 100,
 		units_limit 		= 10,
 		Growth_Focus 		= "down",
-		show_txt_buff		= true,
+		show_txt_buff		= false,
 		targeting 			= true,
 		buff_slots			= 2,
-		debuff_slots		= 2,
-		Buff_Growth			= "left",
+		Buff_Growth			= "vertical",
+		Buff_Anchor 		= "topright"
 		
 	})
 
@@ -222,6 +223,8 @@ function sRaidFrames:OnEnable()
 	self:RegisterBucketEvent("PARTY_MEMBERS_CHANGED", 0.01, "UpdateParty");
 
 	self:UpdateRoster()
+	
+	Zorlen_MakeFirstMacros = nil
 	
 	if LunaUnitFrames then
 		LunaUnitFrames.UpdateTargetFrameOld = LunaUnitFrames.UpdateTargetFrame
@@ -945,9 +948,9 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 							if texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
 								--f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
 								self.hpaura[unit] = L["Intervened"]
-							elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
+							--elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
 								--f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
-								self.hpaura[unit] = L["Spirit"]
+								--self.hpaura[unit] = L["Spirit"]
 							else
 								self.hpaura[unit] = nil
 							end
@@ -1031,15 +1034,16 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 								sRaidFrames.debuff[unit] = debuffType
 							end
 
-							if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsanddebuffs") and debuffSlots < self.opt.buff_slots and process2 then
+							if (self.opt.BuffType == "debuffs" or self.opt.BuffType == "buffsanddebuffs") and debuffSlots < self.opt.buff_slots and process2 and not UnitIsDeadOrGhost(unit) then
 								debuffSlots = debuffSlots + 1
 
 								local debuffFrame = f["buff".. debuffSlots]
-								debuffFrame.unitid = unit
+								debuffFrame.unit = unit
 								debuffFrame.debuffid = i
 								debuffFrame.mask = debuff_mask
-								debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unitid, this.debuffid, this.mask) end);
+								debuffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(debuffFrame) GameTooltip:SetUnitDebuff(this.unit, this.debuffid, this.mask) end);
 								debuffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+								debuffFrame:SetScript("OnClick", self.OnUnitClick)
 								debuffFrame.count:SetText(debuffApplications > 1 and debuffApplications or nil);
 								debuffFrame.texture:SetTexture(debuffTexture)
 								debuffFrame:SetFrameLevel(5)
@@ -1088,9 +1092,10 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 								buffSlots = buffSlots + 1
 								local buffFrame = f["buff".. buffSlots]
 								buffFrame.buffid = i
-								buffFrame.unitid = unit
-								buffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(buffFrame) GameTooltip:SetUnitBuff(this.unitid, this.buffid, showOnlyCastable) end)
+								buffFrame.unit = unit
+								buffFrame:SetScript("OnEnter", function() GameTooltip:SetOwner(buffFrame) GameTooltip:SetUnitBuff(this.unit, this.buffid, showOnlyCastable) end)
 								buffFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+								buffFrame:SetScript("OnClick", self.OnUnitClick)
 								buffFrame.count:SetText(buffApplications > 1 and buffApplications or nil)
 								buffFrame.texture:SetTexture(buffTexture)
 								--buffFrame:SetFrameLevel(10)
@@ -1103,6 +1108,7 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 				end	
 			else
 				f.mpbar.text:SetText()
+				f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
 			end
 		end	
 	end
@@ -1427,23 +1433,45 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 	self:SetWHP(f.title, frame_width - 10, 16, "TOPLEFT", f, "TOPLEFT",  5, -6)
 	--self:SetWHP(f.aura1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -5)
 	--self:SetWHP(f.aura2, 12, 12, "RIGHT", f.aura1, "LEFT", 0, 0)
-	self:SetWHP(f.buff1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4.3, -4.3)
 	
-	if self.opt.Buff_Growth == "left" then
-		self:SetWHP(f.buff2, 12, 12, "RIGHT", f.buff1, "LEFT", 0, 0)
-		self:SetWHP(f.buff3, 12, 12, "RIGHT", f.buff2, "LEFT", 0, 0)
-		self:SetWHP(f.buff4, 12, 12, "RIGHT", f.buff3, "LEFT", 0, 0)
 	
-	elseif self.opt.Buff_Growth == "down" then
-		self:SetWHP(f.buff2, 12, 12, "TOP", f.buff1, "BOTTOM", 0, 0)
-		self:SetWHP(f.buff3, 12, 12, "TOP", f.buff2, "BOTTOM", 0, 0)
-		self:SetWHP(f.buff4, 12, 12, "TOP", f.buff3, "BOTTOM", 0, 0)
+	if self.opt.Buff_Anchor == "topright" then
+		self:SetWHP(f.buff1, self.opt.buff_size, self.opt.buff_size, "TOPRIGHT", f.hpbar, "TOPRIGHT", 0.3, 0)
 		
+		if self.opt.Buff_Growth == "horizontal" then
+			self:SetWHP(f.buff2, self.opt.buff_size, self.opt.buff_size, "RIGHT", f.buff1, "LEFT", 0, 0)
+			self:SetWHP(f.buff3, self.opt.buff_size, self.opt.buff_size, "RIGHT", f.buff2, "LEFT", 0, 0)
+			self:SetWHP(f.buff4, self.opt.buff_size, self.opt.buff_size, "RIGHT", f.buff3, "LEFT", 0, 0)
+		
+		elseif self.opt.Buff_Growth == "vertical" then
+			self:SetWHP(f.buff2, self.opt.buff_size, self.opt.buff_size, "TOP", f.buff1, "BOTTOM", 0, 0)
+			self:SetWHP(f.buff3, self.opt.buff_size, self.opt.buff_size, "TOP", f.buff2, "BOTTOM", 0, 0)
+			self:SetWHP(f.buff4, self.opt.buff_size, self.opt.buff_size, "TOP", f.buff3, "BOTTOM", 0, 0)
+			
+		else
+			self:SetWHP(f.buff2, self.opt.buff_size, self.opt.buff_size, "RIGHT", f.buff1, "LEFT", 0, 0)
+			self:SetWHP(f.buff3, self.opt.buff_size, self.opt.buff_size, "TOP", f.buff1, "BOTTOM", 0, 0)
+			self:SetWHP(f.buff4, self.opt.buff_size, self.opt.buff_size, "TOP", f.buff2, "BOTTOM", 0, 0)
+		end
 	else
-		self:SetWHP(f.buff2, 12, 12, "RIGHT", f.buff1, "LEFT", 0, 0)
-		self:SetWHP(f.buff3, 12, 12, "TOP", f.buff1, "BOTTOM", 0, 0)
-		self:SetWHP(f.buff4, 12, 12, "TOP", f.buff2, "BOTTOM", 0, 0)
-	end	
+		self:SetWHP(f.buff1, self.opt.buff_size, self.opt.buff_size, "BOTTOMRIGHT", f.hpbar, "BOTTOMRIGHT", 0.3, 0)
+		
+		if self.opt.Buff_Growth == "horizontal" then
+			self:SetWHP(f.buff2, self.opt.buff_size, self.opt.buff_size, "RIGHT", f.buff1, "LEFT", 0, 0)
+			self:SetWHP(f.buff3, self.opt.buff_size, self.opt.buff_size, "RIGHT", f.buff2, "LEFT", 0, 0)
+			self:SetWHP(f.buff4, self.opt.buff_size, self.opt.buff_size, "RIGHT", f.buff3, "LEFT", 0, 0)
+		
+		elseif self.opt.Buff_Growth == "vertical" then
+			self:SetWHP(f.buff2, self.opt.buff_size, self.opt.buff_size, "BOTTOM", f.buff1, "TOP", 0, 0)
+			self:SetWHP(f.buff3, self.opt.buff_size, self.opt.buff_size, "BOTTOM", f.buff2, "TOP", 0, 0)
+			self:SetWHP(f.buff4, self.opt.buff_size, self.opt.buff_size, "BOTTOM", f.buff3, "TOP", 0, 0)
+			
+		else
+			self:SetWHP(f.buff2, self.opt.buff_size, self.opt.buff_size, "RIGHT", f.buff1, "LEFT", 0, 0)
+			self:SetWHP(f.buff3, self.opt.buff_size, self.opt.buff_size, "BOTTOM", f.buff1, "TOP", 0, 0)
+			self:SetWHP(f.buff4, self.opt.buff_size, self.opt.buff_size, "BOTTOM", f.buff2, "TOP", 0, 0)
+		end
+	end
 	
 		
 	if not sRaidFrames.opt.Border then
@@ -1466,7 +1494,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 	
 	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -11)
 	self:SetWHP(f.hpbar.highlight, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35) -- highlight
-	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f, "CENTER", 0, -3)
+	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f, "CENTER", 0, -3.5)
 	
 	f.mpbar.text:SetTextHeight(7.5)
 	f.hpbar.text:SetTextHeight(8)
@@ -1789,10 +1817,6 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 			v:ClearAllPoints()
 			v:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xBuffer+yMod, yBuffer+xMod)
 	end
-	if not self.MultidragInfo then
-		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag unlock the frames, hold Alt key then click left Mouse button on any frame name."); 
-		self.MultidragInfo = true
-	end	
 	self:SavePosition()
 end
 

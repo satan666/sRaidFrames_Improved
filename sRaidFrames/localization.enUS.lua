@@ -34,9 +34,10 @@ L:RegisterTranslations("enUS", function() return {
 	["Apply best settings"] = true,
 	["Load predefined settings for best visual effect"] = true,
 	
-	["Load pure view profiles"] = true,
+	["_Load profiles"] = true,
 	["Classic - 5 per column"] = true,
 	["Classic - 8 per column"] = true,
+	["Classic - 10 per column"] = true,
 	["Classic - 20 per column"] = true,
 	["Grid - Vertical 5 per column"] = true,
 	["Grid - Horizontal 5 per column"] = true,
@@ -144,6 +145,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Grid like"] = true,
 	["Blizzard default"] = true,
 	["Group by"] = true,
+	["Group method"] = true,
 	["Dead and offline units sub sort"] = true,
 	["Dead or offline units are moved to the bottom of frame - effect only if Grid like group sort is enabled"] = true,
 	
@@ -153,6 +155,11 @@ L:RegisterTranslations("enUS", function() return {
 	["Units per column"] = true,
 	["Set max number of units in column - effect only if Grid like group sort is enabled"] = true,
 
+
+	["Anchor"] = true,
+	["Set the anchor of buffs/debuffs"] = true,
+	["Set size of buff/debuff texture"] = true,
+	["Buff/debuff texture size"] = true,	
 	["Buff/Debuff visibility"] = true,
 	["Show buffs or debuffs on the raid frames"] = true,
 	["Only buffs"] = true,
@@ -284,6 +291,9 @@ L:RegisterTranslations("enUS", function() return {
 	["Left"] = true,
 	["Right"] = true,
 	["Combined"] = true,
+	["TopRight"] = true,
+	["BottomRight"] = true,
+
 
 	["Border"] = true,
 	["Toggle the display of borders around the raid frames"] = true,
