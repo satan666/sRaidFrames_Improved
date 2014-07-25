@@ -25,7 +25,10 @@ L:RegisterTranslations("enUS", function() return {
 	["Unit name - class color"] = true,
 	["Class colored unit name"] = true,
 	["Status bar - black color"] = true,
-	["Black colored status bar when friendly unit is targeting you and out of combat"] = true,
+	["Black colored status bar when friendly unit is targeting you"] = true,
+	
+	["Purple colored status bar when friendly unit is targeted by you"] = true,
+	["Status bar - purple color"] = true,
 	
 	["Vertical orientation"] = true,
 	["Full size statusbar"] = true,

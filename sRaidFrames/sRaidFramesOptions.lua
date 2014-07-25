@@ -94,12 +94,25 @@ sRaidFrames.options = {
 				black_status_bar = {
 					name = L["Status bar - black color"],
 					type = "toggle",
-					desc = L["Black colored status bar when friendly unit is targeting you and out of combat"],
+					desc = L["Black colored status bar when friendly unit is targeting you"],
 					get = function()
 						return sRaidFrames.opt.targeting
 					end,
 					set = function(targeting)
 						sRaidFrames:S("targeting", targeting)
+					end,
+					order = 2,
+				},
+				
+				purple_status_bar = {
+					name = L["Status bar - purple color"],
+					type = "toggle",
+					desc = L["Purple colored status bar when friendly unit is targeted by you"],
+					get = function()
+						return sRaidFrames.opt.self_targeting
+					end,
+					set = function(targeting)
+						sRaidFrames:S("self_targeting", targeting)
 					end,
 					order = 2,
 				},
@@ -1871,7 +1884,7 @@ function sRaidFrames:ProfileFeedClassic()
 	sRaidFrames:S("red", true)
 	sRaidFrames:S("redbar", false)
 	
-	sRaidFrames:S("healthDisplayType", "none")
+	sRaidFrames:S("healthDisplayType", "percent")
 	sRaidFrames:S("show_txt_buff", nil)
 	sRaidFrames:S("Buff_Growth", "vertical")
 	sRaidFrames:S("Buff_Anchor", "topright")

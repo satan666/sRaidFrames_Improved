@@ -149,6 +149,7 @@ function sRaidFrames:OnInitialize()
 		Growth_Focus 		= "down",
 		show_txt_buff		= false,
 		targeting 			= true,
+		self_targeting		= true,
 		buff_slots			= 2,
 		Buff_Growth			= "vertical",
 		Buff_Anchor 		= "topright"
@@ -867,7 +868,10 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 						if unit_aggro and self.opt.redbar then
 							f.hpbar:SetStatusBarColor(1,0,0)
 							
-						elseif self.opt.targeting and not UnitAffectingCombat("player") and self.targeting[unit] then
+						elseif self.opt.self_targeting and UnitExists("target") and UnitIsUnit("target", unit) then
+							f.hpbar:SetStatusBarColor(1,0,1,0.75)	
+							
+						elseif self.opt.targeting and self.targeting[unit] then
 							f.hpbar:SetStatusBarColor(0,0,0,0.75)
 						
 						elseif class_color then
@@ -931,64 +935,58 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 				if not update_counter or update_counter == 0 then
 					f.mpbar.text:SetText()
 					
-					if self.opt.targeting and not UnitAffectingCombat("player") and self.targeting[unit] then
-						if not self.opt.show_txt_buff then
-							f.mpbar.text:SetText("|cffffffff Targeting|r")
-						end	
-					
-					else
-						for i=1,32 do
-							local texture = UnitBuff(unit, i)
-							if not texture then break end
-							--INV_BannerPVP_01
-							-- First we match the texture, then we pull the name of the debuff from a tooltip, and compare it to BabbleSpell
-							-- The idea is that we do a simple string match, and only if that string match triggers something, then we do the extra check
-							-- This should prevent unnessesary calls to functions and lookups
+
+					for i=1,32 do
+						local texture = UnitBuff(unit, i)
+						if not texture then break end
+						--INV_BannerPVP_01
+						-- First we match the texture, then we pull the name of the debuff from a tooltip, and compare it to BabbleSpell
+						-- The idea is that we do a simple string match, and only if that string match triggers something, then we do the extra check
+						-- This should prevent unnessesary calls to functions and lookups
 							
-							if texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
-								--f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
-								self.hpaura[unit] = L["Intervened"]
-							--elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
-								--f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
-								--self.hpaura[unit] = L["Spirit"]
-							else
-								self.hpaura[unit] = nil
-							end
+						if texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
+							--f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
+							self.hpaura[unit] = L["Intervened"]
+						--elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
+							--f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
+							--self.hpaura[unit] = L["Spirit"]
+						else
+							self.hpaura[unit] = nil
+						end
 							
 						
-							if not self.opt.show_txt_buff then
-								if texture == "Interface\\Icons\\INV_BannerPVP_01" then
-									f.mpbar.text:SetText("|cffff0000"..L["Carrier"].."|r")
-								elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
-									f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
-								elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
-									f.mpbar.text:SetText("|cffffffff"..BS["Shield Wall"].."|r")
-								elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then
-									f.mpbar.text:SetText("|cffffffff"..BS["Last Stand"].."|r")
-								elseif texture == "Interface\\Icons\\INV_Misc_Gem_Pearl_05" then
-									f.mpbar.text:SetText("|cffffffff"..L["Gifted"].."|r")
-								elseif texture == "Interface\\Icons\\Spell_Frost_Frost" and self:GetBuffName(unit, i) == BS["Ice Block"] then
-									f.mpbar.text:SetText("|cffbfefff"..BS["Ice Block"].."|r")
-								elseif texture == "Interface\\Icons\\Spell_Holy_SealOfProtection" and self:GetBuffName(unit, i) == BS["Blessing of Protection"] then
-									f.mpbar.text:SetText("|cffffffff"..L["Protection"].."|r")
-								elseif texture == "Interface\\Icons\\Spell_Holy_DivineIntervention" and self:GetBuffName(unit, i) == BS["Divine Shield"] then
-									f.mpbar.text:SetText("|cffffffff"..L["Shield"].."|r")
-								elseif texture == "Interface\\Icons\\Ability_Vanish" and self:GetBuffName(unit, i) == BS["Vanish"] then
-									f.mpbar.text:SetText("|cffffffff"..L["Vanished"].."|r")
-								elseif texture == "Interface\\Icons\\Ability_Stealth" and self:GetBuffName(unit, i) == BS["Stealth"] then
-									f.mpbar.text:SetText("|cffffffff"..L["Stealthed"].."|r")
-								elseif texture == "Interface\\Icons\\Spell_Holy_PowerInfusion" and self:GetBuffName(unit, i) == BS["Power Infusion"] then
-									f.mpbar.text:SetText("|cffffffff"..L["Infused"].."|r")
-								elseif texture == "Interface\\Icons\\Spell_Holy_Excorcism" and self:GetBuffName(unit, i) == BS["Fear Ward"] then
-									f.mpbar.text:SetText("|cffffff00"..BS["Fear Ward"].."|r")
-								elseif UnitClass("player") == "Priest" and texture == "Interface\\Icons\\Spell_Holy_Renew" and self:GetBuffName(unit, i) == BS["Renew"] then
-									f.mpbar.text:SetText("|cff00ff00"..BS["Renew"].."|r")
-								elseif UnitClass("player") == "Druid" and texture == "Interface\\Icons\\Spell_Nature_Rejuvenation" and self:GetBuffName(unit, i) == BS["Rejuvenation"] then
-									f.mpbar.text:SetText("|cff00ff00"..BS["Rejuvenation"].."|r")
-								end
-							end	
+						if not self.opt.show_txt_buff then
+							if texture == "Interface\\Icons\\INV_BannerPVP_01" then
+								f.mpbar.text:SetText("|cffff0000"..L["Carrier"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
+								f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
+							elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
+								f.mpbar.text:SetText("|cffffffff"..BS["Shield Wall"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then
+								f.mpbar.text:SetText("|cffffffff"..BS["Last Stand"].."|r")
+							elseif texture == "Interface\\Icons\\INV_Misc_Gem_Pearl_05" then
+								f.mpbar.text:SetText("|cffffffff"..L["Gifted"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Frost_Frost" and self:GetBuffName(unit, i) == BS["Ice Block"] then
+								f.mpbar.text:SetText("|cffbfefff"..BS["Ice Block"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Holy_SealOfProtection" and self:GetBuffName(unit, i) == BS["Blessing of Protection"] then
+								f.mpbar.text:SetText("|cffffffff"..L["Protection"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Holy_DivineIntervention" and self:GetBuffName(unit, i) == BS["Divine Shield"] then
+								f.mpbar.text:SetText("|cffffffff"..L["Shield"].."|r")
+							elseif texture == "Interface\\Icons\\Ability_Vanish" and self:GetBuffName(unit, i) == BS["Vanish"] then
+								f.mpbar.text:SetText("|cffffffff"..L["Vanished"].."|r")
+							elseif texture == "Interface\\Icons\\Ability_Stealth" and self:GetBuffName(unit, i) == BS["Stealth"] then
+								f.mpbar.text:SetText("|cffffffff"..L["Stealthed"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Holy_PowerInfusion" and self:GetBuffName(unit, i) == BS["Power Infusion"] then
+								f.mpbar.text:SetText("|cffffffff"..L["Infused"].."|r")
+							elseif texture == "Interface\\Icons\\Spell_Holy_Excorcism" and self:GetBuffName(unit, i) == BS["Fear Ward"] then
+								f.mpbar.text:SetText("|cffffff00"..BS["Fear Ward"].."|r")
+							elseif UnitClass("player") == "Priest" and texture == "Interface\\Icons\\Spell_Holy_Renew" and self:GetBuffName(unit, i) == BS["Renew"] then
+								f.mpbar.text:SetText("|cff00ff00"..BS["Renew"].."|r")
+							elseif UnitClass("player") == "Druid" and texture == "Interface\\Icons\\Spell_Nature_Rejuvenation" and self:GetBuffName(unit, i) == BS["Rejuvenation"] then
+								f.mpbar.text:SetText("|cff00ff00"..BS["Rejuvenation"].."|r")
+							end
 						end	
-					end
+					end	
 				end	
 				
 				if not update_counter or update_counter == 1 then
