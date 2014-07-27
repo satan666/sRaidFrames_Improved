@@ -1831,7 +1831,7 @@ end
 
 function sRaidFrames:MultidragMsg()
 	if not self.MultidragInfo then
-		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag unlock the frames, hold Alt key then click left Mouse button on any frame name."); 
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag unlock the frames and use alt + left mouse combination "); 
 		self.MultidragInfo = true
 	end	
 end
