@@ -248,7 +248,7 @@ sRaidFrames.options = {
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 8)
 								if sRaidFrames.opt.Width ~= 40 then
-									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 79)
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 75)
 								end	
 								sRaidFrames:S("Width", 40)
 								sRaidFrames:S("unit_name_lenght", true)
@@ -275,7 +275,7 @@ sRaidFrames.options = {
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 5)
 								if sRaidFrames.opt.Width == 40 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 79)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -300,7 +300,7 @@ sRaidFrames.options = {
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 5)
 								if sRaidFrames.opt.Width ~= 40 then
-									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 79)
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 75)
 								end	
 								sRaidFrames:S("Width", 40)
 								sRaidFrames:S("unit_name_lenght", true)
@@ -326,7 +326,7 @@ sRaidFrames.options = {
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 8)
 								if sRaidFrames.opt.Width == 40 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 79)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -353,7 +353,7 @@ sRaidFrames.options = {
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 20)
 								if sRaidFrames.opt.Width == 40 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 79)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -380,7 +380,7 @@ sRaidFrames.options = {
 								sRaidFrames:S("Spacing", -4)
 								sRaidFrames:S("fixed_count", 10)
 								if sRaidFrames.opt.Width == 40 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 79)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -1831,7 +1831,7 @@ end
 
 function sRaidFrames:MultidragMsg()
 	if not self.MultidragInfo then
-		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag unlock the frames and use alt + left mouse combination "); 
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag unlock the frames and use alt + left mouse combination."); 
 		self.MultidragInfo = true
 	end	
 end
