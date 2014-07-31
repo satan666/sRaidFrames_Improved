@@ -17,12 +17,9 @@ PACK CONTENT
 >> Zorlen - Addon
 - sRaidFrames mandatory dependancy library
 
->> UI_TEXTURES - Textures
-- Pack of UI textures changing sRaidFrames units border. This is not an addon, but a texture pack! To install it, copy everything from UI_TEXTURES folder in your "World of Warcraft/Interface" folder. NOT "World of Warcraft/Interface/AddOns" where you install addons! If you wish to un-install it, simply remove the folders and WoW will load with the default textures again.
-
-
-For cast supporting addons check this project: https://github.com/satan666/LazySpell
-Improved ag_UnitFrames by Skela https://github.com/satan666/ag_UnitFrames_Improved
+Cast supporting addons download: https://github.com/satan666/LazySpell
+UI texture pack download:  
+Improved ag_UnitFrames by Skela download: https://github.com/satan666/ag_UnitFrames_Improved
 
 cheers Ogrisch
 

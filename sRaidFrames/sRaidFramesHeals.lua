@@ -69,11 +69,55 @@ local spellTimers = {
 		self:RegisterEvent("PLAYER_REGEN_ENABLED", "LogReset");
 		-- AceComm
 
-		self:RegisterComm("Grid", "GROUP", "OnCommReceive")
-		self:RegisterEvent("CHAT_MSG_ADDON", "OnCommReceive_LUNA")
+		self:RegisterComm("Grid", "GROUP", "OnCommReceive_Grid")
+		self:RegisterEvent("CHAT_MSG_ADDON", "OnCommReceive_External")
 	end
 	
-	--code taken from HealComm by Luna
+
+----------------------------------------- ORA and CTRA Listener  --------------------------------------------------------
+function sRaidFramesHeals:OraSplitMessage( msg, char )
+	local arr = { }
+	while (string.find(msg, char) ) do
+		local iStart, iEnd = string.find(msg, char)
+		table.insert(arr, strsub(msg, 1, iStart-1))
+		msg = strsub(msg, iEnd+1, strlen(msg))
+	end
+	if ( strlen(msg) > 0 ) then
+		table.insert(arr, msg)
+	end
+	return arr
+end
+
+function sRaidFramesHeals:CleanMessage( msg )
+	msg = string.gsub(msg, "%$", "s")
+	msg = string.gsub(msg, "§", "S")
+	return msg
+end
+
+function sRaidFramesHeals:oRA_ResurrectionStart(msg, author)
+	msg = sRaidFramesHeals:CleanMessage(msg)
+	local _,_,player = string.find(msg, "^RES (.+)$")
+	if player and author then
+		DEFAULT_CHAT_FRAME:AddMessage(author.."(Ora_rdy): "..author.." -> "..player)
+		sRaidFrames:oRA_PlayerResurrected("", player)
+	end
+end
+
+function sRaidFramesHeals:CheckOraMsg(prefix, msg, type, author)
+	if prefix ~= "CTRA" and prefix ~= "oRA" then return end
+	if type ~= "RAID" then return end
+	local msgArr = self:OraSplitMessage(msg, "#")
+	for _, c in pairs(msgArr) do
+		cmd = self:OraSplitMessage(c, " ")
+		local x = cmd[2] or ""
+		DEFAULT_CHAT_FRAME:AddMessage(author.."(Ora_raw): "..cmd[1].." -> "..x)
+		if cmd[1] == "RES" then
+			sRaidFramesHeals:oRA_ResurrectionStart(c, author)
+		end
+	end	
+end
+---------------------------------------------- End of ORA and CTRA Listener  -------------------------------------------
+---------------------------------------------Start of Luna Unit Frames Code---------------------------------------------
 	local function strsplit(pString, pPattern)
 		local Table = {}
 		local fpat = "(.-)" .. pPattern
@@ -92,7 +136,101 @@ local spellTimers = {
 		end
 		return Table
 	end
+---------------------------------------------End of Luna Unit Frames Code---------------------------------------------
+---------------------------------------------Start of Healer Assist Code---------------------------------------------
 
+local HA_COM_VERSION = "7";
+local _HA_TOKEN = '\30';
+local _HA_TOKEN_EMPTY = '\28';
+local _HA_PARSE_PATTERN = "([^".._HA_TOKEN.."]+)";
+
+function sRaidFramesHeals:_HA_COM_Process_CmdSpellStart(from,params)
+  local spellCode = tonumber(params[1],10);
+  local targetName = params[2];
+  local castTime = tonumber(params[3],10);
+  local estimated = tonumber(params[4],10);
+  local willcrit = tonumber(params[5],10);
+  local spellRank = tonumber(params[6],10);
+  
+  if(willcrit)
+  then
+    if(willcrit == 1) then willcrit = true; else willcrit = false; end;
+  end
+  if(spellRank == nil)
+  then
+    spellRank = 0;
+  end
+  
+  if(spellCode == nil or targetName == nil or castTime == nil)
+  then
+    return;
+  end
+  if(estimated == nil)
+  then
+    estimated = 0;
+  end	
+	if spellCode == 46 or spellCode == 83 or spellCode == 62 or spellCode == 17 then
+		sRaidFrames:oRA_PlayerResurrected("", targetName)
+		
+	elseif spellCode == 41 then
+		local duration = castTime/1000
+		if not self:VerifyDuration(duration) then
+			duration = 2.99
+		end
+		self:UnitIsHealedGroup(from, duration, "has")
+	else
+		local duration = castTime/1000
+		if not self:VerifyDuration(duration) then
+			duration = 1.99
+		end
+		self:UnitIsHealed(targetName, from, duration, "has")
+	end
+end
+
+function sRaidFramesHeals:_HA_COM_Process_CmdSpellFailed(from,params)
+  local spellCode = tonumber(params[1],10);
+  local ireason = tonumber(params[2],10);
+  local reason = params[3];
+  
+  if(spellCode == nil or ireason == nil or reason == nil)
+  then
+    return;
+  end
+	self:UnitHealCompleted(from);
+	self:UnitHealCompletedGroup(from);
+	--SoloHeals_StopHeal(from, nil, true)
+end
+
+function sRaidFramesHeals:HA_COM_ParseMessage(from,message)
+  if(from == UnitName("player")) then return; end; -- Not interested by messages from me
+  local _,i,version,cmd = string.find(message,"^<HA([^>]+)>(%d+)");
+  if(version == nil or cmd == nil) then 
+		return; 
+  end;
+  
+   local msg = strsub(message,i+1);
+  
+  local params = {};
+  for w in string.gfind(msg,_HA_PARSE_PATTERN)
+  do
+      if(w == nil or w == _HA_TOKEN_EMPTY)
+      then
+        table.insert(params,"");
+      else
+        table.insert(params,w);
+      end
+  end
+	
+	if cmd == "01"  then 
+		self:_HA_COM_Process_CmdSpellStart(from,params)
+	elseif cmd == "02"  then 
+		--
+	elseif cmd == "03"  then 
+		self:_HA_COM_Process_CmdSpellFailed(from,params)
+	end
+ 
+end
+---------------------------------------------End of Healer Assist Code---------------------------------------------
 	function sRaidFramesHeals:VerifyDuration(val)
 		if val and val <= 3.5 and val > 0 then
 			return true
@@ -109,16 +247,13 @@ local spellTimers = {
 						self.IgnoreLog[caster_name] = "ban"
 					end	
 				elseif not check then
-					--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:LogExamine - add - "..caster_name)
 					self.IgnoreLog[caster_name] = "pass"
 				end
 			end
 		elseif mode == "check" then
 			if check == "pass" then
-				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:LogExamine - check - pass - "..caster_name)
 				return true
 			else
-				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:LogExamine - check - nil - "..caster_name)
 				return nil
 			end	
 		end
@@ -132,12 +267,9 @@ local spellTimers = {
 	end
 
 	function sRaidFramesHeals:CombatLogHeal(msg)
-		for helper, spell in string.gfind(msg, "(.+) begins to cast (.+).") do
-			if not watchSpells[spell] then return end
+		for helper, spell in string.gfind(msg, "(.+) begins to cast (.+).") do		
 			local unitid = RL:GetUnitIDFromName(helper)
-
 			if not helper or not spell or not unitid then return end
-			
 			if self:LogExamine("check", helper) then return end
 			
 			if spell == BS["Prayer of Healing"] then
@@ -145,16 +277,19 @@ local spellTimers = {
 			else
 				local u = RL:GetUnitObjectFromUnit(unitid.."target")
 				if not u then return end
-				-- filter units that are probably not the correct unit
-				--if UnitHealth(u.unitid)/UnitHealthMax(u.unitid) < 0.9 or Banzai:GetUnitAggroByUnitId(u.unitid) then
+				if watchSpells[spell] then
 					self:UnitIsHealed(u.name, helper, spellTimers[spell], "log")
-				--end
+				elseif spell == BS["Rebirth"] or spell == BS["Redemption"] or spell == BS["Resurrection"] or spell == BS["Ancestral Spirit"] then
+					if UnitIsDead(unitid.."target") then
+						sRaidFrames:oRA_PlayerResurrected("", u.name)
+					end	
+				end	
 			end
 		end
 	end
 
-
-	function sRaidFramesHeals:OnCommReceive_LUNA(val1, val2, val3, val4)
+	function sRaidFramesHeals:OnCommReceive_External(val1, val2, val3, val4)
+		--DEFAULT_CHAT_FRAME:AddMessage(val1)
 		if (val1 == "HealComm" or val1 == "healcommComm") and val4 ~= UnitName("player") then
 			local result = strsplit(val2,"/")
 			if result[1] == "Heal" then	
@@ -174,12 +309,28 @@ local spellTimers = {
 			elseif val2 == "GrpHealstop" then	
 				self:UnitHealCompletedGroup(val4);
 			elseif result[1] == "Healdelay" then
-				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive_LUNA Healdelay - "..val4)
+				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive_External Healdelay - "..val4)
 			end
+		elseif val1 == "CTRA" or val1 == "oRA" then
+			sRaidFramesHeals:CheckOraMsg(val1, val2, val3, val4)
+		
+		elseif val1 == "HealBot_Heals" then
+			local tmpTest, unitname, heal_val
+			tmpTest,tmpTest,unitname,heal_val = string.find(val2, ">> (%a+) <<=>> (.%d+) <<" );
+			if heal_val then
+				if tonumber(heal_val) > 0 then
+					self:UnitIsHealed(unitname, val4, 1.99, "bot")	
+				else
+					self:UnitHealCompleted(val4);
+					self:UnitHealCompletedGroup(val4);
+				end
+			end	
+		elseif val1 == "HealAss" then
+			sRaidFramesHeals:HA_COM_ParseMessage(val4, val2)
 		end
 	end
 
-	function sRaidFramesHeals:OnCommReceive(prefix, sender, distribution, what, who, spell, duration, heal_amount, sufix)
+	function sRaidFramesHeals:OnCommReceive_Grid(prefix, sender, distribution, what, who, spell, duration, heal_amount, sufix)
 		if sender == UnitName("player") then return end
 		if not RL:GetUnitIDFromName(sender) then return end
 		
@@ -200,10 +351,8 @@ local spellTimers = {
 				duration = 2
 			end
 			self:UnitIsHealed(who, sender, duration, strlower(prefix))
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive - UnitIsHealedGroup "..sender)
 		
 		elseif what == "STOP_CAST" then
-			--DEFAULT_CHAT_FRAME:AddMessage("STOP_CAST - "..sender.." - "..prefix)
 			self:UnitHealCompleted(sender);
 			self:UnitHealCompletedGroup(sender);
 		end
@@ -239,7 +388,6 @@ local spellTimers = {
 		end
 		
 		self:ScheduleEvent("HealCompletedGroup"..caster_name, self.UnitHealCompletedGroup, duration, self, caster_name)
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealedGroup - "..prefix)
 	end
 	
 	function sRaidFramesHeals:UnitHealCompletedGroup(caster_name)
@@ -257,8 +405,6 @@ local spellTimers = {
 			
 		end
 		self:CancelScheduledEvent("HealCompletedGroup"..caster_name);
-				
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitHealCompletedGroup "..caster_name)
 	end
 
 	function sRaidFramesHeals:UnitIsHealed(target_name, caster_name, duration, prefix)
@@ -277,14 +423,11 @@ local spellTimers = {
 		end
 		
 		if check1 and (prefix == "log" or prefix ~= "log" and self.WhoHealsWho[caster_name] ~= target_name) then 
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealed x1"..caster_name..target_name.." old "..caster_name..self.WhoHealsWho[caster_name].." "..prefix)
 			self:UnitHealCompleted(caster_name);
 			check2 = true
-			
 		end
 		
 		if not check1 or check2 then
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitIsHealed x2 "..prefix)
 			sRaidFrames:ShowHealIndicator(unit)
 			self.WhoHealsWho[caster_name] = target_name
 			self:ScheduleEvent("HealCompleted"..caster_name, self.UnitHealCompleted, duration, self, caster_name)
@@ -293,7 +436,6 @@ local spellTimers = {
 	end
 
 	function sRaidFramesHeals:UnitHealCompleted(caster)
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitHealCompleted ")
 		local target = self.WhoHealsWho[caster]
 		if not target then return end
 		
@@ -303,9 +445,10 @@ local spellTimers = {
 		self.WhoHealsWho[caster] = nil
 		sRaidFrames:HideHealIndicator(unit)
 		self:CancelScheduledEvent("HealCompleted"..caster);
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:UnitHealCompleted "..GetUnitName(unit))
 	end
 
+
+--------------------------------------------Event Handlers-----------------------------------------------------------------------
 	function sRaidFramesHeals:SPELLCAST_START()
 		if not self.target and UnitExists("target") and UnitIsFriend("target", "player") then
 			self.target = GetUnitName("target")
@@ -333,13 +476,11 @@ local spellTimers = {
 		end
 	end
 
-	function sRaidFramesHeals:SPELLCAST_STOP()
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SPELLCAST_STOP ");	
+	function sRaidFramesHeals:SPELLCAST_STOP()	
 		self.target = nil
 	end
 	
 	function sRaidFramesHeals:SpellInterrupted()
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals - SpellInterrupted");
 		self.target = nil
 		if GridStatusHeals then
 			GridStatusHeals:SendCommMessage("GROUP", "STOP_CAST")
@@ -349,7 +490,6 @@ local spellTimers = {
 	end
 
 	function sRaidFramesHeals:CastSpell(spellId, spellbookTabNum)
-		--DEFAULT_CHAT_FRAME:AddMessage("CastSpell");
 		self.hooks["CastSpell"](spellId, spellbookTabNum)
 		sRaidFramesHeals_Tooltip:SetSpell(spellId, spellbookTabNum)
 		local spellName = sRaidFramesHeals_TooltipTextLeft1:GetText()
@@ -357,12 +497,10 @@ local spellTimers = {
 			self.spell = spellName
 		elseif UnitExists("target") then
 			self.spell = spellName
-			--self.target = UnitName("target")
 		end
 	end
 
 	function sRaidFramesHeals:CastSpellByName(a1, a2)
-		--DEFAULT_CHAT_FRAME:AddMessage("CastSpellByName");
 		self.hooks["CastSpellByName"](a1, a2)
 		local _, _, spellName = string.find(a1, "^([^%(]+)");
 		if spellName then
@@ -370,11 +508,10 @@ local spellTimers = {
 				self.spell = spellName
 			else
 				self.spell = spellName
-				--self.target = UnitName("target") 
 			end
 		end
 	end
-
+	
 	function sRaidFramesHeals:UseAction(a1, a2, a3)
 		sRaidFramesHeals_Tooltip:SetAction(a1)
 		local spellName = sRaidFramesHeals_TooltipTextLeft1:GetText()
@@ -396,9 +533,7 @@ local spellTimers = {
 		end
 		self.hooks["SpellTargetUnit"](a1)
 		if shallTargetUnit and not SpellIsTargeting() then
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:SpellTargetUnit "..UnitName(a1))
 			self.target = UnitName(a1)
-			
 		end
 	end
 
@@ -412,12 +547,10 @@ local spellTimers = {
 		self.hooks["TargetUnit"](a1)
 		if self.spell and UnitExists(a1) then
 			self.target = UnitName(a1)
-			--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:TargetUnit");
 		end
 	end
 
 	function sRaidFramesHeals:sRaidFramesHealsOnMouseDown()
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:sRaidFramesHealsOnMouseDown")
 		if self.spell and UnitName("mouseover") then
 			self.target = UnitName("mouseover")
 		elseif self.spell and GameTooltipTextLeft1:IsVisible() then

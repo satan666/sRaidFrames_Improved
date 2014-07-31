@@ -25,7 +25,7 @@ surface:Register("Flat", "Interface\\AddOns\\sRaidFrames\\textures\\bar17.tga")
 surface:Register("Club", "Interface\\AddOns\\sRaidFrames\\textures\\bar5.tga")
 --surface:Register("Bumps", "Interface\\AddOns\\sRaidFrames\\textures\\Bumps")
 --surface:Register("Button", "Interface\\AddOns\\sRaidFrames\\textures\\Button")
-surface:Register("Cloud", "Interface\\AddOns\\sRaidFrames\\textures\\Cloud")
+surface:Register("Cloud", "Interface\\AddOns\\sRaidFrames\\textures\\Insomniax_Bar_1f.tga")
 surface:Register("Diagonal", "Interface\\AddOns\\sRaidFrames\\textures\\Diagonal")
 surface:Register("Fifths", "Interface\\AddOns\\sRaidFrames\\textures\\Fifths")
 surface:Register("Fourths", "Interface\\AddOns\\sRaidFrames\\textures\\Fourths")
@@ -33,12 +33,12 @@ surface:Register("Gloss", "Interface\\AddOns\\sRaidFrames\\textures\\Gloss")
 surface:Register("Hatched", "Interface\\AddOns\\sRaidFrames\\textures\\Hatched")
 surface:Register("Paint", "Interface\\AddOns\\sRaidFrames\\textures\\Paint")
 surface:Register("Skewed", "Interface\\AddOns\\sRaidFrames\\textures\\Skewed")
-surface:Register("Water", "Interface\\AddOns\\sRaidFrames\\textures\\Water")
+surface:Register("Water", "Interface\\AddOns\\sRaidFrames\\textures\\Insomniax_Bar_1e.tga")
 --surface:Register("Charcoal", "Interface\\AddOns\\sRaidFrames\\textures\\Charcoal")
 surface:Register("Glaze", "Interface\\AddOns\\sRaidFrames\\textures\\glaze")
 --surface:Register("Metal", "Interface\\AddOns\\sRaidFrames\\textures\\BEB-BarFill-Metal")
 surface:Register("Wood", "Interface\\AddOns\\sRaidFrames\\textures\\BEB-BarFill-Wood")
-surface:Register("Rupture", "Interface\\AddOns\\sRaidFrames\\textures\\Rupture")
+surface:Register("Rupture", "Interface\\AddOns\\sRaidFrames\\textures\\Insomniax_Bar_1d.tga")
 --surface:Register("Highlight", "Interface\\AddOns\\sRaidFrames\\textures\\debuffHighlight")
 --surface:Register("TukuiBar", "Interface\\AddOns\\sRaidFrames\\textures\\tukuibar")
 surface:Register("Blur", "Interface\\AddOns\\sRaidFrames\\textures\\bar1.tga")
@@ -49,13 +49,13 @@ surface:Register("VuhDo", "Interface\\AddOns\\sRaidFrames\\textures\\bar3.tga")
 --surface:Register("Tube", "Interface\\AddOns\\sRaidFrames\\textures\\Tube.tga")
 surface:Register("Stoned", "Interface\\AddOns\\sRaidFrames\\textures\\metal.tga")
 --surface:Register("Glow", "Interface\\AddOns\\sRaidFrames\\textures\\glowTex.tga")
---surface:Register("Ray", "Interface\\AddOns\\sRaidFrames\\textures\\highlightTex.tga")
+surface:Register("Discord", "Interface\\AddOns\\sRaidFrames\\textures\\Insomniax_Bar_2a.tga")
 surface:Register("Neal", "Interface\\AddOns\\sRaidFrames\\textures\\Neal.blp")
 surface:Register("Ruben", "Interface\\AddOns\\sRaidFrames\\textures\\Ruben.tga")
 surface:Register("Orient", "Interface\\AddOns\\sRaidFrames\\textures\\Orient.tga")
 surface:Register("Ghost", "Interface\\AddOns\\sRaidFrames\\textures\\Ghost.tga")
---surface:Register("Lap", "Interface\\AddOns\\sRaidFrames\\textures\\Lap.tga")
---surface:Register("Grid", "Interface\\AddOns\\sRaidFrames\\textures\\Grid")
+surface:Register("Acid", "Interface\\AddOns\\sRaidFrames\\textures\\Insomniax_Bar_1b.tga")
+surface:Register("Insomniac", "Interface\\AddOns\\sRaidFrames\\textures\\Insomniax_Bar_1a.tga")
 
 local math_mod = math.fmod or math.mod 
 
@@ -110,10 +110,10 @@ function sRaidFrames:OnInitialize()
 		healthDisplayType	= 'percent',
 		Invert = false,
 		Scale				= 1.15,
-		Width				= 79,
-		ScaleFocus 			= 1.3,
-		WidthFocus 			= 85,
-		Width_OLD			= 79,
+		Width				= 70,
+		ScaleFocus 			= 1.15,
+		WidthFocus 			= 70,
+		Width_OLD			= 70,
 		Border				= true,
 		Texture				= "Gradient",
 		BuffType			= "debuffs",
@@ -132,13 +132,13 @@ function sRaidFrames:OnInitialize()
 		PowerFilter			= {[0] = false,[1] = false,[2] = false,[3] = false},
 		aggro				= false,
 		RangeCheck 			= false,
-		ExtendedRangeCheck = false,
-		ExtendedRangeCheckCombat = true,
+		ExtendedRangeCheck = true,
+		ExtendedRangeCheckCombat = false,
 		fixed_count			= 5,
 		RangeFrequency 		= 0.20,
 		AccurateRangeFactor = 0.05,
 		RangeAlpha 			= 0.2,
-		buff_size			= 15.3,
+		buff_size			= 15.2,
 		srfhideparty		= true,
 		lock_focus			= false,
 		ShowGroupTitles_Focus = true,
@@ -152,7 +152,9 @@ function sRaidFrames:OnInitialize()
 		self_targeting		= true,
 		buff_slots			= 2,
 		Buff_Growth			= "vertical",
-		Buff_Anchor 		= "topright"
+		Buff_Anchor 		= "topright",
+		Bordertexture		= "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp"
+
 		
 	})
 
@@ -1195,6 +1197,7 @@ function sRaidFrames:UnitTooltip(frame)
 		return
 	end
 	local name, rank, subgroup, level, class, fileName, zone, online, isDead = GetRaidRosterInfo(frame.id);
+	if not fileName then return end
 	GameTooltip:SetOwner(frame)
 	GameTooltip:AddDoubleLine(name, level, self.RAID_CLASS_COLORS[fileName].r, self.RAID_CLASS_COLORS[fileName].g, self.RAID_CLASS_COLORS[fileName].b, 1, 1, 1)
 	GameTooltip:AddLine(UnitRace(frame.unit) .. " " .. class, 1, 1, 1);
@@ -1395,10 +1398,9 @@ end
 function sRaidFrames:SetBackdrop(f, unit, aggro)
 	if self.opt.Border then
 		f:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-										tile = true,
-										tileSize = 16,
-										edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-										edgeSize = 16,
+										tile = true, tileSize = 16,
+										edgeFile = self.opt.Bordertexture,
+										edgeSize = 17,
 										insets = { left = 5, right = 5, top = 5, bottom = 5 }
 									})
 	else
@@ -1434,7 +1436,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 	
 	
 	if self.opt.Buff_Anchor == "topright" then
-		self:SetWHP(f.buff1, self.opt.buff_size, self.opt.buff_size, "TOPRIGHT", f.hpbar, "TOPRIGHT", 0.3, 0)
+		self:SetWHP(f.buff1, self.opt.buff_size, self.opt.buff_size, "TOPRIGHT", f.hpbar, "TOPRIGHT", 0.35, 0)
 		
 		if self.opt.Buff_Growth == "horizontal" then
 			self:SetWHP(f.buff2, self.opt.buff_size, self.opt.buff_size, "RIGHT", f.buff1, "LEFT", 0, 0)
@@ -1452,7 +1454,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 			self:SetWHP(f.buff4, self.opt.buff_size, self.opt.buff_size, "TOP", f.buff2, "BOTTOM", 0, 0)
 		end
 	else
-		self:SetWHP(f.buff1, self.opt.buff_size, self.opt.buff_size, "BOTTOMRIGHT", f.hpbar, "BOTTOMRIGHT", 0.3, 0)
+		self:SetWHP(f.buff1, self.opt.buff_size, self.opt.buff_size, "BOTTOMRIGHT", f.hpbar, "BOTTOMRIGHT", 0.35, 0)
 		
 		if self.opt.Buff_Growth == "horizontal" then
 			self:SetWHP(f.buff2, self.opt.buff_size, self.opt.buff_size, "RIGHT", f.buff1, "LEFT", 0, 0)
@@ -1781,8 +1783,8 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 		i = i + 1
 		
 		if k == 9 then
-			yMod = -1*(v:GetWidth()*self.master:GetScale()+self.opt.Spacing)
-			xMod = 0
+			xMod = 2*(f:GetHeight()*self.master:GetScale()+self.opt.Spacing)
+			yMod = f:GetWidth()*self.master:GetScale()+self.opt.Spacing
 		elseif layout == "horizontal" then
 			yMod = (i) * v:GetWidth()
 			xMod = 0
@@ -2119,4 +2121,9 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 		UIErrorsFrame:AddMessage("|cFFFF0000"..err_txt)
 	end
 	return
+end
+
+function sRaidFrames:xcv()
+	
+	
 end

@@ -51,6 +51,12 @@ patch 0.85 - visual improvements
 - implemented round healing indicators for better look when using borders 
 - this release requires to delete sRaidFrames.lua and sRaidFrames.bak from WTF/../SavedVariables to avoid various errors
 
+patch 0.95 - functionality improvements
+- reworked buff/debuff menu for better customization
+- added fast configuration available from Load profiles menu
+- implemented healcomm lib 
+- implemented HealBot, CTRA, ORA, HealerAsst spell listener
+- added border texture change functionality
 
 -=cheers Ogrisch
 

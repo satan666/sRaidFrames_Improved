@@ -245,10 +245,10 @@ sRaidFrames.options = {
 							if value then
 								sRaidFrames:chatToggleBorder(value)
 
-								sRaidFrames:S("Spacing", -4)
+								
 								sRaidFrames:S("fixed_count", 8)
 								if sRaidFrames.opt.Width ~= 40 then
-									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 75)
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 70)
 								end	
 								sRaidFrames:S("Width", 40)
 								sRaidFrames:S("unit_name_lenght", true)
@@ -272,10 +272,10 @@ sRaidFrames.options = {
 							if value then
 								sRaidFrames:chatToggleBorder(value)
 	
-								sRaidFrames:S("Spacing", -4)
+								
 								sRaidFrames:S("fixed_count", 5)
 								if sRaidFrames.opt.Width == 40 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -297,10 +297,10 @@ sRaidFrames.options = {
 							if value then
 								sRaidFrames:chatToggleBorder(value)
 		
-								sRaidFrames:S("Spacing", -4)
+								
 								sRaidFrames:S("fixed_count", 5)
 								if sRaidFrames.opt.Width ~= 40 then
-									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 75)
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 70)
 								end	
 								sRaidFrames:S("Width", 40)
 								sRaidFrames:S("unit_name_lenght", true)
@@ -323,10 +323,10 @@ sRaidFrames.options = {
 							if value then
 								sRaidFrames:chatToggleBorder(value)
 
-								sRaidFrames:S("Spacing", -4)
+								
 								sRaidFrames:S("fixed_count", 8)
 								if sRaidFrames.opt.Width == 40 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -350,10 +350,10 @@ sRaidFrames.options = {
 							if value then
 								sRaidFrames:chatToggleBorder(value)
 	
-								sRaidFrames:S("Spacing", -4)
+								
 								sRaidFrames:S("fixed_count", 20)
 								if sRaidFrames.opt.Width == 40 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -377,10 +377,10 @@ sRaidFrames.options = {
 							if value then
 								sRaidFrames:chatToggleBorder(value)
 	
-								sRaidFrames:S("Spacing", -4)
+								
 								sRaidFrames:S("fixed_count", 10)
 								if sRaidFrames.opt.Width == 40 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 75)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -1562,20 +1562,6 @@ sRaidFrames.options = {
 			order = 7,
 		},
 
-		bordercolor = {
-			type = "color",
-			name = L["Border color"],
-			desc = L["Change the border color"],
-			get = function()
-				local s = sRaidFrames.opt.BorderColor
-				return s.r, s.g, s.b, s.a
-			end,
-			set = "chatBorderColor",
-			hasAlpha = true,
-			disabled = function() return not sRaidFrames.opt.Border end,
-			order = 8
-		},
-
 		tooltip = {
 			name = L["Tooltip display"],
 			type = "text",
@@ -1697,24 +1683,64 @@ sRaidFrames.options = {
 			},
 		},
 
-		
-
-		
-
 		border = {
 			name = L["Border"],
-			type = "toggle",
-			desc = L["Toggle the display of borders around the raid frames"],
-			get = function()
-				return sRaidFrames.opt.Border
-			end,
-			order = 9,
-			set = function(value)
-				sRaidFrames:ResetHealIndicators()
-				sRaidFrames:chatToggleBorder(value)
-				sRaidFrames:LoadStyle()
-			end
+			type = "group",
+			desc = L["Set about borders around the raid frames"],
+			order = 6,
+			args = {
+
+			bordertexture = {
+				name = L["Border texture"],
+				type = "text",
+				desc = L["Select border texture"],
+				order = 1,
+				get = function()
+					return sRaidFrames.opt.Bordertexture
+				end,
+				set = "chatTextureBorder",
+				validate = {
+							["Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp"] = L["Original"], 
+							["Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Ace.blp"] = L["Ace"], 
+							--["Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Santa.blp"] = L["Santa"],
+							--["Interface\\AddOns\\sRaidFrames\\borders\\XPerl_ThinEdge.blp"] = L["ThickEdge"],
+							["Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Snow.blp"] = L["Snow"],
+							["Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga"] = L["Grid"]
+							
+				},
+				order = 2
+			},
+
+			bordertoggle = {
+				name = L["Toggle border"],
+				type = "toggle",
+				desc = L["Toggle the display of borders around the raid frames"],
+				get = function()
+					return sRaidFrames.opt.Border
+				end,
+				order = 1,
+				set = function(value)
+					sRaidFrames:ResetHealIndicators()
+					sRaidFrames:chatToggleBorder(value)
+					sRaidFrames:LoadStyle()
+				end
+			},
+
+			bordercolor = {
+				type = "color",
+				name = L["Border color"],
+				desc = L["Change the border color"],
+				get = function()
+					local s = sRaidFrames.opt.BorderColor
+					return s.r, s.g, s.b, s.a
+				end,
+				set = "chatBorderColor",
+				hasAlpha = true,
+				disabled = function() return not sRaidFrames.opt.Border end,
+				order = 3
+			},
 		},
+		},	
 
 		spacing = {
 			name = L["Frame spacing"],
@@ -1829,13 +1855,6 @@ function sRaidFrames:chatBorderColor(r, g, b, a)
 	end
 end
 
-function sRaidFrames:MultidragMsg()
-	if not self.MultidragInfo then
-		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag unlock the frames and use alt + left mouse combination."); 
-		self.MultidragInfo = true
-	end	
-end
-
 function sRaidFrames:chatSetLayout(layout)
 	self:MultidragMsg()
 	self:PositionLayout(layout, 200, -200)
@@ -1843,6 +1862,17 @@ end
 
 function sRaidFrames:chatToggleBorder(value)
 	self:S("Border", value)
+	
+	for k,f in pairs(self.frames) do
+			self:SetBackdrop(f)
+	end
+
+	self:UpdateBuffs(self.visible)
+	self:ResetHealIndicators("force")
+end
+
+function sRaidFrames:chatTextureBorder(value)
+	self:S("Bordertexture", value)
 	
 	for k,f in pairs(self.frames) do
 			self:SetBackdrop(f)
@@ -1860,6 +1890,13 @@ function sRaidFrames:DisableRangeCheck()
 		end	
 	--end					
 end		
+
+function sRaidFrames:MultidragMsg()
+	if not self.MultidragInfo then
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."For multidrag unlock the frames and use alt + left mouse combination."); 
+		self.MultidragInfo = true
+	end	
+end
 
 function sRaidFrames:ProfileFeedClassic()
 	sRaidFrames:chatSortBy("fixed")
@@ -1883,17 +1920,21 @@ function sRaidFrames:ProfileFeedClassic()
 	sRaidFrames:S("aggro", true)
 	sRaidFrames:S("red", true)
 	sRaidFrames:S("redbar", false)
-	
+	sRaidFrames:S("Spacing", -4)
 	sRaidFrames:S("healthDisplayType", "none")
 	sRaidFrames:S("show_txt_buff", nil)
-	sRaidFrames:S("Buff_Growth", "vertical")
-	sRaidFrames:S("Buff_Anchor", "topright")
-	sRaidFrames:S("buff_slots", 2)
-	sRaidFrames:S("Texture", "Gradient")
+	sRaidFrames:S("Buff_Growth", "horizontal")
+	sRaidFrames:S("Buff_Anchor", "bottomright")
+	sRaidFrames:S("buff_slots", 4)
+	--sRaidFrames:S("Texture", "Gradient")
+	sRaidFrames:chatTexture("Gradient")
 	sRaidFrames:S("statusbar_color", true)
+	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp")
+	sRaidFrames:chatBorderColor(0.5, 0.5, 0.5, 1)
 	sRaidFrames:MultidragMsg()
 	sRaidFrames:LoadStyle()
 	sRaidFrames:PositionLayout("sticky", 200, -200)
+	
 end
 
 function sRaidFrames:ProfileFeedGrid()
@@ -1918,14 +1959,18 @@ function sRaidFrames:ProfileFeedGrid()
 	sRaidFrames:S("aggro", true)
 	sRaidFrames:S("red", true)
 	sRaidFrames:S("redbar", false)
+	sRaidFrames:S("Spacing", -6)
 	
 	sRaidFrames:S("healthDisplayType", "none")
 	sRaidFrames:S("show_txt_buff", true)
 	sRaidFrames:S("Buff_Growth", "horizontal")
 	sRaidFrames:S("Buff_Anchor", "bottomright")
-	sRaidFrames:S("buff_slots", 2)
-	sRaidFrames:S("Texture", "Gradient")
+	sRaidFrames:S("buff_slots", 1)
+	--sRaidFrames:S("Texture", "Gradient")
+	sRaidFrames:chatTexture("Gradient")
 	sRaidFrames:S("statusbar_color", true)
+	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
+	sRaidFrames:chatBorderColor(0.5, 0.5, 0.5, 1)
 	sRaidFrames:MultidragMsg()
 	sRaidFrames:LoadStyle()
 	sRaidFrames:PositionLayout("sticky", 200, -200)
