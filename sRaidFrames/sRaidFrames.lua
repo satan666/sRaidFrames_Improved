@@ -153,7 +153,8 @@ function sRaidFrames:OnInitialize()
 		buff_slots			= 2,
 		Buff_Growth			= "vertical",
 		Buff_Anchor 		= "topright",
-		Bordertexture		= "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp"
+		Bordertexture		= "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp",
+		heal 				= "round"
 
 		
 	})
@@ -244,6 +245,9 @@ function sRaidFrames:PatchUpdate()
 	if not self.opt.DebuffFilter then
 		self.opt.DebuffFilter = {}
 	end
+	if not self.opt.heal then
+		self.opt.heal = "none"
+	end
 end
 
 function sRaidFrames:TargetFrame_OnEvent(event)
@@ -274,6 +278,7 @@ end
 function sRaidFrames:JoinedRaid()
 	--self:Print("Joined a raid, enabling raid frames")
 	self.enabled = true
+	self.carrier = nil
 
 	self:RegisterBucketEvent("UNIT_HEALTH", 0.2, "UpdateUnit")
 	self:RegisterBucketEvent("UNIT_AURA", 0.2, "UpdateBuffs")
@@ -294,6 +299,10 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterEvent("oRA_PlayerResurrected")
 	self:RegisterEvent("oRA_PlayerNotResurrected")
 	self:RegisterEvent("HealComm_Ressupdate", "HealCommRez")
+	
+	
+	self:RegisterEvent("CHAT_MSG_BG_SYSTEM_HORDE", "TrackCarrier")
+	self:RegisterEvent("CHAT_MSG_BG_SYSTEM_ALLIANCE", "TrackCarrier")
 
 	-- TODO: only updateunit
 	self:ScheduleRepeatingEvent("sRaidFramesSort_Force", self.Sort_Force, 0.5, self)
@@ -378,7 +387,7 @@ function sRaidFrames:Variables()
 
 	
 	self.TempTooltipDebuffs = {}
-
+	self.carrier = {}
 	self.UnitSortOrder = {}
 	self.UnitFocusHPArray = {}
 	self.UnitFocusArray = {}
@@ -947,11 +956,7 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 						-- This should prevent unnessesary calls to functions and lookups
 							
 						if texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
-							--f.hpbar.text:SetText("|cffff0000"..L["Intervened"].."|r")
 							self.hpaura[unit] = L["Intervened"]
-						--elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
-							--f.hpbar.text:SetText("|cffff0000"..L["Spirit"].."|r")
-							--self.hpaura[unit] = L["Spirit"]
 						else
 							self.hpaura[unit] = nil
 						end
@@ -959,7 +964,8 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 						
 						if not self.opt.show_txt_buff then
 							if texture == "Interface\\Icons\\INV_BannerPVP_01" then
-								f.mpbar.text:SetText("|cffff0000"..L["Carrier"].."|r")
+								f.mpbar.text:SetText("|cffFF0000"..L["Carrier"].."|r")
+								self.carrier = strlower(GetUnitName(unit))
 							elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
 								f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
 							elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
@@ -1107,7 +1113,11 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 					
 				end	
 			else
-				f.mpbar.text:SetText()
+				if not self.opt.show_txt_buff and self:CheckCarrier(unit) then
+					f.mpbar.text:SetText("|cffFF0000"..L["Carrier"].."|r")
+				else
+					f.mpbar.text:SetText()
+				end	
 				f:SetBackdropColor(self.opt.BackgroundColor.r, self.opt.BackgroundColor.g, self.opt.BackgroundColor.b, self.opt.BackgroundColor.a)
 			end
 		end	
@@ -1236,26 +1246,6 @@ function sRaidFrames:CreateUnitFrame(id)
 	f.title = f:CreateFontString(nil, "ARTWORK")
 	f.title:SetFontObject(GameFontNormalSmall)
 	f.title:SetJustifyH("LEFT")
-
-	--[[
-	f.aura1 = CreateFrame("Button", nil, f)
-	f.aura1.texture = f.aura1:CreateTexture(nil, "ARTWORK")
-	f.aura1.texture:SetAllPoints(f.aura1);
-	f.aura1.count = f.aura1:CreateFontString(nil, "OVERLAY")
-	f.aura1.count:SetFontObject(GameFontHighlightSmallOutline)
-	f.aura1.count:SetJustifyH("CENTER")
-	f.aura1.count:SetPoint("CENTER", f.aura1, "CENTER", 0, 0);
-	f.aura1:Hide()
-
-	f.aura2 = CreateFrame("Button", nil, f)
-	f.aura2.texture = f.aura2:CreateTexture(nil, "ARTWORK")
-	f.aura2.texture:SetAllPoints(f.aura2)
-	f.aura2.count = f.aura2:CreateFontString(nil, "OVERLAY")
-	f.aura2.count:SetFontObject(GameFontHighlightSmallOutline)
-	f.aura2.count:SetJustifyH("CENTER")
-	f.aura2.count:SetPoint("CENTER", f.aura2, "CENTER", 0, 0);
-	f.aura2:Hide()
-	--]]
 
 	f.buff1 = CreateFrame("Button", nil, f)
 	f.buff1.texture = f.buff1:CreateTexture(nil, "ARTWORK")
@@ -1400,7 +1390,7 @@ function sRaidFrames:SetBackdrop(f, unit, aggro)
 		f:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 										tile = true, tileSize = 16,
 										edgeFile = self.opt.Bordertexture,
-										edgeSize = 17,
+										edgeSize = 16,
 										insets = { left = 5, right = 5, top = 5, bottom = 5 }
 									})
 	else
@@ -1481,7 +1471,6 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 			self:SetWHP(f.hpbar, frame_width - 9.8, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
-		self:SetWHP(f.hpbar.indicator2, 4.5, 4.5, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 	else
 		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
 			self:SetWHP(f.hpbar, frame_width - 9.8, 26, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
@@ -1489,7 +1478,12 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 			self:SetWHP(f.hpbar, frame_width - 9.8, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
 		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
+	end
+	
+	if sRaidFrames.opt.heal == "round" then
 		self:SetWHP(f.hpbar.indicator1, 7.7, 7.7, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
+	else
+		self:SetWHP(f.hpbar.indicator2, 4.5, 4.5, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 	end
 	
 	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -11)
@@ -1834,7 +1828,7 @@ end
 --==Added by Ogrisch
 
 function sRaidFrames:ShowHealIndicator(unit)
-	if not unit or not self.opt.heal then return end
+	if not unit or self.opt.heal == "none" then return end
 		
 	if not self.indicator[unit] then
 		self.indicator[unit] = 0
@@ -1850,7 +1844,7 @@ function sRaidFrames:ShowHealIndicator(unit)
 end
 
 function sRaidFrames:HideHealIndicator(unit, force)
-	if not unit or not self.opt.heal then return end
+	if not unit or self.opt.heal == "none" then return end
 	
 	if not self.indicator[unit] then
 		self.indicator[unit] = 0
@@ -1874,7 +1868,7 @@ function sRaidFrames:SetHealIndicator(unit)
 	
 	local f = nil
 	
-	if self.opt.Border then
+	if self.opt.heal == "round" then
 		f = self.frames[unit].hpbar.indicator1
 	else
 		f = self.frames[unit].hpbar.indicator2
@@ -2121,6 +2115,36 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 		UIErrorsFrame:AddMessage("|cFFFF0000"..err_txt)
 	end
 	return
+end
+
+
+function sRaidFrames:CheckCarrier(unit)
+	if self.carrier and strlower(GetUnitName(unit)) == self.carrier then
+		
+		return true
+	end
+	return nil
+end
+
+function sRaidFrames:TrackCarrier(msg)
+	local oposite_faction = "Alliance"
+	if UnitFactionGroup("player") == oposite_faction then
+		oposite_faction = "Horde"
+	end
+	if msg then
+		msg = strlower(msg)
+		
+		local find0 = "captured "
+		local find1 = "The "..oposite_faction.." Flag"
+		local find2 = " was picked up "
+		local find3 = " was dropped "
+		
+		if string.find(msg, strlower(find1..find2)) then
+			_, _, self.carrier = string.find(msg, strlower(find1..find2.."by (.+)%!"))	
+		elseif string.find(msg, strlower(find1..find3)) or string.find(msg, strlower(find0..find1)) then
+			self.carrier = nil
+		end
+	end
 end
 
 function sRaidFrames:xcv()

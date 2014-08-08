@@ -17,9 +17,9 @@ PACK CONTENT
 >> Zorlen - Addon
 - sRaidFrames mandatory dependancy library
 
-Cast supporting addons download: https://github.com/satan666/LazySpell
-UI texture pack download:  
-Improved ag_UnitFrames by Skela download: https://github.com/satan666/ag_UnitFrames_Improved
+---Cast supporting addons download: https://github.com/satan666/LazySpell
+---UI texture pack download: https://github.com/satan666/UI-TEXTURE-PACK/archive/master.zip
+---Improved ag_UnitFrames by Skela download: https://github.com/satan666/ag_UnitFrames_Improved
 
 cheers Ogrisch
 

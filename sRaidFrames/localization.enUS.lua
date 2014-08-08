@@ -34,6 +34,9 @@ L:RegisterTranslations("enUS", function() return {
 	["Full size statusbar"] = true,
 	["_Healing indicators"] = true,
 	["Show/Hide incoming heal indicators"] = true,
+	["Round"] = true,
+	["Square"] = true,
+	["None"] = true,
 	["Apply best settings"] = true,
 	["Load predefined settings for best visual effect"] = true,
 	
@@ -43,7 +46,9 @@ L:RegisterTranslations("enUS", function() return {
 	["Classic - 10 per column"] = true,
 	["Classic - 20 per column"] = true,
 	["Grid - Vertical 5 per column"] = true,
-	["Grid - Horizontal 5 per column"] = true,
+	["Grid - Horizontal 8 per row"] = true,
+	["Compact - Vertical 5 per column"] = true,
+	["Compact - Horizontal 8 per row"] = true,
 	
 	["_Focus frame"] = true,
 	["Use keybinding to add/remove units manually or select Polpulate with range feature"] = true,
