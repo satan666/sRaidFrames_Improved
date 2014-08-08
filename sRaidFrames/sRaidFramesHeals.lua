@@ -98,7 +98,7 @@ function sRaidFramesHeals:oRA_ResurrectionStart(msg, author)
 	msg = sRaidFramesHeals:CleanMessage(msg)
 	local _,_,player = string.find(msg, "^RES (.+)$")
 	if player and author then
-		DEFAULT_CHAT_FRAME:AddMessage(author.."(Ora_rdy): "..author.." -> "..player)
+		--DEFAULT_CHAT_FRAME:AddMessage(author.."(Ora_rdy): "..author.." -> "..player)
 		sRaidFrames:oRA_PlayerResurrected("", player)
 	end
 end
@@ -110,7 +110,7 @@ function sRaidFramesHeals:CheckOraMsg(prefix, msg, type, author)
 	for _, c in pairs(msgArr) do
 		cmd = self:OraSplitMessage(c, " ")
 		local x = cmd[2] or ""
-		DEFAULT_CHAT_FRAME:AddMessage(author.."(Ora_raw): "..cmd[1].." -> "..x)
+		--DEFAULT_CHAT_FRAME:AddMessage(author.."(Ora_raw): "..cmd[1].." -> "..x)
 		if cmd[1] == "RES" then
 			sRaidFramesHeals:oRA_ResurrectionStart(c, author)
 		end
