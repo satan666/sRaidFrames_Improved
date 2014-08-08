@@ -13,10 +13,10 @@
 
 
 ## PACK CONTENT
->> sRaidFrames - Addon
+sRaidFrames - Addon
 - improved version of sRaidFrames
 
->> Zorlen - Addon
+Zorlen - Addon
 - sRaidFrames mandatory dependancy library
 
 
