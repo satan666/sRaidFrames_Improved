@@ -19,9 +19,9 @@
   - sRaidFrames mandatory dependancy library
 
 ## OTHER REPOSITORIES
-- [Cast supporting addons download](https://github.com/satan666/LazySpell)
-- [UI texture pack download] (https://github.com/satan666/UI-TEXTURE-PACK/archive/master.zip)
-- [Improved ag_UnitFrames by Skela download](https://github.com/satan666/ag_UnitFrames_Improved)
+- [WOW 1.12.1 Cast supporting addons](https://github.com/satan666/LazySpell)
+- [WOW 1.12.1 UI texture pack] (https://github.com/satan666/UI-TEXTURE-PACK/archive/master.zip)
+- [WOW 1.12.1 Improved ag_UnitFrames by Skela](https://github.com/satan666/ag_UnitFrames_Improved)
 
 cheers Ogrisch
 
