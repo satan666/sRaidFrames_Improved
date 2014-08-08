@@ -15,10 +15,8 @@
 ## PACK CONTENT
 sRaidFrames - Addon
 - improved version of sRaidFrames
-
 Zorlen - Addon
 - sRaidFrames mandatory dependancy library
-
 
 ## OTHER REPOSITORIES
 - [Cast supporting addons download](https://github.com/satan666/LazySpell)
