@@ -138,7 +138,7 @@ function sRaidFrames:OnInitialize()
 		RangeFrequency 		= 0.20,
 		AccurateRangeFactor = 0.05,
 		RangeAlpha 			= 0.2,
-		buff_size			= 15.2,
+		buff_size			= 15,
 		srfhideparty		= true,
 		lock_focus			= false,
 		ShowGroupTitles_Focus = true,
@@ -1419,15 +1419,12 @@ function sRaidFrames:SetBackdrop(f, unit, aggro)
 end
 
 function sRaidFrames:SetStyle(f, unit, width, aggro)
-
 	local frame_width = width or self.opt.Width
+	local powertype = UnitPowerType(unit) or 0
 	
 	self:SetWHP(f, frame_width, 40)
 	self:SetWHP(f.title, frame_width - 10, 16, "TOPLEFT", f, "TOPLEFT",  5, -6)
-	--self:SetWHP(f.aura1, 12, 12, "TOPRIGHT", f, "TOPRIGHT", -4, -5)
-	--self:SetWHP(f.aura2, 12, 12, "RIGHT", f.aura1, "LEFT", 0, 0)
-	
-	
+
 	if self.opt.Buff_Anchor == "topright" then
 		self:SetWHP(f.buff1, self.opt.buff_size, self.opt.buff_size, "TOPRIGHT", f.hpbar, "TOPRIGHT", 0.35, 0)
 		
@@ -1466,22 +1463,13 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 		end
 	end
 	
-		
-	if not sRaidFrames.opt.Border then
-		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
-			self:SetWHP(f.hpbar, frame_width - 9.8, 27, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
-		else
-			self:SetWHP(f.hpbar, frame_width - 9.8, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
-		end	
-		self:SetWHP(f.mpbar, frame_width - 9.8, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
+	if self.opt.PowerFilter[powertype] then
+		self:SetWHP(f.hpbar, frame_width - 10, 26, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 	else
-		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
-			self:SetWHP(f.hpbar, frame_width - 9.8, 26, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
-		else
-			self:SetWHP(f.hpbar, frame_width - 9.8, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
-		end	
-		self:SetWHP(f.mpbar, frame_width - 9.8, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
-	end
+		self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+	end	
+	
+	self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
 	
 	if sRaidFrames.opt.heal == "round" then
 		self:SetWHP(f.hpbar.indicator1, 7.7, 7.7, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
@@ -1489,7 +1477,7 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 		self:SetWHP(f.hpbar.indicator2, 4.5, 4.5, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 	end
 	
-	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", 0, -11)
+	self:SetWHP(f.mpbar.text, f.mpbar:GetWidth(), f.mpbar:GetHeight(), "CENTER", f, "CENTER", -1, -11)
 	self:SetWHP(f.hpbar.highlight, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35) -- highlight
 	self:SetWHP(f.hpbar.text, f.hpbar:GetWidth(), f.hpbar:GetHeight(), "CENTER", f, "CENTER", 0, -3.5)
 	
