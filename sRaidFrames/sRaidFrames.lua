@@ -967,7 +967,7 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 								f.mpbar.text:SetText("|cffFF0000"..L["Carrier"].."|r")
 								self.carrier = strlower(GetUnitName(unit))
 							elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
-								f.mpbar.text:SetText("|cff00ff00"..L["Innervating"].."|r")
+								f.mpbar.text:SetText("|cff00ff00"..L["Innervate"].."|r")
 							elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
 								f.mpbar.text:SetText("|cffffffff"..BS["Shield Wall"].."|r")
 							elseif texture == "Interface\\Icons\\Spell_Holy_AshesToAshes" and self:GetBuffName(unit, i) == BS["Last Stand"] then

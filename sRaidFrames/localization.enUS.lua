@@ -342,7 +342,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Rezzed"] = true,
 	["Soulstoned"] = true,
 	["Intervened"] = true,
-	["Innervating"] = true,
+	["Innervate"] = true,
 	["Spirit"] = true,
 	["Shield Wall"] = true,
 	["Last stand"] = true,
