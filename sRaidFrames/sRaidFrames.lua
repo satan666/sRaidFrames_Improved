@@ -957,6 +957,9 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 							
 						if texture == "Interface\\Icons\\Spell_Nature_TimeStop" and self:GetBuffName(unit, i) == BS["Divine Intervention"] then
 							self.hpaura[unit] = L["Intervened"]
+						elseif texture == "Interface\\Icons\\Spell_Holy_GreaterHeal" and self:GetBuffName(unit, i) == BS["Spirit of Redemption"] then
+							f.hpbar.text:SetText("|cffff8c00"..L["Spirit"].."|r")
+							self.hpaura[unit] = L["Spirit"]
 						else
 							self.hpaura[unit] = nil
 						end
@@ -1470,14 +1473,14 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 		else
 			self:SetWHP(f.hpbar, frame_width - 9.8, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
-		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
+		self:SetWHP(f.mpbar, frame_width - 9.8, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
 	else
 		if self.opt.PowerFilter[0] or self.opt.PowerFilter[1] or self.opt.PowerFilter[2] or self.opt.PowerFilter[3] then
 			self:SetWHP(f.hpbar, frame_width - 9.8, 26, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		else
 			self:SetWHP(f.hpbar, frame_width - 9.8, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 		end	
-		self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
+		self:SetWHP(f.mpbar, frame_width - 9.8, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
 	end
 	
 	if sRaidFrames.opt.heal == "round" then
