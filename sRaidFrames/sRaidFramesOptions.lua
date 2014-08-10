@@ -2063,7 +2063,7 @@ function sRaidFrames:ProfileFeedCompact()
 	sRaidFrames:S("Buff_Anchor", "topright")
 	sRaidFrames:S("buff_slots", 2)
 	--sRaidFrames:S("Texture", "Gradient")
-	sRaidFrames:S("buff_size", 11.3)
+	sRaidFrames:S("buff_size", 10)
 	sRaidFrames.opt.heal = "square"
 	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
 	sRaidFrames:chatBorderColor(0.3, 0.3, 0.3, 1)
