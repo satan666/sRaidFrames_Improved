@@ -251,8 +251,15 @@ L:RegisterTranslations("enUS", function() return {
 	["Enable combined range check"] = true,
 	["Enable 40y accurate range check only in combat otherwise light range check is active"] = true,
 	
-	["Enable debug"] = true,
+	["_Debug"] = true,
+	["Set about debug"] = true,
+	["Enable range calculation debug"] = true,
 	["Range accuracy calculation, only for testing"] = true,
+	["Enable incomming heal debug"] = true,
+	["Incomming heal debug, only for testing"] = true,
+	["Enable incomming resurrection debug"] = true,
+	["Incomming resurrection debug, only for testing"] = true,
+	
 	
 	["Alpha"] = true,
 	["The alpha level for units who are out of range"] = true,

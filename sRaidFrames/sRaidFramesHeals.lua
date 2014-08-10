@@ -99,7 +99,7 @@ function sRaidFramesHeals:oRA_ResurrectionStart(msg, author)
 	local _,_,player = string.find(msg, "^RES (.+)$")
 	if player and author then
 		--DEFAULT_CHAT_FRAME:AddMessage(author.."(Ora_rdy): "..author.." -> "..player)
-		sRaidFrames:oRA_PlayerResurrected("", player)
+		sRaidFrames:oRA_PlayerResurrected(author, player, "ora")
 	end
 end
 
@@ -170,7 +170,7 @@ function sRaidFramesHeals:_HA_COM_Process_CmdSpellStart(from,params)
     estimated = 0;
   end	
 	if spellCode == 46 or spellCode == 83 or spellCode == 62 or spellCode == 17 then
-		sRaidFrames:oRA_PlayerResurrected("", targetName)
+		sRaidFrames:oRA_PlayerResurrected(from, targetName, "has")
 		
 	elseif spellCode == 41 then
 		local duration = castTime/1000
@@ -241,7 +241,7 @@ end
 	function sRaidFramesHeals:LogExamine(mode, caster_name, duration, prefix)
 		local check = self.IgnoreLog[caster_name]
 		if mode == "add"  then
-			if string.find(prefix, "srf") or string.find(prefix, "luf") then
+			if string.find(prefix, "srf") or string.find(prefix, "hcom") then
 				if not self:VerifyDuration(duration) then
 					if check == "pass" then
 						self.IgnoreLog[caster_name] = "ban"
@@ -281,7 +281,7 @@ end
 					self:UnitIsHealed(u.name, helper, spellTimers[spell], "log")
 				elseif spell == BS["Rebirth"] or spell == BS["Redemption"] or spell == BS["Resurrection"] or spell == BS["Ancestral Spirit"] then
 					if UnitIsDead(unitid.."target") then
-						sRaidFrames:oRA_PlayerResurrected("", u.name)
+						sRaidFrames:oRA_PlayerResurrected(helper, u.name, "log")
 					end	
 				end	
 			end
@@ -297,19 +297,21 @@ end
 				if not self:VerifyDuration(duration) then
 					duration = 2
 				end
-				self:UnitIsHealed(result[2], val4, duration, "luf")			
+				self:UnitIsHealed(result[2], val4, duration, "hcom")			
 			elseif result[1] == "GrpHeal" then	
 				local duration = result[3]/1000
 				if not self:VerifyDuration(duration) then
 					duration = 3
 				end
-				self:UnitIsHealedGroup(val4, duration, "luf")
+				self:UnitIsHealedGroup(val4, duration, "hcom")
 			elseif val2 == "Healstop" then
 				self:UnitHealCompleted(val4);
 			elseif val2 == "GrpHealstop" then	
 				self:UnitHealCompletedGroup(val4);
 			elseif result[1] == "Healdelay" then
 				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive_External Healdelay - "..val4)
+			elseif result[1] == "Resurrection" and result[3] == "start" then
+				sRaidFrames:oRA_PlayerResurrected(arg4, result[2], "hcom")
 			end
 		elseif val1 == "CTRA" or val1 == "oRA" then
 			sRaidFramesHeals:CheckOraMsg(val1, val2, val3, val4)
@@ -319,7 +321,7 @@ end
 			tmpTest,tmpTest,unitname,heal_val = string.find(val2, ">> (%a+) <<=>> (.%d+) <<" );
 			if heal_val then
 				if tonumber(heal_val) > 0 then
-					self:UnitIsHealed(unitname, val4, 1.99, "bot")	
+					self:UnitIsHealed(unitname, val4, 1.99, "hbot")	
 				else
 					self:UnitHealCompleted(val4);
 					self:UnitHealCompletedGroup(val4);
@@ -339,6 +341,8 @@ end
 		elseif spell and watchSpells[spell] then
 			duration = spellTimers[spell]
 		end
+		
+		prefix = sufix or prefix
 		
 		if what == "HG" or spell and spell == "Prayer of Healing" then 
 			if not self:VerifyDuration(duration) then
@@ -368,6 +372,9 @@ end
 		if not sRaidFramesHeals.WhoHealsWhoGroup[caster_name] then
 			sRaidFramesHeals.WhoHealsWhoGroup[caster_name] = {}
 		end
+		
+		sRaidFrames:DebugHeal(strupper(prefix).." >> "..caster_name.." -> GRP Heal "..duration.."s")
+		
 		
 		self:LogExamine("add", caster_name, duration, prefix)
 		
@@ -414,6 +421,9 @@ end
 		
 		if not unit then return end
 		if not caster_name then return end
+
+		sRaidFrames:DebugHeal(strupper(prefix).." >> "..caster_name.." -> Heal "..duration.."s -> "..target_name)
+		
 
 		
 		self:LogExamine("add", caster_name, duration, prefix)

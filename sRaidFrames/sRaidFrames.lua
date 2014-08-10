@@ -298,7 +298,7 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterEvent("oRA_PlayerCanResurrect")
 	self:RegisterEvent("oRA_PlayerResurrected")
 	self:RegisterEvent("oRA_PlayerNotResurrected")
-	self:RegisterEvent("HealComm_Ressupdate", "HealCommRez")
+	--self:RegisterEvent("HealComm_Ressupdate", "HealCommRez")
 	
 	
 	self:RegisterEvent("CHAT_MSG_BG_SYSTEM_HORDE", "TrackCarrier")
@@ -519,9 +519,11 @@ function sRaidFrames:HealCommRez(author)
 	if unit and HealComm:UnitisResurrecting(GetUnitName(unit)) then self.res[unit] = 2 end
 end
 
-function sRaidFrames:oRA_PlayerResurrected(msg, author)
-	local unit = roster:GetUnitIDFromName(author)
+function sRaidFrames:oRA_PlayerResurrected(caster, target, prefix)
+	local unit = roster:GetUnitIDFromName(target)
 	--self:Print("oRA_PlayerResurrected", UnitIsDead(unit), UnitIsGhost(unit), self.unavail[unit], msg, author, unit)
+	sRaidFrames:DebugRez(strupper(prefix).." >> "..caster.." -> Resurrection -> "..target)
+	
 	if unit then self.res[unit] = 2 end
 end
 
@@ -592,7 +594,7 @@ function sRaidFrames:RangeCheck()
 
 	if _px > 0 and _py > 0 and not self.MapEnable then
 		self.MapEnable = true
-		self:Debug("RC_MAP_ENABLE")
+		self:DebugRange("RC_MAP_ENABLE")
 	end
 	if not self.opt.RangeCheck and not self.opt.ExtendedRangeCheck and not self.opt.ExtendedRangeCheckCombat then 
 		return 
@@ -628,11 +630,11 @@ function sRaidFrames:RangeCheck()
 						if (dist/11.11) > self.MapScale and CheckInteractDistance(unit, 2) then
 							self.UnitRangeArray[unit] = " 11Y"
 							local adjust = dist/11.11
-							self:Debug("RC_INC "..GetUnitName(unit).."_11Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+							self:DebugRange("RC_INC "..GetUnitName(unit).."_11Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 							self.MapScale = adjust
 						elseif (dist/28) > self.MapScale then
 							local adjust = dist/28
-							self:Debug("RC_INC "..GetUnitName(unit).."_28Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+							self:DebugRange("RC_INC "..GetUnitName(unit).."_28Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 							self.MapScale = adjust
 						end
 					end	
@@ -665,7 +667,7 @@ function sRaidFrames:RangeCheck()
 			
 			local table_val = self:ExtendedRangeArrayUtilize("calc")
 			local step, freq = self:Freqcalc(table_val)
-			self:Debug("RC_TOTAL: "..table_val.." - CYCLE FREQ: "..((math.floor(freq *100))/100).."s - STATUS: "..status)
+			self:DebugRange("RC_TOTAL: "..table_val.." - CYCLE FREQ: "..((math.floor(freq *100))/100).."s - STATUS: "..status)
 			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, step , self)	
 		end
 	end
@@ -696,7 +698,7 @@ function sRaidFrames:ExtendedRangeCheck()
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			--self.frames[j]:SetAlpha(1)
 			if self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) then self.UnitRangeArray[j] = " 40Y*" else self.UnitRangeArray[j] = " 40Y"	end
-			self:Debug("RC "..GetUnitName(j).."_40y - " .."|cff00FF00 PASS")
+			self:DebugRange("RC "..GetUnitName(j).."_40y - " .."|cff00FF00 PASS")
 			jumpnext = nil
 		end
 		if targetchanged then 
@@ -708,7 +710,7 @@ function sRaidFrames:ExtendedRangeCheck()
 		if jumpnext then
 			--self.frames[j]:SetAlpha(self.opt.RangeAlpha)
 			self.UnitRangeArray[j] = ""
-			self:Debug("RC "..GetUnitName(j).."_40y - " .."|cffFF0000 NOT PASS")
+			self:DebugRange("RC "..GetUnitName(j).."_40y - " .."|cffFF0000 NOT PASS")
 		end
 		--self.ExtendedRangeScan[i] = nil
 		self:ExtendedRangeArrayUtilize("remove", j)
@@ -720,13 +722,13 @@ function sRaidFrames:VerifyUnitRange(unit, dist)
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			if dist > (self.MapScale*40) then
 				local adjust = dist/(40*0.99)
-				self:Debug("RC_INC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+				self:DebugRange("RC_INC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 				self.MapScale = adjust
 			end	
 			return true
 		elseif dist < (self.MapScale*40) then
 			local adjust = dist/(40*1.01)
-			self:Debug("RC_DEC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+			self:DebugRange("RC_DEC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
 			self.MapScale = adjust
 			return nil
 		else
@@ -744,12 +746,30 @@ function sRaidFrames:ZoneCheck()
 	self.MapEnable = false
 	SetMapToCurrentZone()
 	self:ResetHealIndicators()
-	self:Debug("RC_RST")
+	self:DebugRange("RC_RST")
 end
 
 function sRaidFrames:Debug(msg)
-	if msg and self.opt.Debug then 
-		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames Debug: |cffffffff"..msg); 
+	if msg then 
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee SRF Debug: |cffffffff"..msg); 
+	end
+end
+
+function sRaidFrames:DebugRange(msg)
+	if self.opt.DebugRange then 
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee SRF Debug Range: |cffffffff"..msg); 
+	end
+end
+
+function sRaidFrames:DebugHeal(msg)
+	if self.opt.DebugRange then 
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee SRF Debug Heal: |cffffffff"..msg); 
+	end
+end
+
+function sRaidFrames:DebugRez(msg)
+	if self.opt.DebugRez then 
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee SRF Debug Rez: |cffffffff"..msg); 
 	end
 end
 
@@ -776,7 +796,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 					subgroup = ""
 				end
 				
-				if self.opt.Debug then
+				if self.opt.DebugRange then
 					range = self.UnitRangeArray[unit]
 					if not range then
 						range =  ""
@@ -786,7 +806,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				local _, class = UnitClass(unit)
 				local unit_name = UnitName(unit).." "..subgroup
 				
-				if self.opt.unit_name_lenght or self.opt.Debug then
+				if self.opt.unit_name_lenght or self.opt.DebugRange then
 					unit_name = string.sub(UnitName(unit), 1, 3).." "..subgroup --UnitName(unit)
 				end
 				

@@ -1623,6 +1623,52 @@ sRaidFrames.options = {
 			validate = {["never"] = L["Never"], ["notincombat"] = L["Only when not in combat"], ["always"] = L["Always"]},
 		},
 
+
+		debug = {
+			name = L["_Debug"],
+			type = "group",
+			desc = L["Set about debug"],
+			args = {
+				debug_range = {
+					name = L["Enable range calculation debug"],
+					type = "toggle",
+					desc = L["Range accuracy calculation, only for testing"],
+					get = function() return sRaidFrames.opt.DebugRange end,
+					set = function(value)
+						sRaidFrames.opt.DebugRange = value
+					end,
+					order = 1,
+				},
+			
+				debug_heal = {
+					name = L["Enable incomming heal debug"],
+					type = "toggle",
+					desc = L["Incomming heal debug, only for testing"],
+					get = function() return sRaidFrames.opt.DebugHeal end,
+					set = function(value)
+						sRaidFrames.opt.DebugHeal = value
+					end,
+					order = 2,
+				},
+			
+				debug_rez = {
+					name = L["Enable incomming resurrection debug"],
+					type = "toggle",
+					desc = L["Incomming resurrection debug, only for testing"],
+					get = function() return sRaidFrames.opt.DebugRez end,
+					set = function(value)
+						sRaidFrames.opt.DebugRez = value
+					end,
+					order = 3,
+				},
+			
+				
+			
+			},
+			},
+
+
+
 		range = {
 			name = L["_Range"],
 			type = "group",
@@ -1675,16 +1721,7 @@ sRaidFrames.options = {
 					order = 3,		
 				},
 				
-					debug = {
-					name = L["Enable debug"],
-					type = "toggle",
-					desc = L["Range accuracy calculation, only for testing"],
-					get = function() return sRaidFrames.opt.Debug end,
-					set = function(value)
-						sRaidFrames.opt.Debug = value
-					end,
-					order = 4,
-				},
+
 				
 				alpha = {
 					name = L["Alpha"],
@@ -1990,7 +2027,7 @@ function sRaidFrames:ProfileFeedClassic()
 	sRaidFrames:S("Buff_Anchor", "bottomright")
 	sRaidFrames:S("buff_slots", 4)
 	--sRaidFrames:S("Texture", "Gradient")
-	sRaidFrames:S("buff_size", 15)
+	sRaidFrames:S("buff_size", 15.1)
 	sRaidFrames.opt.heal = "round"
 	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp")
 	sRaidFrames:chatBorderColor(0.5, 0.5, 0.5, 1)
@@ -2008,7 +2045,7 @@ function sRaidFrames:ProfileFeedGrid()
 	sRaidFrames:S("Buff_Anchor", "bottomright")
 	sRaidFrames:S("buff_slots", 1)
 	--sRaidFrames:S("Texture", "Gradient")
-	sRaidFrames:S("buff_size", 15)
+	sRaidFrames:S("buff_size", 15.1)
 	sRaidFrames.opt.heal = "square"
 	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
 	sRaidFrames:chatBorderColor(0.3, 0.3, 0.3, 1)
