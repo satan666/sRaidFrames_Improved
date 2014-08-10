@@ -762,7 +762,7 @@ function sRaidFrames:DebugRange(msg)
 end
 
 function sRaidFrames:DebugHeal(msg)
-	if self.opt.DebugRange then 
+	if self.opt.DebugHeal then 
 		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee SRF Debug Heal: |cffffffff"..msg); 
 	end
 end

@@ -1921,6 +1921,7 @@ end
 
 function sRaidFrames:chatScale(t)
 	self:S("Scale", t)
+	self:S("ScaleFocus", t)
 
 	self.master:SetScale(t)
 	self:LoadStyle()
