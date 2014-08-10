@@ -513,17 +513,9 @@ function sRaidFrames:oRA_PlayerCanResurrect(msg, author)
 	if unit then self.res[unit] = 1 end
 end
 
-function sRaidFrames:HealCommRez(author)
+function sRaidFrames:oRA_PlayerResurrected(msg, author)
 	local unit = roster:GetUnitIDFromName(author)
 	--self:Print("oRA_PlayerResurrected", UnitIsDead(unit), UnitIsGhost(unit), self.unavail[unit], msg, author, unit)
-	if unit and HealComm:UnitisResurrecting(GetUnitName(unit)) then self.res[unit] = 2 end
-end
-
-function sRaidFrames:oRA_PlayerResurrected(caster, target, prefix)
-	local unit = roster:GetUnitIDFromName(target)
-	--self:Print("oRA_PlayerResurrected", UnitIsDead(unit), UnitIsGhost(unit), self.unavail[unit], msg, author, unit)
-	sRaidFrames:DebugRez(strupper(prefix).." >> "..caster.." -> Resurrection -> "..target)
-	
 	if unit then self.res[unit] = 2 end
 end
 
@@ -531,6 +523,19 @@ function sRaidFrames:oRA_PlayerNotResurrected(msg, author)
 	local unit = roster:GetUnitIDFromName(author)
 	--self:Print("oRA_PlayerNotResurrected", UnitIsDead(unit), UnitIsGhost(unit), self.unavail[unit], msg, author, unit)
 	if unit then self.res[unit] = nil end
+end
+
+
+function sRaidFrames:HealCommRez(author)
+	local unit = roster:GetUnitIDFromName(author)
+	--self:Print("oRA_PlayerResurrected", UnitIsDead(unit), UnitIsGhost(unit), self.unavail[unit], msg, author, unit)
+	if unit and HealComm:UnitisResurrecting(GetUnitName(unit)) then self.res[unit] = 2 end
+end
+
+function sRaidFrames:SRF_PlayerResurrected(caster, target, prefix)
+	local unit = roster:GetUnitIDFromName(target)
+	sRaidFrames:DebugRez(strupper(prefix).." >> "..caster.." -> Resurrection -> "..target)
+	if unit then self.res[unit] = 2 end
 end
 
 function sRaidFrames:IsSpellInRangeAndActionBar(SpellName)

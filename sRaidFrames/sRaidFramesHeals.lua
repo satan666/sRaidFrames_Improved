@@ -99,7 +99,7 @@ function sRaidFramesHeals:oRA_ResurrectionStart(msg, author)
 	local _,_,player = string.find(msg, "^RES (.+)$")
 	if player and author then
 		--DEFAULT_CHAT_FRAME:AddMessage(author.."(Ora_rdy): "..author.." -> "..player)
-		sRaidFrames:oRA_PlayerResurrected(author, player, "ora")
+		sRaidFrames:SRF_PlayerResurrected(author, player, "ora")
 	end
 end
 
@@ -170,7 +170,7 @@ function sRaidFramesHeals:_HA_COM_Process_CmdSpellStart(from,params)
     estimated = 0;
   end	
 	if spellCode == 46 or spellCode == 83 or spellCode == 62 or spellCode == 17 then
-		sRaidFrames:oRA_PlayerResurrected(from, targetName, "has")
+		sRaidFrames:SRF_PlayerResurrected(from, targetName, "has")
 		
 	elseif spellCode == 41 then
 		local duration = castTime/1000
@@ -281,7 +281,7 @@ end
 					self:UnitIsHealed(u.name, helper, spellTimers[spell], "log")
 				elseif spell == BS["Rebirth"] or spell == BS["Redemption"] or spell == BS["Resurrection"] or spell == BS["Ancestral Spirit"] then
 					if UnitIsDead(unitid.."target") then
-						sRaidFrames:oRA_PlayerResurrected(helper, u.name, "log")
+						sRaidFrames:SRF_PlayerResurrected(helper, u.name, "log")
 					end	
 				end	
 			end
@@ -311,7 +311,7 @@ end
 			elseif result[1] == "Healdelay" then
 				--DEFAULT_CHAT_FRAME:AddMessage("sRaidFramesHeals:OnCommReceive_External Healdelay - "..val4)
 			elseif result[1] == "Resurrection" and result[3] == "start" then
-				sRaidFrames:oRA_PlayerResurrected(arg4, result[2], "hcom")
+				sRaidFrames:SRF_PlayerResurrected(arg4, result[2], "hcom")
 			end
 		elseif val1 == "CTRA" or val1 == "oRA" then
 			sRaidFramesHeals:CheckOraMsg(val1, val2, val3, val4)
