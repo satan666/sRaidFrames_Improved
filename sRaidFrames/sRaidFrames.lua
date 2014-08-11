@@ -286,8 +286,8 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterBucketEvent("ZONE_CHANGED_NEW_AREA", 1, "ZoneCheck")
 	self:RegisterBucketEvent("PLAYER_UNGHOST", 1, "ZoneCheck")
 		
-	self:RegisterBucketEvent("PLAYER_REGEN_ENABLED", 2, "ResetHealIndicators")
-	self:RegisterBucketEvent("PLAYER_REGEN_DISABLED", 2, "ResetHealIndicators")
+	self:RegisterBucketEvent("PLAYER_REGEN_ENABLED", 2, "CombatEnds")
+	self:RegisterBucketEvent("PLAYER_REGEN_DISABLED", 2, "CombatStarts")
 	self:RegisterBucketEvent("PLAYER_DEAD", 2, "ResetHealIndicators")
 
 	self:RegisterBucketEvent("PLAYER_TARGET_CHANGED", 0.01)
@@ -298,7 +298,7 @@ function sRaidFrames:JoinedRaid()
 	self:RegisterEvent("oRA_PlayerCanResurrect")
 	self:RegisterEvent("oRA_PlayerResurrected")
 	self:RegisterEvent("oRA_PlayerNotResurrected")
-	--self:RegisterEvent("HealComm_Ressupdate", "HealCommRez")
+	self:RegisterEvent("HealComm_Ressupdate", "HealCommRez")
 	
 	
 	self:RegisterEvent("CHAT_MSG_BG_SYSTEM_HORDE", "TrackCarrier")
@@ -535,6 +535,7 @@ end
 function sRaidFrames:SRF_PlayerResurrected(caster, target, prefix)
 	local unit = roster:GetUnitIDFromName(target)
 	sRaidFrames:DebugRez(strupper(prefix).." >> "..caster.." -> Resurrection -> "..target)
+	
 	if unit then self.res[unit] = 2 end
 end
 
@@ -1907,6 +1908,17 @@ function sRaidFrames:SetHealIndicator(unit)
 		f:Show()
 
 	end	
+end
+
+function sRaidFrames:CombatStarts()
+	self:ResetHealIndicators()
+end
+
+function sRaidFrames:CombatEnds()
+	self:ResetHealIndicators()
+	for key,value in pairs(self.res) do
+		self.res[key] = nil
+	end
 end
 
 function sRaidFrames:ResetHealIndicators(mode)
