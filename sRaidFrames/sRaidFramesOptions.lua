@@ -249,7 +249,7 @@ sRaidFrames.options = {
 								
 								sRaidFrames:S("fixed_count", 8)
 								if sRaidFrames.opt.Width > 50 then
-									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 70)
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
 								end	
 								sRaidFrames:S("Width", 40)
 								sRaidFrames:S("unit_name_lenght", true)
@@ -276,7 +276,7 @@ sRaidFrames.options = {
 								
 								sRaidFrames:S("fixed_count", 5)
 								if sRaidFrames.opt.Width <= 50 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 65)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -301,7 +301,7 @@ sRaidFrames.options = {
 								
 								sRaidFrames:S("fixed_count", 5)
 								if sRaidFrames.opt.Width > 50 then
-									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 70)
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
 								end	
 								sRaidFrames:S("Width", 40)
 								sRaidFrames:S("unit_name_lenght", true)
@@ -327,7 +327,7 @@ sRaidFrames.options = {
 								
 								sRaidFrames:S("fixed_count", 8)
 								if sRaidFrames.opt.Width <= 50 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 65)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -354,7 +354,7 @@ sRaidFrames.options = {
 								
 								sRaidFrames:S("fixed_count", 20)
 								if sRaidFrames.opt.Width <= 50 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 65)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -381,7 +381,7 @@ sRaidFrames.options = {
 								
 								sRaidFrames:S("fixed_count", 10)
 								if sRaidFrames.opt.Width <= 50 then
-									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 70)
+									sRaidFrames:S("Width", sRaidFrames.opt.Width_OLD or 65)
 								end	
 								sRaidFrames:S("unit_name_lenght", nil)
 								sRaidFrames:S("vertical_hp", nil)
@@ -406,7 +406,7 @@ sRaidFrames.options = {
 								
 								sRaidFrames:S("fixed_count", 5)
 								if sRaidFrames.opt.Width > 50 then
-									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 70)
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
 								end	
 								sRaidFrames:S("Width", 50)
 								sRaidFrames:S("unit_name_lenght", true)
@@ -433,7 +433,7 @@ sRaidFrames.options = {
 								
 								sRaidFrames:S("fixed_count", 8)
 								if sRaidFrames.opt.Width > 50 then
-									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 70)
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
 								end	
 								sRaidFrames:S("Width", 50)
 								sRaidFrames:S("unit_name_lenght", true)
@@ -2015,7 +2015,7 @@ function sRaidFrames:ProfileFeedCommon()
 	sRaidFrames:S("red", true)
 	sRaidFrames:S("redbar", false)
 	sRaidFrames:S("healthDisplayType", "none")
-	sRaidFrames:chatTexture("Gradient")
+	
 	sRaidFrames:S("statusbar_color", true)
 
 end
@@ -2027,9 +2027,9 @@ function sRaidFrames:ProfileFeedClassic()
 	sRaidFrames:S("Buff_Growth", "horizontal")
 	sRaidFrames:S("Buff_Anchor", "bottomright")
 	sRaidFrames:S("buff_slots", 4)
-	--sRaidFrames:S("Texture", "Gradient")
+	sRaidFrames:chatTexture("Smelly")
 	sRaidFrames:S("buff_size", 12)
-	sRaidFrames.opt.heal = "round"
+	sRaidFrames:chatHealingIndicators("round")
 	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp")
 	sRaidFrames:chatBorderColor(0.5, 0.5, 0.5, 1)
 	sRaidFrames:MultidragMsg()
@@ -2045,9 +2045,9 @@ function sRaidFrames:ProfileFeedGrid()
 	sRaidFrames:S("Buff_Growth", "horizontal")
 	sRaidFrames:S("Buff_Anchor", "bottomright")
 	sRaidFrames:S("buff_slots", 1)
-	--sRaidFrames:S("Texture", "Gradient")
+	sRaidFrames:chatTexture("Insomniac")
 	sRaidFrames:S("buff_size", 11)
-	sRaidFrames.opt.heal = "square"
+	sRaidFrames:chatHealingIndicators("square")
 	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
 	sRaidFrames:chatBorderColor(0.3, 0.3, 0.3, 1)
 	sRaidFrames:MultidragMsg()
@@ -2062,9 +2062,9 @@ function sRaidFrames:ProfileFeedCompact()
 	sRaidFrames:S("Buff_Growth", "vertical")
 	sRaidFrames:S("Buff_Anchor", "topright")
 	sRaidFrames:S("buff_slots", 2)
-	--sRaidFrames:S("Texture", "Gradient")
+	sRaidFrames:chatTexture("Gradient")
 	sRaidFrames:S("buff_size", 10)
-	sRaidFrames.opt.heal = "square"
+	sRaidFrames:chatHealingIndicators("square")
 	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
 	sRaidFrames:chatBorderColor(0.3, 0.3, 0.3, 1)
 	sRaidFrames:MultidragMsg()
