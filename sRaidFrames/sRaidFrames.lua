@@ -149,7 +149,7 @@ function sRaidFrames:OnInitialize()
 		Growth_Focus 		= "down",
 		show_txt_buff		= false,
 		targeting 			= true,
-		self_targeting		= true,
+		self_targeting		= false,
 		buff_slots			= 2,
 		Buff_Growth			= "vertical",
 		Buff_Anchor 		= "topright",
