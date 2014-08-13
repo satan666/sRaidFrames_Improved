@@ -1654,7 +1654,7 @@ sRaidFrames.options = {
 				debug_rez = {
 					name = L["Enable incomming resurrection debug"],
 					type = "toggle",
-					desc = L["Incomming resurrection debug, only for testing. Prefixes: HCOM - HealComm, SRF - SRaidFrames, HBOT - HealBot, HAS - Healer Assist, ORA - ORA and CTRA"],
+					desc = L["Incomming resurrection debug, only for testing. Prefixes: HCOM - HealComm, SRF - SRaidFrames, HBOT - HealBot, HAS - Healer Assist"],
 					get = function() return sRaidFrames.opt.DebugRez end,
 					set = function(value)
 						sRaidFrames.opt.DebugRez = value
@@ -1956,7 +1956,7 @@ function sRaidFrames:chatToggleBorder(value)
 	end
 
 	self:UpdateBuffs(self.visible)
-	self:ResetHealIndicators("force")
+	--self:ResetHealIndicators("force")
 end
 
 function sRaidFrames:chatTextureBorder(value)
@@ -1967,12 +1967,12 @@ function sRaidFrames:chatTextureBorder(value)
 	end
 
 	self:UpdateBuffs(self.visible)
-	self:ResetHealIndicators("force")
+	--self:ResetHealIndicators("force")
 end
 
 function sRaidFrames:chatHealingIndicators(value)
-	self:S("heal", value)
 	sRaidFrames:ResetHealIndicators()
+	self:S("heal", value)
 	sRaidFrames:LoadStyle()
 end
 
@@ -2028,7 +2028,7 @@ function sRaidFrames:ProfileFeedClassic()
 	sRaidFrames:S("Buff_Anchor", "bottomright")
 	sRaidFrames:S("buff_slots", 4)
 	--sRaidFrames:S("Texture", "Gradient")
-	sRaidFrames:S("buff_size", 15.1)
+	sRaidFrames:S("buff_size", 12)
 	sRaidFrames.opt.heal = "round"
 	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp")
 	sRaidFrames:chatBorderColor(0.5, 0.5, 0.5, 1)
@@ -2046,7 +2046,7 @@ function sRaidFrames:ProfileFeedGrid()
 	sRaidFrames:S("Buff_Anchor", "bottomright")
 	sRaidFrames:S("buff_slots", 1)
 	--sRaidFrames:S("Texture", "Gradient")
-	sRaidFrames:S("buff_size", 15.1)
+	sRaidFrames:S("buff_size", 11)
 	sRaidFrames.opt.heal = "square"
 	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
 	sRaidFrames:chatBorderColor(0.3, 0.3, 0.3, 1)

@@ -258,7 +258,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Enable incomming heal debug"] = true,
 	["Incomming heal debug, only for testing. Prefixes: HCOM - HealComm, SRF - SRaidFrames, HBOT - HealBot, HAS - Healer Assist"] = true,
 	["Enable incomming resurrection debug"] = true,
-	["Incomming resurrection debug, only for testing. Prefixes: HCOM - HealComm, SRF - SRaidFrames, HBOT - HealBot, HAS - Healer Assist, ORA - ORA and CTRA"] = true,
+	["Incomming resurrection debug, only for testing. Prefixes: HCOM - HealComm, SRF - SRaidFrames, HBOT - HealBot, HAS - Healer Assist"] = true,
 	
 	
 	["Alpha"] = true,

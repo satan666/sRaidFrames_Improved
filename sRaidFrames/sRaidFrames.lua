@@ -1821,6 +1821,7 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 				yMod = 0
 				xMod = -1*(f:GetHeight()*self.master:GetScale()+self.opt.Spacing)*k
 			else
+
 				yMod = (f:GetWidth()*self.master:GetScale()+self.opt.Spacing)*k
 				xMod = 0
 			end
@@ -1926,9 +1927,9 @@ function sRaidFrames:ResetHealIndicators(mode)
 		for key,value in pairs(self.indicator) do
 			self.indicator[key] = 0
 			self:SetHealIndicator(key)
-			if mode == "force" then
-				self.indicator[key] = nil
-			end
+			--if mode == "force" then
+				--self.indicator[key] = nil
+			--end
 		end
 	end	
 end
