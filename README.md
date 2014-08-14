@@ -20,7 +20,7 @@
 
 ## OTHER REPOSITORIES
 - [WOW 1.12.1 Cast supporting addons](https://github.com/satan666/LazySpell)
-- [WOW 1.12.1 UI texture pack] (https://github.com/satan666/UI-TEXTURE-PACK/archive/master.zip)
+- [WOW 1.12.1 UI texture pack] (https://github.com/satan666/UI-TEXTURE-PACK)
 - [WOW 1.12.1 Improved ag_UnitFrames by Skela](https://github.com/satan666/ag_UnitFrames_Improved)
 
 cheers Ogrisch
