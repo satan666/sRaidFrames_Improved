@@ -6,6 +6,8 @@
 - aggro status
 - focus frame
 - class colored status bars
+- [fast configuration](https://www.youtube.com/watch?v=WEYpvmRHAXg&feature=youtu.be)
+
 
 ## IMPORTANT
 - USING UNITFRAMES OTHER THAN BLIZZARD UF OR LUNA UF OR AG UNITFRAMES MAY CAUSE PROBLEMS(DISAPPEARING LOOT FRAME OR TARGET FLICKING)
