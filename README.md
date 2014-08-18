@@ -10,7 +10,7 @@
 
 
 ## IMPORTANT
-- If you're using SRF 0.85 and older it's mandatory to delete SRF files from savedVariables folder
+- If you're using SRF 0.85 and older it's mandatory to delete SRF files from SavedVariables folder
 
 ## PACK CONTENT
 - sRaidFrames
