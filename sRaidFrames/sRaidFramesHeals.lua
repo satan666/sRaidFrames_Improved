@@ -8,7 +8,7 @@ sRaidFramesHeals.ver = GetAddOnMetadata("sRaidFrames", "Version")
 sRaidFramesHeals.WhoHealsWho = {}
 sRaidFramesHeals.WhoHealsWhoGroup = {}
 sRaidFramesHeals.IgnoreLog = {}
-
+sRaidFramesHeals.visualdelay = 0.25
 
 local watchSpells = {
 	[BS["Prayer of Healing"]] = true,
@@ -440,7 +440,7 @@ end
 		if not check1 or check2 then
 			sRaidFrames:ShowHealIndicator(unit)
 			self.WhoHealsWho[caster_name] = target_name
-			self:ScheduleEvent("HealCompleted"..caster_name, self.UnitHealCompleted, duration, self, caster_name)
+			self:ScheduleEvent("HealCompleted"..caster_name, self.UnitHealCompleted, (duration + self.visualdelay), self, caster_name)
 		end	
 		
 	end
