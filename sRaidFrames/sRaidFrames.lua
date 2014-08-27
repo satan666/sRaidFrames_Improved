@@ -109,9 +109,9 @@ function sRaidFrames:OnInitialize()
 		SortBy				= "fixed",
 		healthDisplayType	= 'percent',
 		Invert = false,
-		Scale				= 1.25,
+		Scale				= 1.15,
 		Width				= 65,
-		ScaleFocus 			= 1.25,
+		ScaleFocus 			= 1.15,
 		WidthFocus 			= 65,
 		Width_OLD			= 65,
 		Border				= true,
@@ -636,11 +636,11 @@ function sRaidFrames:RangeCheck()
 						if (dist/11.11) > self.MapScale and CheckInteractDistance(unit, 2) then
 							self.UnitRangeArray[unit] = " 11Y"
 							local adjust = dist/11.11
-							self:DebugRange("RC_INC "..GetUnitName(unit).."_11Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+							self:DebugRange("RC_INC "..GetUnitName(unit).."_11Y: "..adjust.." - "..math.floor(adjust/self.MapScale*100 - 100).."% ")
 							self.MapScale = adjust
 						elseif (dist/28) > self.MapScale then
 							local adjust = dist/28
-							self:DebugRange("RC_INC "..GetUnitName(unit).."_28Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+							self:DebugRange("RC_INC "..GetUnitName(unit).."_28Y: "..adjust.." - "..math.floor(adjust/self.MapScale*100 - 100).."% ")
 							self.MapScale = adjust
 						end
 					end	
@@ -673,7 +673,9 @@ function sRaidFrames:RangeCheck()
 			
 			local table_val = self:ExtendedRangeArrayUtilize("calc")
 			local step, freq = self:Freqcalc(table_val)
-			self:DebugRange("RC_TOTAL: "..table_val.." - CYCLE FREQ: "..((math.floor(freq *100))/100).."s - STATUS: "..status)
+			self:DebugRange("RC_STATUS: |cff00eeee"..status.."|cffffffff - TOTAL: |cff00eeee"..table_val.."|cffffffff - PERIOD: |cff00eeee"..((math.floor(freq *100))/100).."s |cffffffff")
+
+			
 			self:ScheduleRepeatingEvent("sRaidFramesExtendedRangeCheck", self.ExtendedRangeCheck, step , self)	
 		end
 	end
@@ -728,13 +730,13 @@ function sRaidFrames:VerifyUnitRange(unit, dist)
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			if dist > (self.MapScale*40) then
 				local adjust = dist/(40*0.99)
-				self:DebugRange("RC_INC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+				self:DebugRange("RC_INC "..GetUnitName(unit).."_40Y: "..adjust.." - "..math.floor(adjust/self.MapScale*100 - 100).."% ")
 				self.MapScale = adjust
 			end	
 			return true
 		elseif dist < (self.MapScale*40) then
 			local adjust = dist/(40*1.01)
-			self:DebugRange("RC_DEC "..GetUnitName(unit).."_40Y - "..math.floor(adjust/self.MapScale*100).."% "..adjust)
+			self:DebugRange("RC_DEC "..GetUnitName(unit).."_40Y: "..adjust.." - "..math.floor(adjust/self.MapScale*100 - 100).."% ")
 			self.MapScale = adjust
 			return nil
 		else
