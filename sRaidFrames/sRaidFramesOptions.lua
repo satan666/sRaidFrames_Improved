@@ -299,7 +299,7 @@ sRaidFrames.options = {
 								sRaidFrames:chatToggleBorder(value)
 		
 								
-								sRaidFrames:S("fixed_count", 5)
+								sRaidFrames:S("fixed_count", 8)
 								if sRaidFrames.opt.Width > 50 then
 									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
 								end	
@@ -404,7 +404,7 @@ sRaidFrames.options = {
 								sRaidFrames:chatToggleBorder(value)
 		
 								
-								sRaidFrames:S("fixed_count", 5)
+								sRaidFrames:S("fixed_count", 8)
 								if sRaidFrames.opt.Width > 50 then
 									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
 								end	
@@ -461,7 +461,7 @@ sRaidFrames.options = {
 								if sRaidFrames.opt.Width > 50 then
 									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
 								end	
-								sRaidFrames:S("Width", 40)
+								sRaidFrames:S("Width", 47.5)
 								sRaidFrames:S("unit_name_lenght", true)
 								sRaidFrames:S("vertical_hp", true)
 								sRaidFrames:S("Growth", "down")
@@ -488,7 +488,7 @@ sRaidFrames.options = {
 								if sRaidFrames.opt.Width > 50 then
 									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
 								end	
-								sRaidFrames:S("Width", 40)
+								sRaidFrames:S("Width", 47.5)
 								sRaidFrames:S("unit_name_lenght", true)
 								sRaidFrames:S("vertical_hp", true)
 								sRaidFrames:S("Growth", "right")
@@ -2131,7 +2131,7 @@ function sRaidFrames:ProfileFeedPyramid()
 	sRaidFrames:chatSortBy("class")
 	sRaidFrames:ProfileFeedCommon()
 	sRaidFrames:S("Spacing", -6)
-	sRaidFrames:S("show_txt_buff", true)
+	sRaidFrames:S("show_txt_buff", nil)
 	sRaidFrames:S("Buff_Growth", "horizontal")
 	sRaidFrames:S("Buff_Anchor", "bottomright")
 	sRaidFrames:S("buff_slots", 1)

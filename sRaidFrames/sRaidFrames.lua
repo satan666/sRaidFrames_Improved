@@ -1550,7 +1550,6 @@ function sRaidFrames:Sort_Force()
 	end	
 end
 
-
 function sRaidFrames:ReturnClassCount(class)
 	local NumMembers = GetNumRaidMembers()
 	local counter = 1
@@ -1568,13 +1567,12 @@ function sRaidFrames:ReturnClassCount(class)
 	return counter_class
 end
 
-
 function sRaidFrames:MembersSortBy(id)
 	local sort_by = ""
 	local unit = "raid" .. id
 	--DEFAULT_CHAT_FRAME:AddMessage(Zorlen_UnitClass(unit).." ")
 	if self.opt.SubSort == "class" then
-		local prefix = UnitExists(unit) and self:ReturnClassCount(Zorlen_UnitClass(unit))
+		local prefix = UnitExists(unit) and self:ReturnClassCount(Zorlen_UnitClass(unit)) or 0
 		--sort_by = UnitClass(unit) or ""
 		sort_by = UnitExists(unit) and prefix..Zorlen_UnitClass(unit) or ""
 	elseif self.opt.SubSort == "name" then
