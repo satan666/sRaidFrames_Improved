@@ -146,23 +146,26 @@ L:RegisterTranslations("enUS", function() return {
 
 	["Show group titles"] = true,
 	["Toggle display of titles above each group frame"] = true,
-	["Member sort order"] = true,
+	["Group subsort"] = true,
 	["Select how you wish to sort the members of each group"] = true,
 	["By name"] = true,
 	["By class"] = true,
 	["Grid like"] = true,
 	["Blizzard default"] = true,
-	["Group by"] = true,
+	["Group sort"] = true,
 	["Group method"] = true,
 	["Dead and offline units sub sort"] = true,
 	["Dead or offline units are moved to the bottom of frame - effect only if Grid like group sort is enabled"] = true,
+	["Reverse sort"] = true,
 	
 	["Select how you wish to show the groups"] = true,
 	["By group"] = true,
 	["By class"] = true,
+	["By order"] = true,
 	["Units per column"] = true,
 	["Set max number of units in column - effect only if Grid like group sort is enabled"] = true,
-
+	["Pyramid right"] = true,
+	["Pyramid left"] = true,
 
 	["Anchor"] = true,
 	["Set the anchor of buffs/debuffs"] = true,
@@ -185,6 +188,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Show dispellable debuffs"] = true,
 	["Toggle display of dispellable debuffs"] = true,
 	
+
 	["Show filtered buffs"] = true,
 	["Toggle display of filtered buffs"] = true,
 	
