@@ -1648,6 +1648,7 @@ sRaidFrames.options = {
 					return sRaidFrames.opt.Width
 				end,
 				set = function(set)
+					sRaidFrames:PositionLayout("sticky", 200, -200)
 					sRaidFrames:S("Width", set)
 					sRaidFrames:LoadStyle()
 				end,
@@ -1994,7 +1995,7 @@ end
 function sRaidFrames:chatScale(t)
 	self:S("Scale", t)
 	self:S("ScaleFocus", t)
-
+						sRaidFrames:PositionLayout("sticky", 200, -200)
 	self.master:SetScale(t)
 	self:LoadStyle()
 end
