@@ -461,7 +461,7 @@ sRaidFrames.options = {
 								if sRaidFrames.opt.Width > 50 then
 									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
 								end	
-								sRaidFrames:S("Width", 47.5)
+								sRaidFrames:S("Width", 46)
 								sRaidFrames:S("unit_name_lenght", true)
 								sRaidFrames:S("vertical_hp", true)
 								sRaidFrames:S("Growth", "down")
@@ -488,7 +488,7 @@ sRaidFrames.options = {
 								if sRaidFrames.opt.Width > 50 then
 									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
 								end	
-								sRaidFrames:S("Width", 47.5)
+								sRaidFrames:S("Width", 46)
 								sRaidFrames:S("unit_name_lenght", true)
 								sRaidFrames:S("vertical_hp", true)
 								sRaidFrames:S("Growth", "right")
@@ -2132,11 +2132,11 @@ function sRaidFrames:ProfileFeedPyramid()
 	sRaidFrames:ProfileFeedCommon()
 	sRaidFrames:S("Spacing", -6)
 	sRaidFrames:S("show_txt_buff", nil)
-	sRaidFrames:S("Buff_Growth", "horizontal")
-	sRaidFrames:S("Buff_Anchor", "bottomright")
-	sRaidFrames:S("buff_slots", 1)
+	sRaidFrames:S("Buff_Growth", "vertical")
+	sRaidFrames:S("Buff_Anchor", "topright")
+	sRaidFrames:S("buff_slots", 3)
 	sRaidFrames:chatTexture("Minimalist")
-	sRaidFrames:S("buff_size", 11)
+	sRaidFrames:S("buff_size", 10)
 	sRaidFrames:chatHealingIndicators("square")
 	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
 	sRaidFrames:chatBorderColor(0.3, 0.3, 0.3, 1)
