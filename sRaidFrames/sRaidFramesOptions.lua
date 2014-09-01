@@ -444,6 +444,64 @@ sRaidFrames.options = {
 						end,
 						order = 7,
 					},
+					
+					profile88 = {
+						name = L["Pyramid left"],
+						type = "toggle",
+						desc = L["Load predefined settings"],
+						get = function()
+							return nil
+						end,
+						set = function(value)
+							if value then
+								sRaidFrames:chatToggleBorder(value)
+		
+								
+								sRaidFrames:S("fixed_count", 5)
+								if sRaidFrames.opt.Width > 50 then
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
+								end	
+								sRaidFrames:S("Width", 40)
+								sRaidFrames:S("unit_name_lenght", true)
+								sRaidFrames:S("vertical_hp", true)
+								sRaidFrames:S("Growth", "down")
+								sRaidFrames:S("Growth", "left")
+							end
+							sRaidFrames:ProfileFeedPyramid()
+						end,
+						order = 8,
+					},
+					
+					profile99 = {
+						name = L["Pyramid right"],
+						type = "toggle",
+						desc = L["Load predefined settings"],
+						get = function()
+							return nil
+						end,
+						set = function(value)
+							if value then
+								sRaidFrames:chatToggleBorder(value)
+		
+								
+								sRaidFrames:S("fixed_count", 5)
+								if sRaidFrames.opt.Width > 50 then
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
+								end	
+								sRaidFrames:S("Width", 40)
+								sRaidFrames:S("unit_name_lenght", true)
+								sRaidFrames:S("vertical_hp", true)
+								sRaidFrames:S("Growth", "right")
+							end
+							sRaidFrames:ProfileFeedPyramid()
+						end,
+						order = 9,
+					},
+					
+					
+					
+					
+					
 								
 					}	
 				},				
@@ -957,7 +1015,7 @@ sRaidFrames.options = {
 
 
 			sort = {
-				name = L["Group by"],
+				name = L["Group sort"],
 				type = "text",
 				desc = L["Select how you wish to show the groups"],
 				order = 1,
@@ -969,7 +1027,7 @@ sRaidFrames.options = {
 			},
 				
 			subsort = {
-				name = L["Member sort order"],
+				name = L["Group subsort"],
 				type = "text",
 				desc = L["Select how you wish to sort the members of each group"],
 				get = function()
@@ -979,7 +1037,7 @@ sRaidFrames.options = {
 					sRaidFrames:S("SubSort", value)
 					sRaidFrames:Sort()
 				end,
-				validate = {["name"] = L["By name"], ["class"] = L["By class"], ["none"] = L["By group"]},
+				validate = {["name"] = L["By name"], ["class"] = L["By class"], ["none"] = L["By order"]},
 				order = 2,
 			},
 			
@@ -1012,6 +1070,20 @@ sRaidFrames.options = {
 				end,
 				order = 9,
 			},	
+				
+			reverse_sort = {
+				name = L["Reverse sort"],
+				type = "toggle",
+				desc = L["Reverse sort"],
+				get = function()
+					return sRaidFrames.opt.ReverseSort
+				end,
+				set = function(value)
+					sRaidFrames:S("ReverseSort", value)
+					sRaidFrames:Sort()
+				end,
+				order = 10,
+			},		
 				
 				
 			per_column = {
@@ -1434,7 +1506,7 @@ sRaidFrames.options = {
 				set = function(set)
 					sRaidFrames:S("ShowFilteredBuffs", set)
 				end,	
-				--disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				disabled = function() return not (sRaidFrames.opt.BuffType == "buffs" or sRaidFrames.opt.BuffType == "buffsanddebuffs") end,
 				order = 4
 			},
 			
@@ -1448,7 +1520,7 @@ sRaidFrames.options = {
 				set = function(set)
 					sRaidFrames:S("ShowFilteredDebuffs", set)
 				end,	
-				--disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				disabled = function() return not (sRaidFrames.opt.BuffType == "debuffs" or sRaidFrames.opt.BuffType == "buffsanddebuffs") end,
 				order = 5
 			},
 
@@ -1461,7 +1533,7 @@ sRaidFrames.options = {
 					return sRaidFrames.opt.ShowOnlyDispellable
 				end,
 				set = "chatToggleDispellable",
-				disabled = function() return not (sRaidFrames.opt.BuffType ~= "buffs" or sRaidFrames.opt.BuffType ~= "nothing") end,
+				disabled = function() return not (sRaidFrames.opt.BuffType == "debuffs" or sRaidFrames.opt.BuffType == "buffsanddebuffs") end,
 				order = 6
 			},
 		
@@ -1994,10 +2066,7 @@ end
 
 
 function sRaidFrames:ProfileFeedCommon()
-	sRaidFrames:chatSortBy("fixed")
 	sRaidFrames.opt.SubSort = "class"
-	
-
 	sRaidFrames.opt.RangeAlpha = 0.25
 				
 	sRaidFrames.opt.PowerFilter[0] = false
@@ -2021,6 +2090,7 @@ function sRaidFrames:ProfileFeedCommon()
 end
 
 function sRaidFrames:ProfileFeedClassic()
+	sRaidFrames:chatSortBy("fixed")
 	sRaidFrames:ProfileFeedCommon()
 	sRaidFrames:S("Spacing", -4)
 	sRaidFrames:S("show_txt_buff", nil)
@@ -2039,6 +2109,25 @@ function sRaidFrames:ProfileFeedClassic()
 end
 
 function sRaidFrames:ProfileFeedGrid()
+	sRaidFrames:chatSortBy("fixed")
+	sRaidFrames:ProfileFeedCommon()
+	sRaidFrames:S("Spacing", -6)
+	sRaidFrames:S("show_txt_buff", true)
+	sRaidFrames:S("Buff_Growth", "horizontal")
+	sRaidFrames:S("Buff_Anchor", "bottomright")
+	sRaidFrames:S("buff_slots", 1)
+	sRaidFrames:chatTexture("Minimalist")
+	sRaidFrames:S("buff_size", 11)
+	sRaidFrames:chatHealingIndicators("square")
+	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
+	sRaidFrames:chatBorderColor(0.3, 0.3, 0.3, 1)
+	sRaidFrames:MultidragMsg()
+	sRaidFrames:LoadStyle()
+	sRaidFrames:PositionLayout("sticky", 200, -200)
+end
+
+function sRaidFrames:ProfileFeedPyramid()
+	sRaidFrames:chatSortBy("class")
 	sRaidFrames:ProfileFeedCommon()
 	sRaidFrames:S("Spacing", -6)
 	sRaidFrames:S("show_txt_buff", true)
@@ -2056,6 +2145,7 @@ function sRaidFrames:ProfileFeedGrid()
 end
 
 function sRaidFrames:ProfileFeedCompact()
+	sRaidFrames:chatSortBy("fixed")
 	sRaidFrames:ProfileFeedCommon()
 	sRaidFrames:S("Spacing", -6)
 	sRaidFrames:S("show_txt_buff", nil)

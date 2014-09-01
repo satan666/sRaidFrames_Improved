@@ -109,9 +109,9 @@ function sRaidFrames:OnInitialize()
 		SortBy				= "fixed",
 		healthDisplayType	= 'percent',
 		Invert = false,
-		Scale				= 1.15,
+		Scale				= 1.1,
 		Width				= 65,
-		ScaleFocus 			= 1.15,
+		ScaleFocus 			= 1.1,
 		WidthFocus 			= 65,
 		Width_OLD			= 65,
 		Border				= true,
@@ -1550,12 +1550,33 @@ function sRaidFrames:Sort_Force()
 	end	
 end
 
+
+function sRaidFrames:ReturnClassCount(class)
+	local NumMembers = GetNumRaidMembers()
+	local counter = 1
+	local counter_class = 0
+	local u = nil
+
+	while counter <= NumMembers do
+		u = "raid"..counter
+		if Zorlen_UnitClass(u) == class then
+			counter_class = counter_class + 1
+		end
+		counter = counter + 1	
+	end
+	--DEFAULT_CHAT_FRAME:AddMessage(class.." "..counter_class)
+	return counter_class
+end
+
+
 function sRaidFrames:MembersSortBy(id)
 	local sort_by = ""
 	local unit = "raid" .. id
-	
+	--DEFAULT_CHAT_FRAME:AddMessage(Zorlen_UnitClass(unit).." ")
 	if self.opt.SubSort == "class" then
-		sort_by = UnitClass(unit) or ""
+		local prefix = UnitExists(unit) and self:ReturnClassCount(Zorlen_UnitClass(unit))
+		--sort_by = UnitClass(unit) or ""
+		sort_by = UnitExists(unit) and prefix..Zorlen_UnitClass(unit) or ""
 	elseif self.opt.SubSort == "name" then
 		sort_by = UnitName(unit) or ""
 	else
@@ -1594,28 +1615,46 @@ function sRaidFrames:Sort(force_sort)
 			--end
 		end
 	end
-	
-	table.sort(sort, function(a,b) return self:MembersSortBy(a) < self:MembersSortBy(b) end)
+	if self.opt.ReverseSort then
+		table.sort(sort, function(a,b) return self:MembersSortBy(a) > self:MembersSortBy(b) end)
+	else
+		table.sort(sort, function(a,b) return self:MembersSortBy(a) < self:MembersSortBy(b) end)
+	end
 
 	if self.opt.SortBy == "class" then
-		frameAssignments["WARRIOR"] = 1;
-		frameAssignments["MAGE"] = 2;
-		frameAssignments["PALADIN"] = 3;
-		frameAssignments["SHAMAN"] = 3;
-		frameAssignments["DRUID"] = 4;
-		frameAssignments["HUNTER"] = 5;
-		frameAssignments["ROGUE"] = 6;
-		frameAssignments["WARLOCK"] = 7;
-		frameAssignments["PRIEST"] = 8;
+		local queue = {}	
+		
+		table.insert(queue, "Warrior")
+		table.insert(queue, "Mage")
+		if UnitFactionGroup("player") == "Alliance" then table.insert(queue, "Paladin")	else table.insert(queue, "Shaman") end	
+		table.insert(queue, "Druid")
+		table.insert(queue, "Hunter")
+		table.insert(queue, "Rogue")
+		table.insert(queue, "Warlock")
+		table.insert(queue, "Priest")
 
-		self.groupframes[1].title:SetText(L["Warrior"]);
-		self.groupframes[2].title:SetText(L["Mage"]);
-		self.groupframes[3].title:SetText((UnitFactionGroup("player") == "Alliance") and L["Paladin"] or L["Shaman"]);
-		self.groupframes[4].title:SetText(L["Druid"]);
-		self.groupframes[5].title:SetText(L["Hunter"]);
-		self.groupframes[6].title:SetText(L["Rogue"]);
-		self.groupframes[7].title:SetText(L["Warlock"]);
-		self.groupframes[8].title:SetText(L["Priest"]);
+		if self.opt.ReverseSort then
+			table.sort(queue, function(a,b) return sRaidFrames:ReturnClassCount(a) < sRaidFrames:ReturnClassCount(b) end)
+		else
+			table.sort(queue, function(a,b) return sRaidFrames:ReturnClassCount(a) > sRaidFrames:ReturnClassCount(b) end)
+		end	
+
+		for i=1,8 do
+			frameAssignments[string.upper(queue[i])] = i
+		end
+
+		self.groupframes[frameAssignments["WARRIOR"]].title:SetText(L["Warrior"]);
+		self.groupframes[frameAssignments["MAGE"]].title:SetText(L["Mage"]);
+		if UnitFactionGroup("player") == "Alliance" then
+			self.groupframes[frameAssignments["PALADIN"]].title:SetText(L["Paladin"]);
+		else
+			self.groupframes[frameAssignments["SHAMAN"]].title:SetText(L["Shaman"]);
+		end	
+		self.groupframes[frameAssignments["DRUID"]].title:SetText(L["Druid"]);
+		self.groupframes[frameAssignments["HUNTER"]].title:SetText(L["Hunter"]);
+		self.groupframes[frameAssignments["ROGUE"]].title:SetText(L["Rogue"]);
+		self.groupframes[frameAssignments["WARLOCK"]].title:SetText(L["Warlock"]);
+		self.groupframes[frameAssignments["PRIEST"]].title:SetText(L["Priest"]);
 
 	elseif self.opt.SortBy == "group" or self.opt.SortBy == "fixed" then
 		frameAssignments[1] = 1;
