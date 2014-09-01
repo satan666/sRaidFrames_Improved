@@ -1572,9 +1572,10 @@ function sRaidFrames:MembersSortBy(id)
 	local unit = "raid" .. id
 	--DEFAULT_CHAT_FRAME:AddMessage(Zorlen_UnitClass(unit).." ")
 	if self.opt.SubSort == "class" then
-		local prefix = UnitExists(unit) and self:ReturnClassCount(Zorlen_UnitClass(unit)) or 0
-		--sort_by = UnitClass(unit) or ""
-		sort_by = UnitExists(unit) and prefix..Zorlen_UnitClass(unit) or ""
+		if UnitExists(unit) and Zorlen_UnitClass(unit) then
+			local prefix = self:ReturnClassCount(Zorlen_UnitClass(unit)) or 0
+			sort_by = prefix..Zorlen_UnitClass(unit) or ""
+		end
 	elseif self.opt.SubSort == "name" then
 		sort_by = UnitName(unit) or ""
 	else
@@ -1821,7 +1822,7 @@ function sRaidFrames:RestorePosition()
 end
 
 function sRaidFrames:ResetPosition()
-	self:PositionLayout("ctra", 200, -200)
+	self:PositionLayout("sticky", 200, -200)
 end
 
 function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)

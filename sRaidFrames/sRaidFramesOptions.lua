@@ -993,6 +993,7 @@ sRaidFrames.options = {
 					desc = L["Reset the position of sRaidFrames"],
 					func = "ResetPosition"
 				},
+				--[[
 				predefined = {
 					name = L["Predefined Layout"],
 					type = "text",
@@ -1001,6 +1002,7 @@ sRaidFrames.options = {
 					set = "chatSetLayout",
 					validate = {["sticky"] = L["Sticky"],["ctra"] = L["CT_RaidAssist"], ["horizontal"] = L["Horizontal"], ["vertical"] = L["Vertical"]},
 				},
+				--]]
 			},
 		},
 
