@@ -446,7 +446,7 @@ sRaidFrames.options = {
 					},
 					
 					profile88 = {
-						name = L["Pyramid left"],
+						name = L["Pyramid BottomRight"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -466,6 +466,7 @@ sRaidFrames.options = {
 								sRaidFrames:S("vertical_hp", true)
 								sRaidFrames:S("Growth", "down")
 								sRaidFrames:S("Growth", "left")
+								sRaidFrames:S("ReverseSort", true)
 							end
 							sRaidFrames:ProfileFeedPyramid()
 						end,
@@ -473,7 +474,7 @@ sRaidFrames.options = {
 					},
 					
 					profile99 = {
-						name = L["Pyramid right"],
+						name = L["Pyramid BottomLeft"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -492,15 +493,66 @@ sRaidFrames.options = {
 								sRaidFrames:S("unit_name_lenght", true)
 								sRaidFrames:S("vertical_hp", true)
 								sRaidFrames:S("Growth", "right")
+								sRaidFrames:S("ReverseSort", true)
 							end
 							sRaidFrames:ProfileFeedPyramid()
 						end,
 						order = 9,
 					},
 					
+					profile10 = {
+						name = L["Pyramid TopLeft"],
+						type = "toggle",
+						desc = L["Load predefined settings"],
+						get = function()
+							return nil
+						end,
+						set = function(value)
+							if value then
+								sRaidFrames:chatToggleBorder(value)
+		
+								
+								sRaidFrames:S("fixed_count", 5)
+								if sRaidFrames.opt.Width > 50 then
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
+								end	
+								sRaidFrames:S("Width", 46)
+								sRaidFrames:S("unit_name_lenght", true)
+								sRaidFrames:S("vertical_hp", true)
+								sRaidFrames:S("Growth", "right")
+								sRaidFrames:S("ReverseSort", nil)
+							end
+							sRaidFrames:ProfileFeedPyramid()
+						end,
+						order = 10,
+					},
 					
-					
-					
+					profile11 = {
+						name = L["Pyramid TopRight"],
+						type = "toggle",
+						desc = L["Load predefined settings"],
+						get = function()
+							return nil
+						end,
+						set = function(value)
+							if value then
+								sRaidFrames:chatToggleBorder(value)
+		
+								
+								sRaidFrames:S("fixed_count", 5)
+								if sRaidFrames.opt.Width > 50 then
+									sRaidFrames:S("Width_OLD", sRaidFrames.opt.Width or 65)
+								end	
+								sRaidFrames:S("Width", 46)
+								sRaidFrames:S("unit_name_lenght", true)
+								sRaidFrames:S("vertical_hp", true)
+								sRaidFrames:S("Growth", "left")
+								sRaidFrames:S("ReverseSort", nil)
+							end
+							sRaidFrames:ProfileFeedPyramid()
+						end,
+						order = 11,
+					},
 					
 								
 					}	

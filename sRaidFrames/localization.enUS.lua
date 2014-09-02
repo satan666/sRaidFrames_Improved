@@ -164,8 +164,11 @@ L:RegisterTranslations("enUS", function() return {
 	["By order"] = true,
 	["Units per column"] = true,
 	["Set max number of units in column - effect only if Grid like group sort is enabled"] = true,
-	["Pyramid right"] = true,
-	["Pyramid left"] = true,
+	["Pyramid BottomRight"] = true,
+	["Pyramid BottomLeft"] = true,
+	["Pyramid TopRight"] = true,
+	["Pyramid TopLeft"] = true,
+
 
 	["Anchor"] = true,
 	["Set the anchor of buffs/debuffs"] = true,
