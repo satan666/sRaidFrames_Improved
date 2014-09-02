@@ -524,7 +524,7 @@ sRaidFrames.options = {
 							end
 							sRaidFrames:ProfileFeedPyramid()
 						end,
-						order = 10,
+						order = 11,
 					},
 					
 					profile11 = {
@@ -551,7 +551,7 @@ sRaidFrames.options = {
 							end
 							sRaidFrames:ProfileFeedPyramid()
 						end,
-						order = 11,
+						order = 10,
 					},
 					
 								
