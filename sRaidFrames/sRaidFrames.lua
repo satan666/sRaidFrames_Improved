@@ -239,6 +239,18 @@ function sRaidFrames:OnEnable()
 		aUF.PLAYER_TARGET_CHANGED_OLD = aUF.PLAYER_TARGET_CHANGED
 		aUF.PLAYER_TARGET_CHANGED = self.ag_PLAYER_TARGET_CHANGED_Hook
 	end
+	
+	if XPerl_Frame_FindID then
+		XPerl_Target_UpdateDisplay_OLD = XPerl_Target_UpdateDisplay
+		XPerl_Target_UpdateDisplay = self.XPerl_Target_UpdateDisplay_Hook
+		
+		XPerl_Target_UpdatePortrait_OLD = XPerl_Target_UpdatePortrait
+		XPerl_Target_UpdatePortrait = self.XPerl_Target_UpdatePortrait_Hook
+		
+		--XPerl_Target_CombatFlash_OLD = XPerl_Target_CombatFlash
+		--XPerl_Target_CombatFlash = self.XPerl_Target_CombatFlash_Hook
+		
+	end
 end
 
 function sRaidFrames:PatchUpdate()
@@ -250,6 +262,29 @@ function sRaidFrames:PatchUpdate()
 	end
 end
 
+
+
+function sRaidFrames:XPerl_Target_UpdateDisplay_Hook()
+	if not sRaidFrames.TargetMonitor then
+		--DEFAULT_CHAT_FRAME:AddMessage("XPerl_Target_UpdateDisplay_Hook")
+		XPerl_Target_UpdateDisplay_OLD()
+	end	
+end
+
+function sRaidFrames:XPerl_Target_UpdatePortrait_Hook()
+	if not sRaidFrames.TargetMonitor then
+		--DEFAULT_CHAT_FRAME:AddMessage("XPerl_Target_UpdatePortrait_Hook")
+		XPerl_Target_UpdatePortrait_OLD()
+	end	
+end
+--[[
+function sRaidFrames:XPerl_Target_CombatFlash_Hook(a1, a2)
+	if not sRaidFrames.TargetMonitor then	
+		DEFAULT_CHAT_FRAME:AddMessage("XPerl_Target_CombatFlash")
+		XPerl_Target_CombatFlash_OLD(a1, a2)
+	end	
+end
+--]]
 function sRaidFrames:TargetFrame_OnEvent(event)
 	if not self.TargetMonitor then
 		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:TargetFrame_OnEvent")

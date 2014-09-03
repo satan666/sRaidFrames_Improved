@@ -464,8 +464,7 @@ sRaidFrames.options = {
 								sRaidFrames:S("Width", 46)
 								sRaidFrames:S("unit_name_lenght", true)
 								sRaidFrames:S("vertical_hp", true)
-								sRaidFrames:S("Growth", "down")
-								sRaidFrames:S("Growth", "left")
+								sRaidFrames:S("Growth", "up")
 								sRaidFrames:S("ReverseSort", true)
 							end
 							sRaidFrames:ProfileFeedPyramid()
@@ -492,8 +491,8 @@ sRaidFrames.options = {
 								sRaidFrames:S("Width", 46)
 								sRaidFrames:S("unit_name_lenght", true)
 								sRaidFrames:S("vertical_hp", true)
-								sRaidFrames:S("Growth", "right")
-								sRaidFrames:S("ReverseSort", true)
+								sRaidFrames:S("Growth", "up")
+								sRaidFrames:S("ReverseSort", false)
 							end
 							sRaidFrames:ProfileFeedPyramid()
 						end,
@@ -519,8 +518,8 @@ sRaidFrames.options = {
 								sRaidFrames:S("Width", 46)
 								sRaidFrames:S("unit_name_lenght", true)
 								sRaidFrames:S("vertical_hp", true)
-								sRaidFrames:S("Growth", "right")
-								sRaidFrames:S("ReverseSort", nil)
+								sRaidFrames:S("Growth", "down")
+								sRaidFrames:S("ReverseSort", false)
 							end
 							sRaidFrames:ProfileFeedPyramid()
 						end,
@@ -546,8 +545,8 @@ sRaidFrames.options = {
 								sRaidFrames:S("Width", 46)
 								sRaidFrames:S("unit_name_lenght", true)
 								sRaidFrames:S("vertical_hp", true)
-								sRaidFrames:S("Growth", "left")
-								sRaidFrames:S("ReverseSort", nil)
+								sRaidFrames:S("Growth", "down")
+								sRaidFrames:S("ReverseSort", true)
 							end
 							sRaidFrames:ProfileFeedPyramid()
 						end,
