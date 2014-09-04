@@ -1527,12 +1527,12 @@ function sRaidFrames:SetStyle(f, unit, width, aggro)
 	end
 	
 	if self.opt.PowerFilter[powertype] then
-		self:SetWHP(f.hpbar, frame_width - 10, 26, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+		self:SetWHP(f.hpbar, frame_width - 10, 27.5, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
 	else
-		self:SetWHP(f.hpbar, frame_width - 10, 30, "TOPLEFT", f, "BOTTOMLEFT", 5, 35)
+		self:SetWHP(f.hpbar, frame_width - 9.4, 30, "TOPLEFT", f, "BOTTOMLEFT", 4.75, 35)
 	end	
 	
-	self:SetWHP(f.mpbar, frame_width - 10, 3, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
+	self:SetWHP(f.mpbar, frame_width - 10, 2.5, "TOPLEFT", f.hpbar, "BOTTOMLEFT", 0, 0)
 	
 	if sRaidFrames.opt.heal == "round" then
 		self:SetWHP(f.hpbar.indicator1, 7.7, 7.7, "TOPLEFT", f, "BOTTOMLEFT", 4, 37)
