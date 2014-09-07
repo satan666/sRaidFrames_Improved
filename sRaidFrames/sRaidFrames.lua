@@ -1857,7 +1857,7 @@ function sRaidFrames:RestorePosition()
 end
 
 function sRaidFrames:ResetPosition()
-	self:PositionLayout("sticky", 200, -200)
+	self:PositionLayout("sticky", 200, -300)
 end
 
 function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
