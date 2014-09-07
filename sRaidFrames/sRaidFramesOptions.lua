@@ -263,7 +263,7 @@ sRaidFrames.options = {
 					},
 
 				profile11 = {
-						name = L["Classic - 5 per column"],
+						name = L["Classic - 8 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -288,7 +288,7 @@ sRaidFrames.options = {
 					},
 				
 				profile22 = {
-						name = L["Grid - Vertical 5 per column"],
+						name = L["Grid - Vertical 8 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -393,7 +393,7 @@ sRaidFrames.options = {
 					},
 
 				profile66 = {
-						name = L["Compact - Vertical 5 per column"],
+						name = L["Compact - Vertical 8 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()

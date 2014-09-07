@@ -41,13 +41,13 @@ L:RegisterTranslations("enUS", function() return {
 	["Load predefined settings for best visual effect"] = true,
 	
 	["_Load profiles"] = true,
-	["Classic - 5 per column"] = true,
+	["Classic - 8 per column"] = true,
 	["Classic - 8 per column"] = true,
 	["Classic - 10 per column"] = true,
 	["Classic - 20 per column"] = true,
-	["Grid - Vertical 5 per column"] = true,
+	["Grid - Vertical 8 per column"] = true,
 	["Grid - Horizontal 8 per row"] = true,
-	["Compact - Vertical 5 per column"] = true,
+	["Compact - Vertical 8 per column"] = true,
 	["Compact - Horizontal 8 per row"] = true,
 	
 	["_Focus frame"] = true,
