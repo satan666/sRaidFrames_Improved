@@ -2223,7 +2223,8 @@ end
 
 
 function sRaidFrames:CheckCarrier(unit)
-	if self.carrier and strlower(GetUnitName(unit)) == self.carrier then
+	local name = GetUnitName(unit)
+	if self.carrier and name and strlower(name) == self.carrier then
 		
 		return true
 	end
