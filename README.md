@@ -25,7 +25,7 @@
 
 ## RELATED REPOSITORIES
 - [WOW 1.12.1 LazySpell](https://github.com/satan666/LazySpell)
-	- great addon providing healing spell auto rank scaling depending on target hp deficit - superior mana saver
+	- great addon providing healing spell auto rank scale depending on target's hp deficit - superior mana saver
 	- I wrote it to work as plugin to Clique or Classic MouseOver - easy to setup
 - [WOW 1.12.1 Improved ag_UnitFrames by Skela](https://github.com/satan666/ag_UnitFrames_Improved)
 	- SRF supported UnitFrames
