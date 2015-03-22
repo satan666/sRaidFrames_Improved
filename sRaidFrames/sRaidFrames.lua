@@ -659,6 +659,19 @@ function sRaidFrames:RangeCheck()
 		for unit in pairs(self.visible) do
 			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and UnitIsConnected(unit) and not UnitIsGhost(unit)
 			local deadcheck = UnitIsDead(unit)
+			
+			local _tx, _ty, dist = nil, nil, 28
+			
+			if self.MapEnable and unitcheck and not deadcheck then
+				_tx, _ty = GetPlayerMapPosition(unit)
+				dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
+			end
+			
+			
+			local check_accurate = unitcheck and self.SpellCheck and (self.opt.ExtendedRangeCheck or self.opt.ExtendedRangeCheckCombat and UnitAffectingCombat("player")) and not deadcheck
+			local check_light = unitcheck and self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) and not deadcheck
+			
+			
 			if unitcheck and UnitIsUnit("player", unit) then
 				--self.frames[unit]:SetAlpha(1)
 				self.UnitRangeArray[unit] = 0
@@ -669,15 +682,11 @@ function sRaidFrames:RangeCheck()
 				else
 					self.UnitRangeArray[unit] = 28
 				end
-				if self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) then
-					local _tx, _ty = GetPlayerMapPosition(unit)
-					local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
-
+				if self.MapEnable then --and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) then
 					--DEFAULT_CHAT_FRAME:AddMessage(GetUnitName(unit)..math.floor(dist/self.MapScale))
 					self.UnitRangeArray[unit] = math.floor(dist/self.MapScale)
 					
-					if _tx > 0 and _ty > 0 then
-					
+					if _tx and _tx > 0 and _ty and _ty > 0 then
 						if (dist/11.11) > self.MapScale and close_range then
 							local adjust = dist/11.11
 							self:DebugRange("RC_INC "..GetUnitName(unit).."_11Y: "..adjust.." - "..math.floor(adjust/self.MapScale*100 - 100).."% ")
@@ -689,10 +698,9 @@ function sRaidFrames:RangeCheck()
 						end
 					end	
 				end
+				
+			--[[	
 			elseif unitcheck and self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) and not deadcheck then
-				local _tx, _ty = GetPlayerMapPosition(unit)
-				local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
-
 				if _tx > 0 and _ty > 0 and self:VerifyUnitRange(unit, dist) then
 					--self.frames[unit]:SetAlpha(1)
 					--self.UnitRangeArray[unit] = 40
@@ -706,6 +714,29 @@ function sRaidFrames:RangeCheck()
 				--self.ExtendedRangeScan[counter] = unit
 				self:ExtendedRangeArrayUtilize("add", unit)
 				counter = counter + 1
+				
+			--]]	
+				
+			elseif check_light or check_accurate then
+				if unitcheck and self.MapEnable and not deadcheck and _tx and _tx > 0 and _ty and _ty > 0 and self:VerifyUnitRange(unit, dist) then
+					--self.frames[unit]:SetAlpha(1)
+					--self.UnitRangeArray[unit] = 40
+					if check_light or check_accurate and self.UnitRangeArray[unit] ~= "" then
+						self.UnitRangeArray[unit] = math.floor(dist/self.MapScale)
+					end
+					--DEFAULT_CHAT_FRAME:AddMessage(GetUnitName(unit)..math.floor(dist/self.MapScale).." -> 40")
+				elseif check_light then
+					self.UnitRangeArray[unit] = ""
+					--self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
+				elseif self.UnitRangeArray[unit] ~= "" then
+					self.UnitRangeArray[unit] = 40
+				end
+				
+				if check_accurate then
+					--self.ExtendedRangeScan[counter] = unit
+					self:ExtendedRangeArrayUtilize("add", unit)
+					counter = counter + 1
+				end
 				
 			else
 				self.UnitRangeArray[unit] = ""
@@ -753,7 +784,9 @@ function sRaidFrames:ExtendedRangeCheck()
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			--self.frames[j]:SetAlpha(1)
 			--if self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) then self.UnitRangeArray[j] = 40 else self.UnitRangeArray[j] = 40 end
-			self.UnitRangeArray[j] = 40
+			if self.UnitRangeArray[j] == "" then
+				self.UnitRangeArray[j] = 40
+			end	
 			self:DebugRange("RC "..GetUnitName(j).."_40y - " .."|cff00FF00 PASS")
 			jumpnext = nil
 		end
@@ -790,7 +823,7 @@ function sRaidFrames:VerifyUnitRange(unit, dist)
 		else
 			return nil
 		end
-	elseif dist < (self.MapScale*40*0.9) then
+	elseif dist < (self.MapScale*40*0.90) then
 		return true
 	else
 		return nil
@@ -854,7 +887,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				
 				if self.opt.RangeShow then
 					range = self.UnitRangeArray[unit]
-					if not range or range == "" or range == 0 then
+					if not range or range == "" or range == 0 or UnitIsDeadOrGhost("player") then
 						range =  ""
 					else
 						range =  range.."Y"
