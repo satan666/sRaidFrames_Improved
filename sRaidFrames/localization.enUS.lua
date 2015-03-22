@@ -249,6 +249,7 @@ L:RegisterTranslations("enUS", function() return {
 	["_Range"] = true,
 	["Set about range"] = true,
 	["Show estimated range"] = true,
+	["Show estimated range next to player's name"] = true,
 	["Enable light range check"] = true,
 	["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - Suggested when you neither play healing class nor using Blizzard frames, agUnitFrames or LunaUnitFrames"] = true,
 	
