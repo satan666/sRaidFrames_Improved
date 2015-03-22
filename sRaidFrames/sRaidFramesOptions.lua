@@ -263,7 +263,7 @@ sRaidFrames.options = {
 					},
 
 				profile11 = {
-						name = L["Classic - 8 per column"],
+						name = L["Classic - 5 per column"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
 						get = function()
@@ -445,7 +445,7 @@ sRaidFrames.options = {
 						order = 7,
 					},
 					
-					profile88 = {
+					profile111 = {
 						name = L["Pyramid BottomRight"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
@@ -472,7 +472,7 @@ sRaidFrames.options = {
 						order = 8,
 					},
 					
-					profile99 = {
+					profile222 = {
 						name = L["Pyramid BottomLeft"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
@@ -499,7 +499,7 @@ sRaidFrames.options = {
 						order = 9,
 					},
 					
-					profile10 = {
+					profile333 = {
 						name = L["Pyramid TopLeft"],
 						type = "toggle",
 						desc = L["Load predefined settings"],
@@ -526,7 +526,7 @@ sRaidFrames.options = {
 						order = 11,
 					},
 					
-					profile11 = {
+					profile444 = {
 						name = L["Pyramid TopRight"],
 						type = "toggle",
 						desc = L["Load predefined settings"],

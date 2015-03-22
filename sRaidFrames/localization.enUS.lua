@@ -41,7 +41,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Load predefined settings for best visual effect"] = true,
 	
 	["_Load profiles"] = true,
-	["Classic - 8 per column"] = true,
+	["Classic - 5 per column"] = true,
 	["Classic - 8 per column"] = true,
 	["Classic - 10 per column"] = true,
 	["Classic - 20 per column"] = true,

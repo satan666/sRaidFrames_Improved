@@ -661,16 +661,24 @@ function sRaidFrames:RangeCheck()
 			local deadcheck = UnitIsDead(unit)
 			if unitcheck and UnitIsUnit("player", unit) then
 				--self.frames[unit]:SetAlpha(1)
-				self.UnitRangeArray[unit] = " 28Y"
+				self.UnitRangeArray[unit] = 0
 			elseif unitcheck and CheckInteractDistance(unit, 4) then
-				--self.frames[unit]:SetAlpha(1)
-				self.UnitRangeArray[unit] = " 28Y"
+				local close_range = CheckInteractDistance(unit, 2)
+				if close_range then
+					self.UnitRangeArray[unit] = 11
+				else
+					self.UnitRangeArray[unit] = 28
+				end
 				if self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) then
 					local _tx, _ty = GetPlayerMapPosition(unit)
 					local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
+
+					--DEFAULT_CHAT_FRAME:AddMessage(GetUnitName(unit)..math.floor(dist/self.MapScale))
+					self.UnitRangeArray[unit] = math.floor(dist/self.MapScale)
+					
 					if _tx > 0 and _ty > 0 then
-						if (dist/11.11) > self.MapScale and CheckInteractDistance(unit, 2) then
-							self.UnitRangeArray[unit] = " 11Y"
+					
+						if (dist/11.11) > self.MapScale and close_range then
 							local adjust = dist/11.11
 							self:DebugRange("RC_INC "..GetUnitName(unit).."_11Y: "..adjust.." - "..math.floor(adjust/self.MapScale*100 - 100).."% ")
 							self.MapScale = adjust
@@ -684,9 +692,12 @@ function sRaidFrames:RangeCheck()
 			elseif unitcheck and self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) and not deadcheck then
 				local _tx, _ty = GetPlayerMapPosition(unit)
 				local dist = sqrt((_px - _tx)^2 + (_py - _ty)^2)*1000
+
 				if _tx > 0 and _ty > 0 and self:VerifyUnitRange(unit, dist) then
 					--self.frames[unit]:SetAlpha(1)
-					self.UnitRangeArray[unit] = " 40Y*"
+					--self.UnitRangeArray[unit] = 40
+					self.UnitRangeArray[unit] = math.floor(dist/self.MapScale)
+					--DEFAULT_CHAT_FRAME:AddMessage(GetUnitName(unit)..math.floor(dist/self.MapScale).." -> 40")
 				else
 					self.UnitRangeArray[unit] = ""
 					--self.frames[unit]:SetAlpha(self.opt.RangeAlpha)
@@ -741,7 +752,8 @@ function sRaidFrames:ExtendedRangeCheck()
 		end
 		if self:IsSpellInRangeAndActionBar(self.SpellCheck) then
 			--self.frames[j]:SetAlpha(1)
-			if self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) then self.UnitRangeArray[j] = " 40Y*" else self.UnitRangeArray[j] = " 40Y"	end
+			--if self.MapEnable and (self.opt.RangeCheck or self.opt.ExtendedRangeCheckCombat and not UnitAffectingCombat("player")) then self.UnitRangeArray[j] = 40 else self.UnitRangeArray[j] = 40 end
+			self.UnitRangeArray[j] = 40
 			self:DebugRange("RC "..GetUnitName(j).."_40y - " .."|cff00FF00 PASS")
 			jumpnext = nil
 		end
@@ -778,7 +790,7 @@ function sRaidFrames:VerifyUnitRange(unit, dist)
 		else
 			return nil
 		end
-	elseif dist < (self.MapScale*40*0.85) then
+	elseif dist < (self.MapScale*40*0.9) then
 		return true
 	else
 		return nil
@@ -842,9 +854,12 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				
 				if self.opt.RangeShow then
 					range = self.UnitRangeArray[unit]
-					if not range then
+					if not range or range == "" or range == 0 then
 						range =  ""
+					else
+						range =  range.."Y"
 					end
+					
 				end
 
 				local _, class = UnitClass(unit)
@@ -1093,7 +1108,7 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 								
 							elseif j == 2 then
 								process1 = self.opt.ShowOnlyDispellable
-								process2 = not self.opt.ShowDebuffsOnlyRange or self.opt.ShowDebuffsOnlyRange and self.UnitRangeArray[unit] and string.find(self.UnitRangeArray[unit], "28Y")
+								process2 = not self.opt.ShowDebuffsOnlyRange or self.opt.ShowDebuffsOnlyRange and self.UnitRangeArray[unit] and self.UnitRangeArray[unit] ~= "" and self.UnitRangeArray[unit] < 28
 								process2 = process2 and not self.TempTooltipDebuffs[debuffName]
 								
 							end
