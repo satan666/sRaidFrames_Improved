@@ -24,10 +24,14 @@
 - try to use supported unitframes(Default Blizzard, Luna, AG - Available from https://github.com/satan666/ag_UnitFrames_Improved)
 
 ## RELATED REPOSITORIES
-- [WOW 1.12.1 Cast supporting addons](https://github.com/satan666/LazySpell)
-- [WOW 1.12.1 UI texture pack] (https://github.com/satan666/UI-TEXTURE-PACK)
+- [WOW 1.12.1 LazySpell](https://github.com/satan666/LazySpell)
+	- great addon providing healing spell auto rank scaling depending on target hp deficit - superior mana saver
+	- I wrote it to work as plugin to Clique or Classic MouseOver - easy to setup
 - [WOW 1.12.1 Improved ag_UnitFrames by Skela](https://github.com/satan666/ag_UnitFrames_Improved)
-
+	- SRF supported UnitFrames
+- [WOW 1.12.1 UI texture pack] (https://github.com/satan666/UI-TEXTURE-PACK)
+	- everything looks much better
+	
 cheers Ogrisch
 
 
