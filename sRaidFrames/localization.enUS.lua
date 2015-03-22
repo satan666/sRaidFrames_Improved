@@ -248,7 +248,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Turn the border of units who have aggro red"] = true,
 	["_Range"] = true,
 	["Set about range"] = true,
-	
+	["Show estimated range"] = true,
 	["Enable light range check"] = true,
 	["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - Suggested when you neither play healing class nor using Blizzard frames, agUnitFrames or LunaUnitFrames"] = true,
 	

@@ -154,7 +154,8 @@ function sRaidFrames:OnInitialize()
 		Buff_Growth			= "vertical",
 		Buff_Anchor 		= "topright",
 		Bordertexture		= "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp",
-		heal 				= "round"
+		heal 				= "round",
+		RangeShow			= false
 
 		
 	})
@@ -839,7 +840,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 					subgroup = ""
 				end
 				
-				if self.opt.DebugRange then
+				if self.opt.RangeShow then
 					range = self.UnitRangeArray[unit]
 					if not range then
 						range =  ""
@@ -849,7 +850,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 				local _, class = UnitClass(unit)
 				local unit_name = UnitName(unit).." "..subgroup
 				
-				if self.opt.unit_name_lenght or self.opt.DebugRange then
+				if self.opt.unit_name_lenght or self.opt.RangeShow then
 					unit_name = string.sub(UnitName(unit), 1, 3).." "..subgroup --UnitName(unit)
 				end
 				

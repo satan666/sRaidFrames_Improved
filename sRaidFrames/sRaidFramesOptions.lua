@@ -1847,7 +1847,17 @@ sRaidFrames.options = {
 					order = 3,		
 				},
 				
-
+				rangeshow = {
+					name = L["Show estimated range"],
+					type = "toggle",
+					desc = L["Show estimated range"],
+					get = function() return sRaidFrames.opt.RangeShow end,
+					set = function(value)
+						sRaidFrames.opt.RangeShow = value
+					end,
+					order = 4,
+					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
+				},
 				
 				alpha = {
 					name = L["Alpha"],
@@ -1860,7 +1870,7 @@ sRaidFrames.options = {
 					min  = 0,
 					max  = 1,
 					step = 0.1,
-					order = 5,
+					order = 6,
 					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
 				},
 				frequency1 = {
@@ -1875,7 +1885,7 @@ sRaidFrames.options = {
 					min  = 0.2,
 					max  = 0.8,
 					step = 0.1,
-					order = 6,
+					order = 7,
 					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
 				},
 				
@@ -1890,9 +1900,10 @@ sRaidFrames.options = {
 					min  = 0.04,
 					max  = 0.08,
 					step = 0.01,
-					order = 7,
+					order = 8,
 					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
 				},
+
 			},
 		},
 
