@@ -93,7 +93,7 @@ sRaidFrames.NextScan = 0
 sRaidFrames.MapScale = 0
 
 
-sRaidFrames.ClassSpellArray = {Paladin = "Holy Light", Priest = "Flash Heal", Druid = "Healing Touch", Shaman = "Healing Wave"}
+sRaidFrames.ClassSpellArray = {Paladin = BS["Holy Light"], Priest = BS["Flash Heal"], Druid = BS["Healing Touch"], Shaman = BS["Healing Wave"]}
 
 
 function sRaidFrames:OnInitialize()
@@ -643,7 +643,7 @@ function sRaidFrames:RangeCheck()
 	end	
 	--DEFAULT_CHAT_FRAME:AddMessage("|cff00eeeeDebug: |cffffffffRange Check")
 	if not self.ClassCheck then 
-		self.ClassCheck = UnitClass("player") 
+		self.ClassCheck = Zorlen_UnitClass("player") 
 		self.SpellCheck = self.ClassSpellArray[self.ClassCheck]
 	end
 	
