@@ -27,7 +27,6 @@ function sRaidFramesArrows:CheckRoster()
 				local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(id)
 				if zone == GetRealZoneText() then
 					self.ZoneUnit["raid"..id] = true
-					--DEFAULT_CHAT_FRAME:AddMessage(name.." - "..zone.."-> My zone")	
 				else
 					self.ZoneUnit["raid"..id] = false
 				end
@@ -40,7 +39,7 @@ function sRaidFramesArrows:ZoneCheck()
 	sRaidFramesArrows.cx, sRaidFramesArrows.cy = GetPlayerMapPosition("player")
 	sRaidFramesArrows.direction = 0
 	sRaidFramesArrows:CheckRoster()
-	--DEFAULT_CHAT_FRAME:AddMessage("Zone Check")
+	sRaidFrames:SetDegTex()
 end
 
 function sRaidFramesArrows:CalcDeg(oldx, oldy, newx, newy)

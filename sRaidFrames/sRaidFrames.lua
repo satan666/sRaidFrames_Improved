@@ -799,7 +799,7 @@ function sRaidFrames:ZoneCheck()
 	self.MapEnable = false
 	SetMapToCurrentZone()
 	self:ResetHealIndicators()
-	self:ScheduleEvent("SRF_ZoneCheck", 1)
+	self:ScheduleEvent("SRF_ZoneCheck", 2)
 	self:DebugRange("RC_RST")
 end
 
@@ -2282,7 +2282,6 @@ end
 
 function sRaidFrames:SetDegTex(force)
 	if force then
-		
 		self.ArrowsDisable = nil
 	elseif self.ArrowsDisable then
 		return
