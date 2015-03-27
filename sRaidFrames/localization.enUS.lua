@@ -258,7 +258,16 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["Enable combined range check"] = true,
 	["Enable 40y accurate range check only in combat otherwise light range check is active"] = true,
-	
+
+
+	["_Arrows"] = true,
+	["Coordinates dependant functionality, won't work in instances"] = true,
+	["Enable arrows"] = true,
+	["Enable unit arrows"] = true,
+	["Focus unit arrows"] = true,
+	["Enable arrows only for focus units"] = true,
+
+
 	["_Debug"] = true,
 	["Set about debug"] = true,
 	["Enable range calculation debug"] = true,

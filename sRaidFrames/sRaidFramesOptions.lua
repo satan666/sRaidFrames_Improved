@@ -1808,6 +1808,7 @@ sRaidFrames.options = {
 					set = function(value)
 						sRaidFrames:DisableRangeCheck()
 						sRaidFrames.opt.RangeCheck = value
+						sRaidFrames:SetDegTex(true)
 						if value then
 							sRaidFrames.opt.ExtendedRangeCheck = not value
 							sRaidFrames.opt.ExtendedRangeCheckCombat = not value
@@ -1823,6 +1824,7 @@ sRaidFrames.options = {
 					set = function(value)
 						sRaidFrames:DisableRangeCheck()
 						sRaidFrames.opt.ExtendedRangeCheck = value
+						sRaidFrames:SetDegTex(true)
 						if value  then
 							sRaidFrames.opt.RangeCheck = not value
 							sRaidFrames.opt.ExtendedRangeCheckCombat = not value
@@ -1839,6 +1841,7 @@ sRaidFrames.options = {
 					set = function(value)
 						sRaidFrames:DisableRangeCheck()
 						sRaidFrames.opt.ExtendedRangeCheckCombat = value
+						sRaidFrames:SetDegTex(true)
 						if value  then
 							sRaidFrames.opt.RangeCheck = not value
 							sRaidFrames.opt.ExtendedRangeCheck = not value
@@ -1906,6 +1909,40 @@ sRaidFrames.options = {
 
 			},
 		},
+		
+		
+		arrows = {
+			name = L["_Arrows"],
+			type = "group",
+			desc = L["Coordinates dependant functionality, won't work in instances"],
+			args = {
+				enable = {
+					name = L["Enable arrows"],
+					type = "toggle",
+					desc = L["Enable unit arrows"],
+					get = function() return sRaidFrames.opt.ArrowsEnable end,
+					set = function(value)
+						sRaidFrames.opt.ArrowsEnable = value
+						sRaidFrames:SetDegTex(true)
+					end,
+					order = 1,
+				},
+			
+				enable_focus = {
+					name = L["Focus unit arrows"],
+					type = "toggle",
+					desc = L["Enable arrows only for focus units"],
+					get = function() return sRaidFrames.opt.FocusArrows end,
+					set = function(value)
+						sRaidFrames.opt.FocusArrows = value
+					end,
+					order = 2,
+				},
+
+			},
+			},
+		
+		
 
 		border = {
 			name = L["Border"],
