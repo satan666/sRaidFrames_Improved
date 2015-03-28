@@ -39,7 +39,7 @@ function sRaidFramesArrows:ZoneCheck()
 	sRaidFramesArrows.cx, sRaidFramesArrows.cy = GetPlayerMapPosition("player")
 	sRaidFramesArrows.direction = 0
 	sRaidFramesArrows:CheckRoster()
-	sRaidFrames:SetDegTex()
+	sRaidFrames:SetDegTex(true)
 end
 
 function sRaidFramesArrows:CalcDeg(oldx, oldy, newx, newy)

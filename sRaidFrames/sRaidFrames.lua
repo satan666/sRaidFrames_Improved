@@ -2289,6 +2289,7 @@ function sRaidFrames:SetDegTex(force)
 		
 	if not self.opt.RangeCheck and not self.opt.ExtendedRangeCheck and not self.opt.ExtendedRangeCheckCombat or not sRaidFrames.opt.ArrowsEnable or not self.MapEnable then
 		self.ArrowsDisable = true
+		--DEFAULT_CHAT_FRAME:AddMessage("self.ArrowsDisable = true")
 	end
 		
 	for id = 1, MAX_RAID_MEMBERS do
