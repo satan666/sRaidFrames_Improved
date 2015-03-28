@@ -800,6 +800,7 @@ function sRaidFrames:ZoneCheck()
 	SetMapToCurrentZone()
 	self:ResetHealIndicators()
 	self:ScheduleEvent("SRF_ZoneCheck", 2)
+	sRaidFrames:SetDegTex(true)
 	self:DebugRange("RC_RST")
 end
 
@@ -2287,7 +2288,7 @@ function sRaidFrames:SetDegTex(force)
 		return
 	end	
 		
-	if not self.opt.RangeCheck and not self.opt.ExtendedRangeCheck and not self.opt.ExtendedRangeCheckCombat or not sRaidFrames.opt.ArrowsEnable or not self.MapEnable then
+	if not self.opt.RangeCheck and not self.opt.ExtendedRangeCheck and not self.opt.ExtendedRangeCheckCombat or not sRaidFrames.opt.ArrowsEnable or not self.MapEnable or not UnitInRaid("player") then
 		self.ArrowsDisable = true
 		--DEFAULT_CHAT_FRAME:AddMessage("self.ArrowsDisable = true")
 	end
