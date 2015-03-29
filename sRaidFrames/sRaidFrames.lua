@@ -85,6 +85,8 @@ sRaidFrames.SpellCheck = false
 sRaidFrames.MenuOpen = false
 sRaidFrames.MapEnable = false
 sRaidFrames.MultidragInfo = false
+sRaidFrames.BuffsDebuffsInfo = false
+sRaidFrames.PopulateFocusInfo = false
 
 sRaidFrames.debuffSlots = {}
 sRaidFrames.buffsupdatecounter = 0
@@ -1594,7 +1596,8 @@ end
 
 function sRaidFrames:Sort_Force()
 	
-	if self.opt.dynamic_sort or self.opt.SortBy == "fixed" then 
+	if self.opt.dynamic_sort then
+	--if self.opt.dynamic_sort then or self.opt.SortBy == "fixed" then 	
 		self:Sort(true)
 		--DEFAULT_CHAT_FRAME:AddMessage("Sort_Force")
 	end
@@ -2011,7 +2014,6 @@ function sRaidFrames:SetHealIndicator(unit)
 		end
 		
 		f:Show()
-
 	end	
 end
 
@@ -2290,7 +2292,6 @@ function sRaidFrames:SetDegTex(force)
 		
 	if not self.opt.RangeCheck and not self.opt.ExtendedRangeCheck and not self.opt.ExtendedRangeCheckCombat or not sRaidFrames.opt.ArrowsEnable or not self.MapEnable or not UnitInRaid("player") then
 		self.ArrowsDisable = true
-		--DEFAULT_CHAT_FRAME:AddMessage("self.ArrowsDisable = true")
 	end
 		
 	for id = 1, MAX_RAID_MEMBERS do
@@ -2362,9 +2363,8 @@ function sRaidFrames:SetDegTex(force)
 					ArrowIcon = FILE_PATH.."FRight+2"
 				end
 			end
-		
 
-			if self.visible[unit] and not self.unavail[unit] and not UnitIsDeadOrGhost("player") and self.UnitRangeArray[unit] == "" and sRaidFramesArrows.direction ~= 0 and sRaidFramesArrows.ZoneUnit[unit] and not self.ArrowsDisable and (not self.opt.FocusArrows or self.opt.FocusArrows and self:CheckFocusUnit(unit)) then
+			if not self.ArrowsDisable and self.visible[unit] and not self.unavail[unit] and not UnitIsDeadOrGhost("player") and self.UnitRangeArray[unit] == "" and sRaidFramesArrows.direction ~= 0 and sRaidFramesArrows.ZoneUnit[unit] and (not self.opt.FocusArrows or self.opt.FocusArrows and self:CheckFocusUnit(unit)) then
 				self.frames[unit].hpbar.arrow:SetTexture(ArrowIcon);				
 				self.frames[unit].hpbar.arrow:Show()
 			else

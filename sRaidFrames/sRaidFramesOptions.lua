@@ -625,9 +625,82 @@ sRaidFrames.options = {
 					order = 2,
 				},
 				
+
 				
-				
-				sort_focus = {
+				range_populate = {
+				name = L["Populate with range"],
+				type = "group",
+				desc = L["Automatically populate focus frame with units in range"],
+				order = 5,
+				args = {
+					
+					
+					fill_range = {
+						name = L["Populate with range"],
+						type = "toggle",
+						desc = L["Automatically populate focus frame with units in range"],
+						get = function()
+							return sRaidFrames.opt.fill_range
+						end,
+						set = function(set)
+							if set then
+								sRaidFrames.opt.dynamic_sort = set
+								if not sRaidFrames.opt.RangeCheck and not sRaidFrames.opt.ExtendedRangeCheck and not sRaidFrames.opt.ExtendedRangeCheckCombat then
+									sRaidFrames.opt.ExtendedRangeCheckCombat = set
+								end
+								sRaidFrames:PopulateFocusMsg()
+							else
+								sRaidFrames.opt.dynamic_sort = set
+								sRaidFrames.opt.dynamic_range_sort = set
+								sRaidFrames.opt.dynamic_overheal_sort = set
+								sRaidFrames.opt.dynamic_aggro_sort = set
+	
+							end
+							sRaidFrames:S("fill_range", set)
+							sRaidFrames:UpdateVisibility()
+							sRaidFrames:LoadStyle()
+						end,
+						order = 1,
+					},
+					
+					
+					hp_limit = {
+						name = L["Set unit HP filter"],
+						type = "range",
+						desc = L["Unit filtering treshold"],
+						min = 1,
+						max = 100,
+						step = 1,
+						get = function()
+							return sRaidFrames.opt.hp_limit
+						end,
+						set = function(set)
+							sRaidFrames:S("hp_limit", set)
+						end,
+					},
+					
+					fill_range_limit = {
+						name = L["Units limit number"],
+						type = "range",
+						desc = L["Units limit number"],
+						min = 1,
+						max = 40,
+						step = 1,
+						get = function()
+							return sRaidFrames.opt.units_limit 
+						end,
+						set = function(set)
+							sRaidFrames:S("units_limit", set)
+						end,
+					},
+					
+					
+					
+					
+					
+					
+					
+									sort_focus = {
 				name = L["Sort focus"],
 				type = "group",
 				desc = L["Sort focus"],
@@ -706,66 +779,14 @@ sRaidFrames.options = {
 					
 				}
 			},
-	
-				
-				range_populate = {
-				name = L["Populate with range"],
-				type = "group",
-				desc = L["Automatically populate focus frame with units in range"],
-				order = 5,
-				args = {
 					
 					
-					fill_range = {
-						name = L["Populate with range"],
-						type = "toggle",
-						desc = L["Automatically populate focus frame with units in range"],
-						get = function()
-							return sRaidFrames.opt.fill_range
-						end,
-						set = function(set)
-							if set then
-								sRaidFrames.opt.dynamic_sort = set
-								if not sRaidFrames.opt.RangeCheck and not sRaidFrames.opt.ExtendedRangeCheck and not sRaidFrames.opt.ExtendedRangeCheckCombat then
-									sRaidFrames.opt.ExtendedRangeCheckCombat = set
-								end		
-							end
-							sRaidFrames:S("fill_range", set)
-							sRaidFrames:UpdateVisibility()
-							sRaidFrames:LoadStyle()
-						end,
-					},
 					
 					
-					hp_limit = {
-						name = L["Set unit HP filter"],
-						type = "range",
-						desc = L["Unit filtering treshold"],
-						min = 1,
-						max = 100,
-						step = 1,
-						get = function()
-							return sRaidFrames.opt.hp_limit
-						end,
-						set = function(set)
-							sRaidFrames:S("hp_limit", set)
-						end,
-					},
 					
-					fill_range_limit = {
-						name = L["Units limit number"],
-						type = "range",
-						desc = L["Units limit number"],
-						min = 1,
-						max = 40,
-						step = 1,
-						get = function()
-							return sRaidFrames.opt.units_limit 
-						end,
-						set = function(set)
-							sRaidFrames:S("units_limit", set)
-						end,
-					},
+					
+					
+					
 				
 				}
 				},
@@ -979,7 +1000,7 @@ sRaidFrames.options = {
 		},
 
 		srfhideparty = {
-			name = L["_Hide party interface"],
+			name = L["Hide party interface"],
 			type = "toggle",
 			desc = L["Hide party interface in raid - Blizzard's version may fail sometimes"],
 			get = function()
@@ -2067,8 +2088,8 @@ end
 
 function sRaidFrames:chatBuffType(value)
 	self:S("BuffType", value)
-
 	self:UpdateBuffs(self.visible)
+	sRaidFrames:BuffFilteringMsg()
 end
 
 function sRaidFrames:chatToggleDispellable(value)
@@ -2166,6 +2187,19 @@ function sRaidFrames:MultidragMsg()
 	end	
 end
 
+function sRaidFrames:PopulateFocusMsg()
+	if not self.PopulateFocusInfo then
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."Enabling - Populate with range and Sort focus functionality may cause UI perfomance drop"); 
+		self.PopulateFocusInfo = true
+	end	
+end
+
+function sRaidFrames:BuffFilteringMsg()
+	if not self.BuffsDebuffsInfo then
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00eeee sRaidFrames: |cffffffff".."Enabling - Buffs and Debuffs filtering at once may cause UI perfomance drop"); 
+		self.BuffsDebuffsInfo = true
+	end
+end
 
 function sRaidFrames:ProfileFeedCommon()
 	sRaidFrames.opt.SubSort = "class"
