@@ -21,7 +21,7 @@
 ## PERFORMANCE ISSUES
 - close WOW client, delete files (sRaidFrames.lua and sRaidFrames.lua.bak) from SavedVariables folder or whole WTF if you're lazy to find it
 - disable or reduce numer of buff filters(enabling buff and debuff filtering at once significantly increase UI load)
-- disable "Populate with range" and "Sort focus" functionality(severely increase UI load ) 
+- use combined range check instead of accurate one if you're healer
 - try to use supported unitframes(Default Blizzard, Luna, AG - Available from https://github.com/satan666/ag_UnitFrames_Improved)
 
 ## RELATED REPOSITORIES
