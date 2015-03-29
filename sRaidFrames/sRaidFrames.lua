@@ -273,6 +273,13 @@ function sRaidFrames:PatchUpdate()
 	if not self.opt.heal then
 		self.opt.heal = "none"
 	end
+	
+	--patch 1.1
+	self.opt.fill_range = false
+	self.opt.dynamic_sort = false
+	self.opt.dynamic_range_sort = false
+	self.opt.dynamic_overheal_sort = false
+	self.opt.dynamic_aggro_sort = false
 end
 
 
@@ -1625,7 +1632,7 @@ function sRaidFrames:ReturnClassCount(class)
 
 	while counter <= NumMembers do
 		u = "raid"..counter
-		if Zorlen_UnitClass(u) == class then
+		if Zorlen_UnitClass(u) == class and not self:CheckFocusUnit(u) then
 			counter_class = counter_class + 1
 		end
 		counter = counter + 1	
@@ -1671,7 +1678,7 @@ function sRaidFrames:Sort(force_sort)
 	local sort = {}
 	local counter={0,0,0,0,0,0,0,0,0}
 
-	self:RefreshFocusWithRange()
+	--self:RefreshFocusWithRange()
 
 
 	for id = 1, MAX_RAID_MEMBERS do
@@ -1755,9 +1762,9 @@ function sRaidFrames:Sort(force_sort)
 		end
 	end
 	
-	if self.opt.dynamic_sort then
-		table.sort(focus_units1, function(a,b) return self:UnitModHP("raid".. a) < self:UnitModHP("raid"..b) end)
-	end	
+	--if self.opt.dynamic_sort then
+	--	table.sort(focus_units1, function(a,b) return self:UnitModHP("raid".. a) < self:UnitModHP("raid"..b) end)
+	--end	
 	
 	local index = 40
 	for id in pairs(self.UnitSortOrder) do
@@ -2055,7 +2062,7 @@ function sRaidFrames:LoadStyle()
 	self:Sort();
 end
 
-
+--[[
 function sRaidFrames:RefreshFocusWithRange()
 	self:CheckRangeFocus(nil, "reset")
 	for id = 1, MAX_RAID_MEMBERS do
@@ -2088,6 +2095,8 @@ function sRaidFrames:RefreshFocusWithRange()
 		end
 	end	
 end
+--]]
+
 
 function sRaidFrames:OverHealCalc(unit)
 	local bonus = 0
@@ -2114,7 +2123,7 @@ function sRaidFrames:OrderCalc(unit)
 	
 	return order
 end
-
+--[[
 function sRaidFrames:UnitModHP(unit)
 	local percent = nil
 	local treshhold = 3
@@ -2151,11 +2160,13 @@ function sRaidFrames:UnitModHP(unit)
 
 	return percent
 end
+--]]
 
 function sRaidFrames:CheckRangeHpCalc(unit)
 	return Zorlen_HealthPercent(unit) + self:OrderCalc(unit)
 end
 
+--[[
 function sRaidFrames:CheckRangeFocus(unit, mode)
 	if not self.opt.fill_range then
 		return nil
@@ -2191,7 +2202,7 @@ function sRaidFrames:CheckRangeFocus(unit, mode)
 		return nil
 	end	
 end
-
+--]]
 function sRaidFrames:CheckFocusUnit(unit)
 	if not unit then 
 		return 
@@ -2201,7 +2212,7 @@ function sRaidFrames:CheckFocusUnit(unit)
 		return
 	end	
 	
-	if self.UnitFocusArray[name] or self:CheckRangeFocus(unit, "check") then
+	if self.UnitFocusArray[name] then--or self:CheckRangeFocus(unit, "check") then
 		return true	
 	end
 	

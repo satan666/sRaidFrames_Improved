@@ -561,7 +561,7 @@ sRaidFrames.options = {
 		focus = {
 			name = L["_Focus frame"],
 			type = "group",
-			desc = L["Use keybinding to add/remove units manually or select Polpulate with range feature"],
+			desc = L["Use keybinding to add/remove focus units."],
 			args = {
 
 				growth_focus = {
@@ -625,8 +625,8 @@ sRaidFrames.options = {
 					order = 2,
 				},
 				
-
 				
+				--[[
 				range_populate = {
 				name = L["Populate with range"],
 				type = "group",
@@ -700,7 +700,7 @@ sRaidFrames.options = {
 					
 					
 					
-									sort_focus = {
+			sort_focus = {
 				name = L["Sort focus"],
 				type = "group",
 				desc = L["Sort focus"],
@@ -780,18 +780,11 @@ sRaidFrames.options = {
 				}
 			},
 					
-					
-					
-					
-					
-					
-					
-					
-				
+
 				}
 				},
 					
-				
+				--]]
 				
 				
 				focus_size = {
@@ -836,7 +829,7 @@ sRaidFrames.options = {
 				}
 				},
 				
-				
+			--[[	
 			profiles = {
 			name = L["Load focus profiles"],
 			type = "group",
@@ -965,7 +958,7 @@ sRaidFrames.options = {
 					}
 					
 				},
-	
+			--]]
 			}
 			
 		},	
@@ -1813,8 +1806,6 @@ sRaidFrames.options = {
 			
 			},
 			},
-
-
 
 		range = {
 			name = L["_Range"],

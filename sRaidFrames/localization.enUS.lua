@@ -51,7 +51,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Compact - Horizontal 8 per row"] = true,
 	
 	["_Focus frame"] = true,
-	["Use keybinding to add/remove units manually or select Polpulate with range feature"] = true,
+	["Use keybinding to add/remove focus units."] = true,
 	
 	["Load predefined settings"] = true,
 	["Common"] = true,
