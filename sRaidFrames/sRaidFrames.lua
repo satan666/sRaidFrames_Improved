@@ -74,7 +74,7 @@ sRaidFrames.defaultMinimapPosition = 180
 sRaidFrames.cannotDetachTooltip = true
 sRaidFrames.hasNoColor = true
 sRaidFrames.clickableTooltip = false
-sRaidFrames.hideWithoutStandby = true
+sRaidFrames.hideWithoutStandby = false
 sRaidFrames.independentProfile = true
 sRaidFrames.TargetMonitor = nil
 sRaidFrames.TargetMonitorEnd = nil
@@ -2322,9 +2322,8 @@ function sRaidFrames:SetDegTex(force)
 						OffSet = OffSet + 360
 					end
 				end
-				if(dir == "Arrived!") then
-					ArrowIcon = FILE_PATH.."Arrived"
-				elseif(OffSet)and ((OffSet >=-5) and ( OffSet <= 5))or(OffSet < -355) then 
+
+				if(OffSet)and ((OffSet >=-5) and ( OffSet <= 5))or(OffSet < -355) then 
 					ArrowIcon = FILE_PATH.."forward"
 				elseif(OffSet)and (OffSet < -5) and (OffSet >= -15) then
 					ArrowIcon = FILE_PATH.."FLeft+2"
@@ -2372,6 +2371,8 @@ function sRaidFrames:SetDegTex(force)
 					ArrowIcon = FILE_PATH.."FRight+1"
 				elseif(OffSet)and (OffSet > 5) and (OffSet <= 15) then	
 					ArrowIcon = FILE_PATH.."FRight+2"
+				else
+					ArrowIcon = FILE_PATH.."Arrived"
 				end
 			end
 
