@@ -297,14 +297,7 @@ function sRaidFrames:XPerl_Target_UpdatePortrait_Hook()
 		XPerl_Target_UpdatePortrait_OLD()
 	end	
 end
---[[
-function sRaidFrames:XPerl_Target_CombatFlash_Hook(a1, a2)
-	if not sRaidFrames.TargetMonitor then	
-		DEFAULT_CHAT_FRAME:AddMessage("XPerl_Target_CombatFlash")
-		XPerl_Target_CombatFlash_OLD(a1, a2)
-	end	
-end
---]]
+
 function sRaidFrames:TargetFrame_OnEvent(event)
 	if not self.TargetMonitor then
 		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:TargetFrame_OnEvent")
@@ -436,6 +429,7 @@ end
 
 function sRaidFrames:Variables()
 	self.enabled = false
+	self.preparesort = false
 	self.frames, self.visible, self.groupframes = {}, {}, {}
 	self.feign, self.unavail, self.res, self.hpaura = {}, {}, {}, {}
 	
@@ -540,24 +534,15 @@ end
 
 function sRaidFrames:Banzai_UnitGainedAggro(unit, unitTable)
 	--self.UnitAggro[unit] = true
-	if self.opt.dynamic_aggro_sort then
-		sRaidFrames:Sort_Force()
-	end
-	
+	--if self.opt.dynamic_aggro_sort then
+		--sRaidFrames:Sort_Force()
+	--end
 	
 	if not unit or not self.visible[unit] or not self.opt.aggro then return end
 	self.frames[unit]:SetBackdropBorderColor(1, 0, 0, self.opt.BorderColor.a)
 end
 
 function sRaidFrames:Banzai_UnitLostAggro(unit)
-	--self.UnitAggro[unit] = nil
-	if self.opt.dynamic_aggro_sort then
-		sRaidFrames:Sort_Force()
-		local units = {}
-		units[unit] = true
-		self:UpdateUnit(units)
-	end	
-
 	if not unit or not self.visible[unit] or not self.opt.aggro then return end
 	self.frames[unit]:SetBackdropBorderColor(self.opt.BorderColor.r, self.opt.BorderColor.g, self.opt.BorderColor.b, self.opt.BorderColor.a)
 end
@@ -921,6 +906,12 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 					elseif ghost then status = "|cffff0000"..L["Ghost"].."|r"
 					elseif dead or UnitHealth(unit) <= 1 then status = "|cffff0000"..L["Dead"].."|r"
 					end				
+					
+					
+					if status and not self.unavail[unit] or not status and self.unavail[unit] then
+						self.preparesort = true
+					end
+					
 					
 					if status then
 						self.unavail[unit] = true
@@ -1337,10 +1328,6 @@ function sRaidFrames:CreateUnitFrame(id)
 	f.title:SetJustifyH("LEFT")
 
 
-
-
-
-
 	f.buff1 = CreateFrame("Button", nil, f)
 	f.buff1.texture = f.buff1:CreateTexture(nil, "ARTWORK")
 	f.buff1.texture:SetAllPoints(f.buff1)
@@ -1603,11 +1590,13 @@ end
 
 function sRaidFrames:Sort_Force()
 	
-	if self.opt.dynamic_sort then
-	--if self.opt.dynamic_sort then or self.opt.SortBy == "fixed" then 	
-		self:Sort(true)
+	--if self.opt.dynamic_sort then
+	if self.preparesort and self.opt.dead_sort then
+		self.preparesort = false 	
+		self:Sort()
 		--DEFAULT_CHAT_FRAME:AddMessage("Sort_Force")
 	end
+	
 	
 	sRaidFrames:SetDegTex()
 	
@@ -1657,7 +1646,8 @@ function sRaidFrames:MembersSortBy(id)
 		sort_by = subgroup..id
 	end	
 	
-	if self.opt.SortBy == "fixed" and self.opt.dead_sort and not self.feign[unit] then
+	--if self.opt.SortBy == "fixed" and self.opt.dead_sort and not self.feign[unit] then
+	if self.opt.dead_sort and not self.feign[unit] then
 		if not UnitIsConnected(unit) then
 			sort_by = "zzz"..sort_by
 		elseif UnitIsDead(unit) then
@@ -1837,7 +1827,7 @@ function sRaidFrames:Sort(force_sort)
 	end
 
 	-- Hide group frames which contain no children
-	if not force_sort then	
+	--if not force_sort then	
 		for k,v in pairs(counter) do
 			if v == 0 then
 				self.groupframes[k]:Hide()
@@ -1845,9 +1835,9 @@ function sRaidFrames:Sort(force_sort)
 		end
 
 		self:UpdateAllUnits()
-	else
-		self:UpdateUnit(self.visible, force_sort)
-	end	
+	--else
+		--self:UpdateUnit(self.visible, force_sort)
+	--end	
 	
 end
 
@@ -2062,147 +2052,6 @@ function sRaidFrames:LoadStyle()
 	self:Sort();
 end
 
---[[
-function sRaidFrames:RefreshFocusWithRange()
-	self:CheckRangeFocus(nil, "reset")
-	for id = 1, MAX_RAID_MEMBERS do
-		if self:QueryVisibility(id) then
-			self:CheckRangeFocus("raid" .. id, "add")
-			if not self.visible["raid" .. id] then
-				self.frames["raid" .. id]:Show()
-				self.visible["raid" .. id] = true;
-			end
-		else
-			if self.visible["raid" .. id] then
-				self.frames["raid" .. id]:Hide()
-				self.visible["raid" .. id] = nil;
-			end
-		end
-	end
-	
-	self:CheckRangeFocus(nil, "sort")
-		
-	if self.opt.fill_range then
-		for unit in pairs(self.visible) do
-			local aggro = Banzai:GetUnitAggroByUnitId(unit)
-			if self:CheckFocusUnit(unit) then
-				self:SetStyle(self.frames[unit], unit, self.opt.WidthFocus, aggro)
-				self.frames[unit]:SetScale(self.opt.ScaleFocus)
-			else
-				self:SetStyle(self.frames[unit], unit, self.opt.Width, aggro)
-				self.frames[unit]:SetScale(self.opt.Scale)
-			end
-		end
-	end	
-end
---]]
-
-
-function sRaidFrames:OverHealCalc(unit)
-	local bonus = 0
-	if self.opt.dynamic_overheal_sort and not Banzai:GetUnitAggroByUnitId(unit) then
-		local indicator = self.indicator and self.indicator[unit] and self.indicator[unit]
-		if indicator and indicator > 0 then
-			bonus = bonus + 15*indicator
-		end
-	end
-	return bonus
-end
-
-function sRaidFrames:OrderCalc(unit)
-	local order = 0
-	local id_str = string.gsub(unit,"raid","")
-	local id_fix = tonumber(id_str)
-	local group_order = self.UnitSortOrder[id_fix]
-
-	order = group_order/10000
-	
-	if self.opt.dynamic_aggro_sort and not Banzai:GetUnitAggroByUnitId(unit) then
-		order = order + 200
-	end
-	
-	return order
-end
---[[
-function sRaidFrames:UnitModHP(unit)
-	local percent = nil
-	local treshhold = 3
-	
-	local order = self:OrderCalc(unit)
-	local overheal = self:OverHealCalc(unit)
-	
-	if UnitHealth(unit) <= 1 or not UnitIsConnected(unit) then
-		percent = 1000
-	else
-		local health = math.ceil(Zorlen_HealthPercent(unit))
-		local health_old = self.UnitFocusHPArray[unit]
-
-		if health_old and health and health_old ~= health and health ~= 100 and math.abs(health - health_old) <= treshhold then ---fixed
-			health = health_old
-		else
-			self.UnitFocusHPArray[unit] = health
-		end
-
-		if health >= 100 then
-			--
-		elseif overheal > 0 and (health + overheal) >= 100 then
-			health = 99
-		else
-			health = health + overheal
-		end
-
-		if self.opt.dynamic_range_sort and self.UnitRangeArray[unit] ~= "" then
-			percent = health + order
-		else
-			percent = health + order + 800
-		end
-	end
-
-	return percent
-end
---]]
-
-function sRaidFrames:CheckRangeHpCalc(unit)
-	return Zorlen_HealthPercent(unit) + self:OrderCalc(unit)
-end
-
---[[
-function sRaidFrames:CheckRangeFocus(unit, mode)
-	if not self.opt.fill_range then
-		return nil
-	end
-	
-	if mode == "sort" then
-		table.sort(self.UnitRangeFocus, function(a,b) return self:CheckRangeHpCalc(a) < self:CheckRangeHpCalc(b) end)
-		return
-	elseif mode == "reset" then
-		Compost:Reclaim(self.UnitRangeFocus)
-		self.UnitRangeFocus = Compost and Compost:Acquire() or {}
-		return
-	end
-	
-	local hplimit = self.opt.hp_limit or 100
-	local check1 = UnitIsConnected(unit) and hplimit >= Zorlen_HealthPercent(unit) and UnitHealth(unit) > 1 or self.opt.dynamic_aggro_sort and Banzai:GetUnitAggroByUnitId(unit)
-	local check2 = self.UnitRangeArray[unit] ~= ""
-
-	if mode == "add" then
-		if check1 and check2 and not self:CheckFocusUnit(unit) then
-			table.insert(self.UnitRangeFocus, unit)
-		end
-		
-	elseif mode == "check" then
-		if check1 and check2 then
-			local units_limit = self.opt.units_limit or 5
-			for blockindex,blockmatch in pairs(self.UnitRangeFocus) do
-				if blockmatch == unit and blockindex <= units_limit then
-					return true
-				end
-			end
-		end
-		return nil
-	end	
-end
---]]
 function sRaidFrames:CheckFocusUnit(unit)
 	if not unit then 
 		return 

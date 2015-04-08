@@ -1134,6 +1134,7 @@ sRaidFrames.options = {
 				end,
 				set = function(value)
 					sRaidFrames:S("dead_sort", value)
+					sRaidFrames:Sort()
 				end,
 				order = 9,
 			},	
