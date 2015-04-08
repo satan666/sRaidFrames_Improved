@@ -533,10 +533,6 @@ function sRaidFrames:UpdateVisibility()
 end
 
 function sRaidFrames:Banzai_UnitGainedAggro(unit, unitTable)
-	--self.UnitAggro[unit] = true
-	--if self.opt.dynamic_aggro_sort then
-		--sRaidFrames:Sort_Force()
-	--end
 	
 	if not unit or not self.visible[unit] or not self.opt.aggro then return end
 	self.frames[unit]:SetBackdropBorderColor(1, 0, 0, self.opt.BorderColor.a)
@@ -827,12 +823,12 @@ function sRaidFrames:UpdateRangeFrequency(value)
 	self:ScheduleRepeatingEvent("sRaidFramesRangeCheck", self.RangeCheck, value, self)
 end
 
-function sRaidFrames:UpdateUnit(units, force_focus)
+function sRaidFrames:UpdateUnit(units)
 	local class_color = self.opt.statusbar_color
 	for unit in pairs(units) do
-		local focus_unit = self:CheckFocusUnit(unit)
+		--local focus_unit = self:CheckFocusUnit(unit)
 		if self.visible[unit] and UnitExists(unit) then
-			if (not self.opt.dynamic_sort or not focus_unit and not force_focus or focus_unit and force_focus) then
+			--if (not self.opt.dynamic_sort or not focus_unit and not force_focus or focus_unit and force_focus) then
 				local f = self.frames[unit]
 				local range = ""
 				
@@ -991,7 +987,7 @@ function sRaidFrames:UpdateUnit(units, force_focus)
 					f.hpbar:SetStatusBarColor(0, 0.9, 0.5)
 					f.mpbar:SetValue(0)
 				end
-			end	
+			--end	
 		end
 	end
 end

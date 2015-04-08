@@ -155,7 +155,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Group sort"] = true,
 	["Group method"] = true,
 	["Dead and offline units sub sort"] = true,
-	["Dead or offline units are moved to the bottom of frame - effect only if Grid like group sort is enabled"] = true,
+	["Dead or offline units are moved to the bottom of frame"] = true,
 	["Reverse sort"] = true,
 	
 	["Select how you wish to show the groups"] = true,
