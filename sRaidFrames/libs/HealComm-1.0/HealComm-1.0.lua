@@ -961,7 +961,8 @@ local function GetTargetSpellPower(spell)
 		end
 		local buffName = healcommTipTextLeft1:GetText()
 		if (buffTexture == "Interface\\Icons\\Spell_Holy_PrayerOfHealing02" or buffTexture == "Interface\\Icons\\Spell_Holy_GreaterBlessingofLight") then
-			local _,_, HLBonus, FoLBonus = string.find(healcommTipTextLeft2:GetText(),L["Blessing of Light"])
+			local tiptxt = healcommTipTextLeft2:GetText() or ""
+			local _,_, HLBonus, FoLBonus = string.find(tiptxt, L["Blessing of Light"])
 			HLBonus = HLBonus or 0
 			FoLBonus = FoLBonus or 0
 			if (spell == L["Flash of Light"]) then

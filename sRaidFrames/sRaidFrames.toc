@@ -3,8 +3,8 @@
 ## X-Website: https://github.com/satan666
 ## X-Category: Raid
 ## Dependencies: Zorlen
-## Title: sRaidFrames Improved 1.10
-## Version: 1.10
+## Title: sRaidFrames Improved 1.15
+## Version: 1.15
 ## Notes-zhCN: CT_RaidAssist 风格的团队框架
 ## Notes-zhTW: CT_RaidAssist 風格的團隊框架
 ## DefaultState: Enabled

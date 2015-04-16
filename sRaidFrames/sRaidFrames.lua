@@ -78,6 +78,9 @@ sRaidFrames.hideWithoutStandby = false
 sRaidFrames.independentProfile = true
 sRaidFrames.TargetMonitor = nil
 sRaidFrames.TargetMonitorEnd = nil
+sRaidFrames.TargetMonitorCycleEnd = nil
+sRaidFrames.UpdateTargetIndex = {}
+
 
 sRaidFrames.FocusWithRange = false
 sRaidFrames.ClassCheck = false
@@ -288,6 +291,7 @@ function sRaidFrames:XPerl_Target_UpdateDisplay_Hook()
 	if not sRaidFrames.TargetMonitor then
 		--DEFAULT_CHAT_FRAME:AddMessage("XPerl_Target_UpdateDisplay_Hook")
 		XPerl_Target_UpdateDisplay_OLD()
+		sRaidFrames.UpdateTargetIndex[1] = true
 	end	
 end
 
@@ -295,13 +299,7 @@ function sRaidFrames:XPerl_Target_UpdatePortrait_Hook()
 	if not sRaidFrames.TargetMonitor then
 		--DEFAULT_CHAT_FRAME:AddMessage("XPerl_Target_UpdatePortrait_Hook")
 		XPerl_Target_UpdatePortrait_OLD()
-	end	
-end
-
-function sRaidFrames:TargetFrame_OnEvent(event)
-	if not self.TargetMonitor then
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:TargetFrame_OnEvent")
-		self.hooks.TargetFrame_OnEvent.orig(event)
+		sRaidFrames.UpdateTargetIndex[1] = true
 	end	
 end
 
@@ -309,6 +307,7 @@ function sRaidFrames:Luna_Target_Hook()
 	if not sRaidFrames.TargetMonitor then
 		--DEFAULT_CHAT_FRAME:AddMessage("LunaUnitFrames:UpdateTargetFrameOld")	
 		LunaUnitFrames:UpdateTargetFrameOld()
+		sRaidFrames.UpdateTargetIndex[2] = true
 	end	
 end
 
@@ -316,7 +315,16 @@ function sRaidFrames:ag_PLAYER_TARGET_CHANGED_Hook()
 	if not sRaidFrames.TargetMonitor then
 		--DEFAULT_CHAT_FRAME:AddMessage("aUF:PLAYER_TARGET_CHANGED_OLD")	
 		aUF:PLAYER_TARGET_CHANGED_OLD()
+		sRaidFrames.UpdateTargetIndex[3] = true
 	end
+end
+
+function sRaidFrames:TargetFrame_OnEvent(event)
+	if not self.TargetMonitor then
+		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:TargetFrame_OnEvent")
+		self.hooks.TargetFrame_OnEvent.orig(event)
+		sRaidFrames.UpdateTargetIndex[4] = true
+	end	
 end
 
 function sRaidFrames:OnDisable()
@@ -388,7 +396,33 @@ function sRaidFrames:PLAYER_TARGET_CHANGED()
 	if self.TargetMonitor and self.TargetMonitorEnd then
 		self.TargetMonitorEnd = nil
 		self.TargetMonitor = nil
-		--DEFAULT_CHAT_FRAME:AddMessage("sRaidFrames:PLAYER_TARGET_CHANGED")
+		
+	end
+
+	if self.TargetMonitorCycleEnd then
+		for blockindex,blockmatch in pairs(self.UpdateTargetIndex) do
+			--if UnitExists("target") then
+				if blockindex == 1  and XPerl_Target_NameFrame_NameBarText and XPerl_Target_NameFrame_NameBarText:GetText() ~= GetUnitName("target") then
+					--if XPerl_Target_NameFrame_NameBarText:GetText() then  DEFAULT_CHAT_FRAME:AddMessage("***********XPERL "..XPerl_Target_NameFrame_NameBarText:GetText().." diff "..(GetUnitName("target") or "")) end
+					XPerl_Target_UpdateDisplay_OLD()
+					XPerl_Target_UpdatePortrait_OLD()
+					
+				elseif blockindex == 2 and LunaTargetFrame and LunaTargetFrame.name and LunaTargetFrame.name:GetText() ~= GetUnitName("target") then
+					--if LunaTargetFrame.name:GetText() then DEFAULT_CHAT_FRAME:AddMessage("************LUNA "..LunaTargetFrame.name:GetText().." diff "..(GetUnitName("target") or "")) end
+					LunaUnitFrames:UpdateTargetFrameOld()
+				
+				elseif blockindex == 3 and aUF and aUF.units.target.NameLabel and not string.find(aUF.units.target.NameLabel:GetText() or "", GetUnitName("target") or "")  then
+					--if aUF.units.target.NameLabel:GetText() then DEFAULT_CHAT_FRAME:AddMessage("***********AG "..aUF.units.target.NameLabel:GetText().." diff "..(GetUnitName("target") or "")) end
+					aUF:PLAYER_TARGET_CHANGED_OLD()
+				
+				elseif blockindex == 4 and UnitExists("target") and TargetFrame and TargetFrame.name and TargetFrame.name:GetText() ~= GetUnitName("target") then
+					--if TargetFrame.name:GetText() then DEFAULT_CHAT_FRAME:AddMessage("************BLIZZARD "..TargetFrame.name:GetText().." diff "..(GetUnitName("target") or "")) end
+					TargetUnit("player")
+					TargetLastTarget()
+				end
+			--end	
+		end
+		self.TargetMonitorCycleEnd = nil
 	end
 end
 
@@ -651,7 +685,8 @@ function sRaidFrames:RangeCheck()
 		local counter = 1	
 		self:CancelScheduledEvent("sRaidFramesExtendedRangeCheck")
 		self:ExtendedRangeArrayUtilize("reset")
-	
+		
+
 		for unit in pairs(self.visible) do
 			local unitcheck = UnitExists(unit) and UnitIsVisible(unit) and UnitIsConnected(unit) and not UnitIsGhost(unit)
 			local deadcheck = UnitIsDead(unit)
@@ -757,6 +792,10 @@ function sRaidFrames:ExtendedRangeCheck()
 			self:DebugRange("RC "..GetUnitName(j).."_40y - " .."|cffFF0000 NOT PASS")
 		end
 		self:ExtendedRangeArrayUtilize("remove", j)
+		
+		if self:ExtendedRangeArrayUtilize("calc") == 0 then
+			self.TargetMonitorCycleEnd = true
+		end
 	end
 end
 
