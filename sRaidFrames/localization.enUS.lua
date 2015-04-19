@@ -250,6 +250,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Set about range"] = true,
 	["Show estimated range"] = true,
 	["Show estimated range next to player's name"] = true,
+	["Show estimated range only for focus units"] = true,
 	["Enable light range check"] = true,
 	["Enable 28y range check in Instances and 40y coordinates dependant range check in Outdoors and Bgs - Suggested when you neither play healing class nor using Blizzard frames, agUnitFrames or LunaUnitFrames"] = true,
 	
@@ -264,7 +265,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Coordinates dependant functionality, won't work in instances"] = true,
 	["Enable arrows"] = true,
 	["Enable unit arrows"] = true,
-	["Focus unit arrows"] = true,
+	["Focus units only"] = true,
 	["Enable arrows only for focus units"] = true,
 
 

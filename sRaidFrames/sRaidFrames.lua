@@ -163,6 +163,7 @@ function sRaidFrames:OnInitialize()
 		Bordertexture		= "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp",
 		heal 				= "round",
 		RangeShow			= false,
+		FocusRangeShow		= false,
 		ArrowsEnable		= true
 
 		
@@ -880,7 +881,7 @@ function sRaidFrames:UpdateUnit(units)
 					subgroup = ""
 				end
 				
-				if self.opt.RangeShow then
+				if self.opt.RangeShow and (not self.opt.FocusRangeShow or self.opt.FocusRangeShow and self:CheckFocusUnit(unit)) then
 					range = self.UnitRangeArray[unit]
 					if not range or range == "" or range == 0 or UnitIsDeadOrGhost("player") then
 						range =  ""

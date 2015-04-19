@@ -1576,17 +1576,44 @@ sRaidFrames.options = {
 					order = 3,		
 				},
 				
-				rangeshow = {
+				range_show = {
 					name = L["Show estimated range"],
-					type = "toggle",
-					desc = L["Show estimated range next to player's name"],
-					get = function() return sRaidFrames.opt.RangeShow end,
-					set = function(value)
-						sRaidFrames.opt.RangeShow = value
-					end,
-					order = 4,
-					--disabled = function() return not sRaidFrames.opt.RangeCheck end,
+					type = "group",
+					desc = L["Show estimated range"],
+					args = {
+
+
+					rangeshow = {
+						name = L["Show estimated range"],
+						type = "toggle",
+						desc = L["Show estimated range next to player's name"],
+						get = function() return sRaidFrames.opt.RangeShow end,
+						set = function(value)
+							sRaidFrames.opt.RangeShow = value
+							if not value then
+								sRaidFrames.opt.FocusRangeShow = value
+							end
+						end,
+						order = 1,
+						--disabled = function() return not sRaidFrames.opt.RangeCheck end,
+					},
+
+					enable_focus = {
+						name = L["Focus units only"],
+						type = "toggle",
+						desc = L["Show estimated range only for focus units"],
+						get = function() return sRaidFrames.opt.FocusRangeShow end,
+						set = function(value)
+							if sRaidFrames.opt.RangeShow then
+								sRaidFrames.opt.FocusRangeShow = value
+							end	
+						end,
+						order = 2,
+					},	
+					
 				},
+				},	
+					
 				
 				alpha = {
 					name = L["Alpha"],
@@ -1650,17 +1677,22 @@ sRaidFrames.options = {
 					set = function(value)
 						sRaidFrames.opt.ArrowsEnable = value
 						sRaidFrames:SetDegTex(true)
+						if not value then
+							sRaidFrames.opt.FocusArrows = value
+						end
 					end,
 					order = 1,
 				},
 			
 				enable_focus = {
-					name = L["Focus unit arrows"],
+					name = L["Focus units only"],
 					type = "toggle",
 					desc = L["Enable arrows only for focus units"],
 					get = function() return sRaidFrames.opt.FocusArrows end,
 					set = function(value)
-						sRaidFrames.opt.FocusArrows = value
+						if sRaidFrames.opt.ArrowsEnable then
+							sRaidFrames.opt.FocusArrows = value
+						end	
 					end,
 					order = 2,
 				},
