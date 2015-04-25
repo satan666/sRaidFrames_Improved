@@ -218,7 +218,7 @@ function sRaidFrames:OnInitialize()
 	
 	--==Added by Ogrisch 
 	self:Hook("TargetFrame_OnEvent")
-
+	self:Hook("TargetFrame_OnShow")
 	
 	Zorlen_MakeFirstMacros = nil
 	DEFAULT_CHAT_FRAME:AddMessage("_SRaidFrames Improved by ".."|cffFF0066".."Ogrisch".."|cffffffff".. " loaded")
@@ -287,7 +287,6 @@ function sRaidFrames:PatchUpdate()
 end
 
 
-
 function sRaidFrames:XPerl_Target_UpdateDisplay_Hook()
 	if not sRaidFrames.TargetMonitor then
 		--DEFAULT_CHAT_FRAME:AddMessage("XPerl_Target_UpdateDisplay_Hook")
@@ -326,6 +325,11 @@ function sRaidFrames:TargetFrame_OnEvent(event)
 		self.hooks.TargetFrame_OnEvent.orig(event)
 		sRaidFrames.UpdateTargetIndex[4] = true
 	end	
+end
+
+function sRaidFrames:TargetFrame_OnShow()
+	--self.hooks.TargetFrame_OnShow.orig()
+	--DEFAULT_CHAT_FRAME:AddMessage("TargetFrame_OnShow")
 end
 
 function sRaidFrames:OnDisable()
@@ -395,12 +399,8 @@ end
 
 function sRaidFrames:PLAYER_TARGET_CHANGED()
 	local skipp_blizz = nil
-	
-	
 	if not self.TargetMonitor then
 		self.TargetMonitorManual = true
-		--DEFAULT_CHAT_FRAME:AddMessage("Manual Target Change")
-		
 	end
 	
 	if self.TargetMonitor and self.TargetMonitorEnd then
@@ -412,20 +412,28 @@ function sRaidFrames:PLAYER_TARGET_CHANGED()
 		if self.TargetMonitorManual then
 			for blockindex,blockmatch in pairs(self.UpdateTargetIndex) do
 				if blockindex == 1 then
+				--DEFAULT_CHAT_FRAME:AddMessage("1")
 					skipp_blizz = true
 					XPerl_Target_UpdateDisplay_OLD()
 					XPerl_Target_UpdatePortrait_OLD()
 					
 				elseif blockindex == 2 then
+				--DEFAULT_CHAT_FRAME:AddMessage("2")
 					skipp_blizz = true
 					LunaUnitFrames:UpdateTargetFrameOld()
 				
 				elseif blockindex == 3 then
+			--	DEFAULT_CHAT_FRAME:AddMessage("3")
 					skipp_blizz = true
 					aUF:PLAYER_TARGET_CHANGED_OLD()
 				
 				elseif blockindex == 4 and not skipp_blizz then
 					if UnitExists("target") then
+
+						--if TargetFrame and TargetFrame.name and TargetFrame.name:GetText() ~= GetUnitName("target") then
+						--	DEFAULT_CHAT_FRAME:AddMessage("************BLIZZARD "..TargetFrame.name:GetText().." diff "..GetUnitName("target"))
+						--end
+						
 						TargetFrame.name:SetText(UnitName("target"));
 						SetPortraitTexture(TargetFrame.portrait, "target");	
 						UnitFrameHealthBar_Update(TargetFrame.healthbar, "target");
@@ -436,7 +444,7 @@ function sRaidFrames:PLAYER_TARGET_CHANGED()
 						TargetFrame_CheckClassification();
 						TargetFrame_CheckDead();
 						TargetFrame:Show()
-						--DEFAULT_CHAT_FRAME:AddMessage("1")
+						--DEFAULT_CHAT_FRAME:AddMessage("4")
 					else
 						TargetFrame:Hide()
 						--DEFAULT_CHAT_FRAME:AddMessage("2")
@@ -444,8 +452,6 @@ function sRaidFrames:PLAYER_TARGET_CHANGED()
 				end
 			end	
 			self.TargetMonitorManual = nil
-			--DEFAULT_CHAT_FRAME:AddMessage("Manual Target Change RESET")
-			--if UnitExists("target") then DEFAULT_CHAT_FRAME:AddMessage(GetUnitName("target")) end 
 		end
 		self.TargetMonitorCycleEnd = nil
 	end
@@ -2299,4 +2305,3 @@ function sRaidFrames:SetDegTex(force)
 
 
 end
-
