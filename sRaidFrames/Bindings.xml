@@ -31,8 +31,10 @@
 		sRaidFrames:chatToggleDispellable(not sRaidFrames.opt.ShowOnlyDispellable);
 	</Binding>
 	<Binding name="Add/Remove focus unit.">
-		if UnitExists("target") then 
-			sRaidFrames:AddRemoveFocusUnit("target");
+		--if UnitExists("target") and sRaidFrames:AddRemoveFocusUnit("target") then 
+		--	return
+		if UnitExists(sRaidFrames.mouseoverunit) and sRaidFrames:AddRemoveFocusUnit(sRaidFrames.mouseoverunit) then
+			return
 		end	
 	</Binding>
 </Bindings>

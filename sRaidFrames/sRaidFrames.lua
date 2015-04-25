@@ -78,6 +78,7 @@ sRaidFrames.hideWithoutStandby = false
 sRaidFrames.independentProfile = true
 sRaidFrames.TargetMonitor = nil
 sRaidFrames.TargetMonitorEnd = nil
+sRaidFrames.TargetMonitorManual = nil
 sRaidFrames.TargetMonitorCycleEnd = nil
 sRaidFrames.UpdateTargetIndex = {}
 
@@ -243,7 +244,9 @@ function sRaidFrames:OnEnable()
 	
 	Zorlen_MakeFirstMacros = nil
 
-
+	
+	--HOOKS--
+	
 	if LunaUnitFrames then
 		LunaUnitFrames.UpdateTargetFrameOld = LunaUnitFrames.UpdateTargetFrame
 		LunaUnitFrames.UpdateTargetFrame = self.Luna_Target_Hook
@@ -266,9 +269,6 @@ function sRaidFrames:OnEnable()
 		
 	end
 end
-
-
-
 
 function sRaidFrames:PatchUpdate()
 	if not self.opt.DebuffFilter then
@@ -394,34 +394,58 @@ function sRaidFrames:PLAYER_ENTERING_WORLD()
 end
 
 function sRaidFrames:PLAYER_TARGET_CHANGED()
+	local skipp_blizz = nil
+	
+	
+	if not self.TargetMonitor then
+		self.TargetMonitorManual = true
+		--DEFAULT_CHAT_FRAME:AddMessage("Manual Target Change")
+		
+	end
+	
 	if self.TargetMonitor and self.TargetMonitorEnd then
 		self.TargetMonitorEnd = nil
 		self.TargetMonitor = nil
-		
 	end
 
 	if self.TargetMonitorCycleEnd then
-		for blockindex,blockmatch in pairs(self.UpdateTargetIndex) do
-			--if UnitExists("target") then
-				if blockindex == 1  and XPerl_Target_NameFrame_NameBarText and XPerl_Target_NameFrame_NameBarText:GetText() ~= GetUnitName("target") then
-					--if XPerl_Target_NameFrame_NameBarText:GetText() then  DEFAULT_CHAT_FRAME:AddMessage("***********XPERL "..XPerl_Target_NameFrame_NameBarText:GetText().." diff "..(GetUnitName("target") or "")) end
+		if self.TargetMonitorManual then
+			for blockindex,blockmatch in pairs(self.UpdateTargetIndex) do
+				if blockindex == 1 then
+					skipp_blizz = true
 					XPerl_Target_UpdateDisplay_OLD()
 					XPerl_Target_UpdatePortrait_OLD()
 					
-				elseif blockindex == 2 and LunaTargetFrame and LunaTargetFrame.name and LunaTargetFrame.name:GetText() ~= GetUnitName("target") then
-					--if LunaTargetFrame.name:GetText() then DEFAULT_CHAT_FRAME:AddMessage("************LUNA "..LunaTargetFrame.name:GetText().." diff "..(GetUnitName("target") or "")) end
+				elseif blockindex == 2 then
+					skipp_blizz = true
 					LunaUnitFrames:UpdateTargetFrameOld()
 				
-				elseif blockindex == 3 and aUF and aUF.units.target.NameLabel and not string.find(aUF.units.target.NameLabel:GetText() or "", GetUnitName("target") or "")  then
-					--if aUF.units.target.NameLabel:GetText() then DEFAULT_CHAT_FRAME:AddMessage("***********AG "..aUF.units.target.NameLabel:GetText().." diff "..(GetUnitName("target") or "")) end
+				elseif blockindex == 3 then
+					skipp_blizz = true
 					aUF:PLAYER_TARGET_CHANGED_OLD()
 				
-				elseif blockindex == 4 and UnitExists("target") and TargetFrame and TargetFrame.name and TargetFrame.name:GetText() ~= GetUnitName("target") then
-					--if TargetFrame.name:GetText() then DEFAULT_CHAT_FRAME:AddMessage("************BLIZZARD "..TargetFrame.name:GetText().." diff "..(GetUnitName("target") or "")) end
-					TargetUnit("player")
-					TargetLastTarget()
+				elseif blockindex == 4 and not skipp_blizz then
+					if UnitExists("target") then
+						TargetFrame.name:SetText(UnitName("target"));
+						SetPortraitTexture(TargetFrame.portrait, "target");	
+						UnitFrameHealthBar_Update(TargetFrame.healthbar, "target");
+						UnitFrameManaBar_Update(TargetFrame.manabar, "target");
+						UnitFrame_UpdateManaType();
+						TargetFrame_CheckLevel();
+						TargetFrame_CheckFaction();
+						TargetFrame_CheckClassification();
+						TargetFrame_CheckDead();
+						TargetFrame:Show()
+						--DEFAULT_CHAT_FRAME:AddMessage("1")
+					else
+						TargetFrame:Hide()
+						--DEFAULT_CHAT_FRAME:AddMessage("2")
+					end	
 				end
-			--end	
+			end	
+			self.TargetMonitorManual = nil
+			--DEFAULT_CHAT_FRAME:AddMessage("Manual Target Change RESET")
+			--if UnitExists("target") then DEFAULT_CHAT_FRAME:AddMessage(GetUnitName("target")) end 
 		end
 		self.TargetMonitorCycleEnd = nil
 	end
@@ -463,6 +487,7 @@ function sRaidFrames:UpdateAllBuffs()
 end
 
 function sRaidFrames:Variables()
+	self.mouseoverunit = nil
 	self.enabled = false
 	self.preparesort = false
 	self.frames, self.visible, self.groupframes = {}, {}, {}
@@ -1338,7 +1363,7 @@ function sRaidFrames:UnitTooltip(frame)
   		GameTooltip:AddDoubleLine(self.cooldownSpells[fileName], "Ready!", nil, nil, nil, 0, 1, 0)
   	end
 	end
-
+	self.mouseoverunit = frame.unit
 	GameTooltip:Show()
 end
 
@@ -1357,7 +1382,7 @@ function sRaidFrames:CreateUnitFrame(id)
 	f:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp", "Button4Up", "Button5Up")
 	f:SetScript("OnClick", self.OnUnitClick)
 	f:SetScript("OnEnter", function() self:UnitTooltip(this) sRaidFrames:MouseOverHighlight(f, "ENTER") end)
-	f:SetScript("OnLeave", function() GameTooltip:Hide() sRaidFrames:MouseOverHighlight(f, "LEAVE") end)
+	f:SetScript("OnLeave", function() GameTooltip:Hide() sRaidFrames:MouseOverHighlight(f, "LEAVE") sRaidFrames.mouseoverunit = nil end)
 
 	f.title = f:CreateFontString(nil, "ARTWORK")
 	f.title:SetFontObject(GameFontNormalSmall)
@@ -2129,7 +2154,7 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 		self:UpdateVisibility()
 		self:LoadStyle()
 		
-		return
+		return true
 	end
 	
 	local unit = roster:GetUnitIDFromName(name)
@@ -2141,9 +2166,11 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 
 		self:UpdateVisibility()
 		self:LoadStyle()
+		return true
 	else
 		UIErrorsFrame:Clear()
 		UIErrorsFrame:AddMessage("|cFFFF0000"..err_txt)
+		return nil
 	end
 	return
 end
