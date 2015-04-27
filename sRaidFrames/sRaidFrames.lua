@@ -219,6 +219,8 @@ function sRaidFrames:OnInitialize()
 	--==Added by Ogrisch 
 	self:Hook("TargetFrame_OnEvent")
 	self:Hook("TargetFrame_OnShow")
+	self:Hook("TargetFrame_OnHide")
+
 	
 	Zorlen_MakeFirstMacros = nil
 	DEFAULT_CHAT_FRAME:AddMessage("_SRaidFrames Improved by ".."|cffFF0066".."Ogrisch".."|cffffffff".. " loaded")
@@ -330,6 +332,11 @@ end
 function sRaidFrames:TargetFrame_OnShow()
 	--self.hooks.TargetFrame_OnShow.orig()
 	--DEFAULT_CHAT_FRAME:AddMessage("TargetFrame_OnShow")
+end
+
+function sRaidFrames:TargetFrame_OnHide()
+	--self.hooks.TargetFrame_OnHide.orig()
+	--DEFAULT_CHAT_FRAME:AddMessage("TargetFrame_OnHide")
 end
 
 function sRaidFrames:OnDisable()
