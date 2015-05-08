@@ -658,7 +658,7 @@ function sRaidFrames:IsSpellInRangeAndActionBar(SpellName)
 				return false
 			end
 		else
-			if self.JoiningWorld > 0 and (GetTime() - self.JoiningWorld > 5) then
+			if self.JoiningWorld > 0 and (GetTime() - self.JoiningWorld > 6) then
 				UIErrorsFrame:AddMessage("|cff00eeee sRaidFrames: |cff00FF00"..SpellName.." - not on Actionbar")
 			end	
 			return false
@@ -1355,13 +1355,16 @@ function sRaidFrames:StopMovingOrSizingAll()
 end
 
 function sRaidFrames:UnitTooltip(frame)
+	local name, rank, subgroup, level, class, fileName, zone, online, isDead = GetRaidRosterInfo(frame.id);
+	if not fileName then return end
+	self.mouseoverunit = frame.unit
+	
 	if self.opt.TooltipMethod == "never" then
 		return
 	elseif self.opt.TooltipMethod == "notincombat" and UnitAffectingCombat("player") then
 		return
 	end
-	local name, rank, subgroup, level, class, fileName, zone, online, isDead = GetRaidRosterInfo(frame.id);
-	if not fileName then return end
+
 	GameTooltip:SetOwner(frame)
 	GameTooltip:AddDoubleLine(name, level, self.RAID_CLASS_COLORS[fileName].r, self.RAID_CLASS_COLORS[fileName].g, self.RAID_CLASS_COLORS[fileName].b, 1, 1, 1)
 	GameTooltip:AddLine(UnitRace(frame.unit) .. " " .. class, 1, 1, 1);
@@ -1376,7 +1379,7 @@ function sRaidFrames:UnitTooltip(frame)
   		GameTooltip:AddDoubleLine(self.cooldownSpells[fileName], "Ready!", nil, nil, nil, 0, 1, 0)
   	end
 	end
-	self.mouseoverunit = frame.unit
+
 	GameTooltip:Show()
 end
 
@@ -2311,4 +2314,11 @@ function sRaidFrames:SetDegTex(force)
 	end
 
 
+end
+
+
+
+function cba()
+	DEFAULT_CHAT_FRAME:AddMessage(igCreatureAggroSelect)
+	
 end
