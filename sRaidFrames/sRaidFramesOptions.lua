@@ -628,7 +628,21 @@ sRaidFrames.options = {
 					order = 2,
 				},
 				
-								
+				
+				wsg_focus = {
+					name = L["Add WSG Carrier to focus"],
+					type = "toggle",
+					desc = L["Auto add WSG Carrier to focus frame"],
+					get = function()
+						return sRaidFrames.opt.WSG_Focus
+					end,
+					set = function(value)
+						sRaidFrames:S("WSG_Focus", value)
+						sRaidFrames:UpdateFocusCarrier()
+					end,
+					order = 3,
+				},
+				
 				focus_size = {
 				name = L["Size"],
 				type = "group",

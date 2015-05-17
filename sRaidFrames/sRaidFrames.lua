@@ -165,7 +165,8 @@ function sRaidFrames:OnInitialize()
 		heal 				= "round",
 		RangeShow			= false,
 		FocusRangeShow		= false,
-		ArrowsEnable		= true
+		ArrowsEnable		= true,
+		WSG_Focus 			= false
 
 		
 	})
@@ -1119,7 +1120,10 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 						if not self.opt.show_txt_buff then
 							if texture == "Interface\\Icons\\INV_BannerPVP_01" or self.carrier == strlower(GetUnitName(unit)) then
 								f.mpbar.text:SetText("|cffFF0000"..L["Carrier"].."|r")
-								self.carrier = strlower(GetUnitName(unit))
+								if self.carrier ~= strlower(GetUnitName(unit)) then
+									self.carrier = strlower(GetUnitName(unit))
+									self:UpdateFocusCarrier()
+								end
 							elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
 								f.mpbar.text:SetText("|cff00ff00"..L["Innervate"].."|r")
 							elseif texture == "Interface\\Icons\\Ability_Warrior_ShieldWall" and self:GetBuffName(unit, i) == BS["Shield Wall"] then
@@ -2138,7 +2142,7 @@ function sRaidFrames:CheckFocusUnit(unit)
 		return
 	end	
 	
-	if self.UnitFocusArray[name] then--or self:CheckRangeFocus(unit, "check") then
+	if self.UnitFocusArray[name] or self.opt.WSG_Focus and self:CheckCarrier(unit) then
 		return true	
 	end
 	
@@ -2201,6 +2205,11 @@ function sRaidFrames:CheckCarrier(unit)
 	return nil
 end
 
+function sRaidFrames:UpdateFocusCarrier()
+	self:UpdateVisibility()
+	self:LoadStyle()
+end
+
 function sRaidFrames:TrackCarrier(msg)
 	local oposite_faction = "Alliance"
 	if UnitFactionGroup("player") == oposite_faction then
@@ -2215,9 +2224,11 @@ function sRaidFrames:TrackCarrier(msg)
 		local find3 = " was dropped "
 		
 		if string.find(msg, strlower(find1..find2)) then
-			_, _, self.carrier = string.find(msg, strlower(find1..find2.."by (.+)%!"))	
+			_, _, self.carrier = string.find(msg, strlower(find1..find2.."by (.+)%!"))
+			self:UpdateFocusCarrier()
 		elseif string.find(msg, strlower(find1..find3)) or string.find(msg, strlower(find0..find1)) then
 			self.carrier = nil
+			self:UpdateFocusCarrier()
 		end
 	end
 end
