@@ -1711,14 +1711,44 @@ function sRaidFrames:ReturnClassCount(class)
 	return counter_class
 end
 
+function sRaidFrames:ReturnClassPrefix(class)
+	if class == "Warrior" then
+		return 1
+	elseif class == "Rogue" then 	
+		return 2
+	elseif class == "Mage" then 	
+		return 3
+	elseif class == "Warlock" then 	
+		return 4
+	elseif class == "Druid" then 	
+		return 5
+	elseif class == "Priest" then 	
+		return 6
+	elseif class == "Shaman" then 	
+		return 7	
+	elseif class == "Paladin" then 	
+		return 7
+	elseif class == "Hunter" then 	
+		return 8		
+	else
+		return ""
+	end	
+end
+
 function sRaidFrames:MembersSortBy(id)
 	local sort_by = ""
 	local unit = "raid" .. id
 	--DEFAULT_CHAT_FRAME:AddMessage(Zorlen_UnitClass(unit).." ")
 	if self.opt.SubSort == "class" then
-		if UnitExists(unit) and Zorlen_UnitClass(unit) then
-			local prefix = self:ReturnClassCount(Zorlen_UnitClass(unit)) or 0
-			sort_by = prefix..Zorlen_UnitClass(unit) or ""
+		local class = Zorlen_UnitClass(unit) or ""
+		if UnitExists(unit) and class then --and self.opt.SortBy == "class"
+			local prefix = 0
+			if self.opt.SortBy == "class" then
+				prefix = self:ReturnClassCount(class) or 0
+			else
+				prefix = self:ReturnClassPrefix(class) or 0
+			end	
+			sort_by = prefix..class or ""
 		end
 	elseif self.opt.SubSort == "name" then
 		sort_by = UnitName(unit) or ""

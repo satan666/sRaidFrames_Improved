@@ -52,8 +52,8 @@ L:RegisterTranslations("enUS", function() return {
 	
 	["_Focus frame"] = true,
 	["Use keybinding to add/remove focus units."] = true,
-	["Add WSG Carrier to focus"] = true;
-	["Auto add WSG Carrier to focus frame"] = true,
+	["Add WSG carrier to focus"] = true;
+	["Auto add WSG carrier to focus frame"] = true,
 	
 	["Load predefined settings"] = true,
 	["Common"] = true,

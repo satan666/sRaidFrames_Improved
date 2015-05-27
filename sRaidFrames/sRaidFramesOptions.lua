@@ -630,9 +630,9 @@ sRaidFrames.options = {
 				
 				
 				wsg_focus = {
-					name = L["Add WSG Carrier to focus"],
+					name = L["Add WSG carrier to focus"],
 					type = "toggle",
-					desc = L["Auto add WSG Carrier to focus frame"],
+					desc = L["Auto add WSG carrier to focus frame"],
 					get = function()
 						return sRaidFrames.opt.WSG_Focus
 					end,
