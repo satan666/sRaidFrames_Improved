@@ -1981,6 +1981,8 @@ function sRaidFrames:ProfileFeedCommon()
 	sRaidFrames:S("healthDisplayType", "none")
 	
 	sRaidFrames:S("statusbar_color", true)
+	sRaidFrames:S("ScaleFocus", sRaidFrames.opt.Scale)
+	sRaidFrames:S("WidthFocus", sRaidFrames.opt.Width)
 
 end
 
