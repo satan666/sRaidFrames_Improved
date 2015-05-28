@@ -1738,10 +1738,9 @@ end
 function sRaidFrames:MembersSortBy(id)
 	local sort_by = ""
 	local unit = "raid" .. id
-	--DEFAULT_CHAT_FRAME:AddMessage(Zorlen_UnitClass(unit).." ")
 	if self.opt.SubSort == "class" then
 		local class = Zorlen_UnitClass(unit) or ""
-		if UnitExists(unit) and class then --and self.opt.SortBy == "class"
+		if UnitExists(unit) and class then
 			local prefix = 0
 			if self.opt.SortBy == "class" then
 				prefix = self:ReturnClassCount(class) or 0
@@ -1757,7 +1756,6 @@ function sRaidFrames:MembersSortBy(id)
 		sort_by = subgroup..id
 	end	
 	
-	--if self.opt.SortBy == "fixed" and self.opt.dead_sort and not self.feign[unit] then
 	if self.opt.dead_sort and not self.feign[unit] then
 		if not UnitIsConnected(unit) then
 			sort_by = "zzz"..sort_by
@@ -1769,7 +1767,6 @@ function sRaidFrames:MembersSortBy(id)
 			sort_by = "zzw"..sort_by
 		end	
 	end
-	--DEFAULT_CHAT_FRAME:AddMessage(sort_by)
 	return sort_by
 end
 
@@ -1998,6 +1995,9 @@ end
 
 function sRaidFrames:ResetPosition()
 	self:PositionLayout("sticky", 200, -300)
+	self:S("ScaleFocus", sRaidFrames.opt.Scale)
+	self:S("WidthFocus", sRaidFrames.opt.Width)
+	self:LoadStyle()
 end
 
 function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)

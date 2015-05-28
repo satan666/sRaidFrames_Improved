@@ -556,6 +556,14 @@ sRaidFrames.options = {
 						order = 10,
 					},
 					
+					reset = {
+						name = L["Reset layout"],
+						type = "execute",
+						desc = L["Reset the position of sRaidFrames"],
+						func = "ResetPosition",
+						order = 12
+					},
+					
 								
 					}	
 				},				
@@ -772,7 +780,7 @@ sRaidFrames.options = {
 			order = 2,
 		},
 
-
+		--[[
 		layout = {
 			name = L["Layout"],
 			type = "group",
@@ -797,7 +805,7 @@ sRaidFrames.options = {
 				--]]
 			},
 		},
-
+	--]]
 
 
 		sorting_method = {
@@ -1979,7 +1987,7 @@ end
 function sRaidFrames:ProfileFeedClassic()
 	sRaidFrames:chatSortBy("fixed")
 	sRaidFrames:ProfileFeedCommon()
-	sRaidFrames:S("Spacing", -4)
+	sRaidFrames:S("Spacing", -5)
 	sRaidFrames:S("show_txt_buff", nil)
 	sRaidFrames:S("Buff_Growth", "horizontal")
 	sRaidFrames:S("Buff_Anchor", "bottomright")
@@ -1987,12 +1995,13 @@ function sRaidFrames:ProfileFeedClassic()
 	sRaidFrames:chatTexture("Gradient")
 	sRaidFrames:S("buff_size", 12)
 	sRaidFrames:chatHealingIndicators("round")
-	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp")
-	sRaidFrames:chatBorderColor(0.5, 0.5, 0.5, 1)
+	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
+	sRaidFrames:chatBorderColor(0, 0, 0, 1)
+	sRaidFrames:PositionLayout("sticky", 200, -200)
+	sRaidFrames:S("Invert", true)
 	sRaidFrames:MultidragMsg()
 	sRaidFrames:LoadStyle()
-	sRaidFrames:PositionLayout("sticky", 200, -200)
-	
+
 end
 
 function sRaidFrames:ProfileFeedGrid()
@@ -2008,9 +2017,11 @@ function sRaidFrames:ProfileFeedGrid()
 	sRaidFrames:chatHealingIndicators("square")
 	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
 	sRaidFrames:chatBorderColor(0.3, 0.3, 0.3, 1)
+	sRaidFrames:PositionLayout("sticky", 200, -200)
+	sRaidFrames:S("Invert", nil)
 	sRaidFrames:MultidragMsg()
 	sRaidFrames:LoadStyle()
-	sRaidFrames:PositionLayout("sticky", 200, -200)
+
 end
 
 function sRaidFrames:ProfileFeedPyramid()
@@ -2026,15 +2037,16 @@ function sRaidFrames:ProfileFeedPyramid()
 	sRaidFrames:chatHealingIndicators("square")
 	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
 	sRaidFrames:chatBorderColor(1, 1, 1, 1)
+	sRaidFrames:PositionLayout("sticky", 200, -200)
+	sRaidFrames:S("Invert", nil)
 	sRaidFrames:MultidragMsg()
 	sRaidFrames:LoadStyle()
-	sRaidFrames:PositionLayout("sticky", 200, -200)
 end
 
 function sRaidFrames:ProfileFeedCompact()
 	sRaidFrames:chatSortBy("fixed")
 	sRaidFrames:ProfileFeedCommon()
-	sRaidFrames:S("Spacing", -6)
+	sRaidFrames:S("Spacing", -4)
 	sRaidFrames:S("show_txt_buff", nil)
 	sRaidFrames:S("Buff_Growth", "vertical")
 	sRaidFrames:S("Buff_Anchor", "topright")
@@ -2042,15 +2054,12 @@ function sRaidFrames:ProfileFeedCompact()
 	sRaidFrames:chatTexture("BantoBar")
 	sRaidFrames:S("buff_size", 10)
 	sRaidFrames:chatHealingIndicators("square")
-	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Grid.tga")
+	sRaidFrames:S("Bordertexture", "Interface\\AddOns\\sRaidFrames\\borders\\UI-Tooltip-Border_Original.blp")
 	sRaidFrames:chatBorderColor(0.3, 0.3, 0.3, 1)
+	sRaidFrames:PositionLayout("sticky", 200, -200)
+	sRaidFrames:S("Invert", nil)
 	sRaidFrames:MultidragMsg()
 	sRaidFrames:LoadStyle()
-	sRaidFrames:PositionLayout("sticky", 200, -200)
 end
 
-					
-function xxx()
-DEFAULT_CHAT_FRAME:AddMessage(sRaidFrames.opt.BackgroundColor.r..sRaidFrames.opt.BackgroundColor.g..sRaidFrames.opt.BackgroundColor.b)
-
-end
+				
