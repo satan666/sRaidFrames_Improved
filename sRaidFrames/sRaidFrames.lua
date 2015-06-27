@@ -79,7 +79,7 @@ sRaidFrames.independentProfile = true
 sRaidFrames.TargetMonitor = nil
 sRaidFrames.TargetMonitorEnd = nil
 sRaidFrames.TargetMonitorManual = nil
-sRaidFrames.TargetMonitorCycleEnd = nil
+sRaidFrames.TargetMonitorCycleName = nil
 sRaidFrames.UpdateTargetIndex = {}
 
 
@@ -407,7 +407,8 @@ end
 
 function sRaidFrames:PLAYER_TARGET_CHANGED()
 	local skipp_blizz = nil
-	if not self.TargetMonitor then
+	--if not self.TargetMonitor then
+	if self.TargetMonitorCycleName ~= GetUnitName("target") then
 		self.TargetMonitorManual = true
 	end
 	
@@ -415,9 +416,12 @@ function sRaidFrames:PLAYER_TARGET_CHANGED()
 		self.TargetMonitorEnd = nil
 		self.TargetMonitor = nil
 	end
+end
 
-	if self.TargetMonitorCycleEnd then
+function sRaidFrames:UtilizeTarget()
+	--if self.TargetMonitorCycleEnd then
 		if self.TargetMonitorManual then
+			self:DebugRange("____Target Changed Manually______") 
 			for blockindex,blockmatch in pairs(self.UpdateTargetIndex) do
 				if blockindex == 1 then
 				--DEFAULT_CHAT_FRAME:AddMessage("1")
@@ -431,13 +435,12 @@ function sRaidFrames:PLAYER_TARGET_CHANGED()
 					LunaUnitFrames:UpdateTargetFrameOld()
 				
 				elseif blockindex == 3 then
-			--	DEFAULT_CHAT_FRAME:AddMessage("3")
+				--	DEFAULT_CHAT_FRAME:AddMessage("3")
 					skipp_blizz = true
 					aUF:PLAYER_TARGET_CHANGED_OLD()
 				
 				elseif blockindex == 4 and not skipp_blizz then
 					if UnitExists("target") then
-
 						--if TargetFrame and TargetFrame.name and TargetFrame.name:GetText() ~= GetUnitName("target") then
 						--	DEFAULT_CHAT_FRAME:AddMessage("************BLIZZARD "..TargetFrame.name:GetText().." diff "..GetUnitName("target"))
 						--end
@@ -461,9 +464,10 @@ function sRaidFrames:PLAYER_TARGET_CHANGED()
 			end	
 			self.TargetMonitorManual = nil
 		end
-		self.TargetMonitorCycleEnd = nil
-	end
+		--self.TargetMonitorCycleEnd = nil
+	--end
 end
+
 
 function sRaidFrames:LeftRaid()
 	--self:Print("Left raid, disabling raid frames")
@@ -565,8 +569,7 @@ function sRaidFrames:UpdateRoster()
 	end
 	
 	self:ResetHealIndicators()
-	self:UpdateVisibility()
-	self:LoadStyle()
+	self:UpdateRaidFrames()
 end
 
 function sRaidFrames:QueryVisibility(id)
@@ -810,8 +813,13 @@ function sRaidFrames:ExtendedRangeCheck()
 	if j then
 		local jumpnext = true
 		local targetchanged = nil
-
+		local tempcyclename = nil
+		
+		self.TargetMonitorCycleName = GetUnitName("target")
+		
 		if not UnitExists("target") or UnitExists("target") and not UnitIsUnit("target", j) then
+			tempcyclename = GetUnitName("target")
+			self.TargetMonitorCycleName = GetUnitName(j)
 			self.TargetMonitor = true
 			targetchanged = true
 			TargetUnit(j)		
@@ -824,6 +832,7 @@ function sRaidFrames:ExtendedRangeCheck()
 			jumpnext = nil
 		end
 		if targetchanged then 
+			self.TargetMonitorCycleName = tempcyclename
 			self.TargetMonitorEnd = true
 			TargetLastTarget()
 		end
@@ -834,7 +843,10 @@ function sRaidFrames:ExtendedRangeCheck()
 		self:ExtendedRangeArrayUtilize("remove", j)
 		
 		if self:ExtendedRangeArrayUtilize("calc") == 0 then
-			self.TargetMonitorCycleEnd = true
+			--self.TargetMonitorCycleEnd = true
+			sRaidFrames:UtilizeTarget()
+			
+			
 		end
 	end
 end
@@ -1122,7 +1134,7 @@ function sRaidFrames:UpdateBuffs(units, update_counter)
 								f.mpbar.text:SetText("|cffFF0000"..L["Carrier"].."|r")
 								if self.carrier ~= strlower(GetUnitName(unit)) then
 									self.carrier = strlower(GetUnitName(unit))
-									self:UpdateFocusCarrier()
+									self:UpdateRaidFrames()
 								end
 							elseif texture == "Interface\\Icons\\Spell_Nature_Lightning" and self:GetBuffName(unit, i) == BS["Innervate"] then
 								f.mpbar.text:SetText("|cff00ff00"..L["Innervate"].."|r")
@@ -2201,8 +2213,7 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 		UIErrorsFrame:Clear()
 		UIErrorsFrame:AddMessage(color.."Remove Focus: "..name)
 		
-		self:UpdateVisibility()
-		self:LoadStyle()
+		self:UpdateRaidFrames()
 		
 		return true
 	end
@@ -2214,8 +2225,7 @@ function sRaidFrames:AddRemoveFocusUnit(unit)
 		UIErrorsFrame:Clear()
 		UIErrorsFrame:AddMessage(color.."Add Focus : "..name)
 
-		self:UpdateVisibility()
-		self:LoadStyle()
+		self:UpdateRaidFrames()
 		return true
 	else
 		UIErrorsFrame:Clear()
@@ -2228,14 +2238,13 @@ end
 
 function sRaidFrames:CheckCarrier(unit)
 	local name = GetUnitName(unit)
-	if self.carrier and name and strlower(name) == self.carrier then
-		
+	if self.carrier and name and strlower(name) == self.carrier and not UnitIsDeadOrGhost(unit) then	
 		return true
 	end
 	return nil
 end
 
-function sRaidFrames:UpdateFocusCarrier()
+function sRaidFrames:UpdateRaidFrames()
 	self:UpdateVisibility()
 	self:LoadStyle()
 end
@@ -2255,10 +2264,10 @@ function sRaidFrames:TrackCarrier(msg)
 		
 		if string.find(msg, strlower(find1..find2)) then
 			_, _, self.carrier = string.find(msg, strlower(find1..find2.."by (.+)%!"))
-			self:UpdateFocusCarrier()
+			self:UpdateRaidFrames()
 		elseif string.find(msg, strlower(find1..find3)) or string.find(msg, strlower(find0..find1)) then
 			self.carrier = nil
-			self:UpdateFocusCarrier()
+			self:UpdateRaidFrames()
 		end
 	end
 end
