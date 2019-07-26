@@ -40,6 +40,7 @@ localization.koKR.lua
 localization.zhCN.lua
 localization.zhTW.lua
 localization.frFR.lua
+localization.ruRU.lua
 sRaidFrames.lua
 sRaidFramesOptions.lua
 sRaidFramesHeals.lua
