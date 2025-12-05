@@ -134,6 +134,8 @@ L:RegisterTranslations("zhTW", function() return {
 	["Toggle the display of Group 7"] = "顯示小隊 7",
 	["Group 8"] = "小隊 8",
 	["Toggle the display of Group 8"] = "顯示小隊 8",
+	["Group 9"] = "小隊 9",
+	["Toggle the display of Group 9"] = "顯示小隊 9",
 	
 	["Growth"] = "標題置底",
 	["Set the growth of the raid frames"] = "將框架標題置底",

@@ -139,7 +139,10 @@ L:RegisterTranslations("frFR", function() return {
 	["Toggle the display of Group 7"] = "Active/d\195\169sactive l'affichage du groupe 7",
 	["Group 8"] = "Groupe 8",
 	["Toggle the display of Group 8"] = "Active/d\195\169sactive l'affichage du groupe 8",
-
+	["Group 9"] = "Groupe 9",
+	["Toggle the display of Group 9"] = "Active/d\195\169sactive l'affichage du groupe 9",
+	
+	
 	["Growth"] = "Croissance",
 	["Set the growth of the raid frames"] = "D\195\169finie la croissance des fen\195\170tres de raid",
 	["Up"] = "Vers le haut",

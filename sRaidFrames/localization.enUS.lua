@@ -329,6 +329,9 @@ L:RegisterTranslations("enUS", function() return {
 	["Toggle the display of Group 7"] = true,
 	["Group 8"] = true,
 	["Toggle the display of Group 8"] = true,
+	["Group 9"] = true,
+	["Toggle the display of Group 9"] = true,
+
 
 	["Growth"] = true,
 	["Set the growth of the raid frames"] = true,

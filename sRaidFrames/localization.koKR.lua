@@ -134,6 +134,9 @@ L:RegisterTranslations("koKR", function() return {
 	["Toggle the display of Group 7"] = "7 파티의 표시 전환",
 	["Group 8"] = "8 파티",
 	["Toggle the display of Group 8"] = "8 파티의 표시 전환",
+	["Group 9"] = "9 파티",
+	["Toggle the display of Group 9"] = "9 파티의 표시 전환",
+
 
 	["Growth"] = "생성 방향",
 	["Set the growth of the raid frames"] = "공격대창의 생성 방향 설정",

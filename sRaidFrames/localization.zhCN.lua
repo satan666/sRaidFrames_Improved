@@ -140,6 +140,8 @@ L:RegisterTranslations("zhCN", function() return {
 	["Toggle the display of Group 7"] = "显示小队 7",
 	["Group 8"] = "小队 8",
 	["Toggle the display of Group 8"] = "显示小队 8",
+	["Group 9"] = "小队 9",
+	["Toggle the display of Group 9"] = "显示小队 9",
 	
 	["Growth"] = "增长方向",
 	["Set the growth of the raid frames"] = "设置框体的增长方向",
