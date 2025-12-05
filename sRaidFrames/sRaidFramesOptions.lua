@@ -646,7 +646,7 @@ sRaidFrames.options = {
 					end,
 					set = function(value)
 						sRaidFrames:S("WSG_Focus", value)
-						sRaidFrames:UpdateFocusCarrier()
+						sRaidFrames:UpdateRaidFrames()
 					end,
 					order = 3,
 				},

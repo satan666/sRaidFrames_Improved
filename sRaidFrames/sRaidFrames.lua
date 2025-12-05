@@ -200,7 +200,7 @@ function sRaidFrames:OnInitialize()
 		self:CreateUnitFrame(i)
 	end
 
-	for i = 1, 9 do
+	for i = 1, 10 do
 		self:CreateGroupFrame(i)
 	end
 	
@@ -1523,7 +1523,7 @@ function sRaidFrames:CreateGroupFrame(id)
 	f:SetMovable(true)
 	f:EnableMouse(true)
 	
-	if id == 9 then
+	if id == 10 then
 		f:SetScript("OnDragStart", function() if self.opt.lock_focus then return end if IsAltKeyDown() then self:StartMovingAll() end f:StartMoving() end)
 	else
 		f:SetScript("OnDragStart", function() if self.opt.lock then return end if IsAltKeyDown() then self:StartMovingAll() end f:StartMoving() end)
@@ -1537,7 +1537,7 @@ function sRaidFrames:CreateGroupFrame(id)
 	f.title:SetFontObject(GameFontNormalSmall)
 	f.title:SetJustifyH("CENTER")
 	f.title:SetText("Group ".. id);
-	if id ~= 9 and not self.opt.ShowGroupTitles or id == 9 and not self.opt.ShowGroupTitles_Focus then
+	if id ~= 10 and not self.opt.ShowGroupTitles or id == 10 and not self.opt.ShowGroupTitles_Focus then
 		f.title:Hide()
 	end
 
@@ -1739,9 +1739,9 @@ function sRaidFrames:ReturnClassPrefix(class)
 	elseif class == "Shaman" then 	
 		return 7	
 	elseif class == "Paladin" then 	
-		return 7
+		return 8
 	elseif class == "Hunter" then 	
-		return 8		
+		return 9		
 	else
 		return ""
 	end	
@@ -1809,7 +1809,9 @@ function sRaidFrames:Sort(force_sort)
 		
 		table.insert(queue, "Warrior")
 		table.insert(queue, "Mage")
-		if UnitFactionGroup("player") == "Alliance" then table.insert(queue, "Paladin")	else table.insert(queue, "Shaman") end	
+		--if UnitFactionGroup("player") == "Alliance" then table.insert(queue, "Paladin")	else table.insert(queue, "Shaman") end	
+		table.insert(queue, "Shaman")
+		table.insert(queue, "Paladin")
 		table.insert(queue, "Druid")
 		table.insert(queue, "Hunter")
 		table.insert(queue, "Rogue")
@@ -1822,17 +1824,18 @@ function sRaidFrames:Sort(force_sort)
 			table.sort(queue, function(a,b) return sRaidFrames:ReturnClassCount(a) > sRaidFrames:ReturnClassCount(b) end)
 		end	
 
-		for i=1,8 do
+		for i=1,9 do
 			frameAssignments[string.upper(queue[i])] = i
 		end
 
 		self.groupframes[frameAssignments["WARRIOR"]].title:SetText(L["Warrior"]);
 		self.groupframes[frameAssignments["MAGE"]].title:SetText(L["Mage"]);
-		if UnitFactionGroup("player") == "Alliance" then
-			self.groupframes[frameAssignments["PALADIN"]].title:SetText(L["Paladin"]);
-		else
+		--if UnitFactionGroup("player") == "Alliance" then
 			self.groupframes[frameAssignments["SHAMAN"]].title:SetText(L["Shaman"]);
-		end	
+			self.groupframes[frameAssignments["PALADIN"]].title:SetText(L["Paladin"]);
+		--else
+			
+		--end	
 		self.groupframes[frameAssignments["DRUID"]].title:SetText(L["Druid"]);
 		self.groupframes[frameAssignments["HUNTER"]].title:SetText(L["Hunter"]);
 		self.groupframes[frameAssignments["ROGUE"]].title:SetText(L["Rogue"]);
@@ -1848,6 +1851,7 @@ function sRaidFrames:Sort(force_sort)
 		frameAssignments[6] = 6;
 		frameAssignments[7] = 7;
 		frameAssignments[8] = 8;
+		frameAssignments[9] = 9;
 
 		self.groupframes[1].title:SetText(L["Group 1"]);
 		self.groupframes[2].title:SetText(L["Group 2"]);
@@ -1857,10 +1861,11 @@ function sRaidFrames:Sort(force_sort)
 		self.groupframes[6].title:SetText(L["Group 6"]);
 		self.groupframes[7].title:SetText(L["Group 7"]);
 		self.groupframes[8].title:SetText(L["Group 8"]);
+		self.groupframes[9].title:SetText(L["Group 9"]);
 	end
 	
-	frameAssignments[9] = 9;
-	self.groupframes[9].title:SetText("Focus");
+	frameAssignments[10] = 10;
+	self.groupframes[10].title:SetText("Focus");
 
 	-- -- -- Do the sorting -- -- --
 
@@ -1900,7 +1905,7 @@ function sRaidFrames:Sort(force_sort)
 				frameAssignee = frameAssignments[subgroup]
 			end
 		else
-			for k=8,1,-1 do
+			for k=9,1,-1 do
 				if counter[k] < self.opt.fixed_count then
 					frameAssignee = k
 				end
@@ -1909,7 +1914,7 @@ function sRaidFrames:Sort(force_sort)
 
 		local growth = self.opt.Growth
 		if self:CheckFocusUnit("raid"..id) then
-			frameAssignee = 9
+			frameAssignee = 10
 			growth = self.opt.Growth_Focus
 		end
 
@@ -1938,7 +1943,7 @@ function sRaidFrames:Sort(force_sort)
 			counter[frameAssignee] = counter[frameAssignee] + 1
 			groupframe:Show()
 			
-			if frameAssignee ~= 9 and self.opt.ShowGroupTitles or frameAssignee == 9 and self.opt.ShowGroupTitles_Focus then
+			if frameAssignee ~= 10 and self.opt.ShowGroupTitles or frameAssignee == 10 and self.opt.ShowGroupTitles_Focus then
 				groupframe.title:Show()
 			else
 				groupframe.title:Hide()
@@ -2020,7 +2025,7 @@ function sRaidFrames:PositionLayout(layout, xBuffer, yBuffer)
 	for k,v in pairs(self.groupframes) do
 		i = i + 1
 		
-		if k == 9 then
+		if k == 10 then
 			xMod = 2*(f:GetHeight()*self.master:GetScale()+self.opt.Spacing)
 			yMod = f:GetWidth()*self.master:GetScale()+self.opt.Spacing
 		elseif layout == "horizontal" then
