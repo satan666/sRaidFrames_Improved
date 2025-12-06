@@ -1786,7 +1786,7 @@ function sRaidFrames:Sort(force_sort)
 	local self = sRaidFrames
 	local frameAssignments = {}
 	local sort = {}
-	local counter={0,0,0,0,0,0,0,0,0}
+	local counter={0,0,0,0,0,0,0,0,0,0}
 
 	--self:RefreshFocusWithRange()
 
@@ -1895,7 +1895,10 @@ function sRaidFrames:Sort(force_sort)
 	for _,id in pairs(sort) do
 		local frameAssignee = nil
 		if self.opt.SortBy == "class" then
-			local _, eClass = UnitClass("raid"..id)
+			--local _, eClass = UnitClass("raid"..id)
+			local _, eClass = Zorlen_UnitClass("raid"..id)
+			
+			
 			if eClass then
 				frameAssignee = frameAssignments[eClass]
 			end
