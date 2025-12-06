@@ -334,6 +334,8 @@ L:RegisterTranslations("ruRU", function() return {
 	["Toggle the display of Group 7"] = "Переключить отображение Группы 7",
 	["Group 8"] = "Группа 8",
 	["Toggle the display of Group 8"] = "Переключить отображение Группы 8",
+	["Group 9"] = "Группа 9",
+	["Toggle the display of Group 9"] = "Переключить отображение Группы 9",		
 
 	["Growth"] = "Возрастание",
 	["Set the growth of the raid frames"] = "Установить возрастание рамок рейда",
