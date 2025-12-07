@@ -720,7 +720,7 @@ function sRaidFrames:RangeCheck()
 	end	
 	
 	if not self.ClassCheck then 
-		self.ClassCheck = Zorlen_UnitClass("player")
+		self.ClassCheck = UnitClass("player")
 		self.SpellCheck = self.ClassSpellArray[self.ClassCheck]
 	end
 
@@ -1714,7 +1714,7 @@ function sRaidFrames:ReturnClassCount(class)
 
 	while counter <= NumMembers do
 		u = "raid"..counter
-		if Zorlen_UnitClass(u) == class and not self:CheckFocusUnit(u) then
+		if UnitClass(u) == class and not self:CheckFocusUnit(u) then
 			counter_class = counter_class + 1
 		end
 		counter = counter + 1	
@@ -1751,7 +1751,7 @@ function sRaidFrames:MembersSortBy(id)
 	local sort_by = ""
 	local unit = "raid" .. id
 	if self.opt.SubSort == "class" then
-		local class = Zorlen_UnitClass(unit) or ""
+		local class = UnitClass(unit) or ""
 		if UnitExists(unit) and class then
 			local prefix = 0
 			if self.opt.SortBy == "class" then
@@ -1809,7 +1809,6 @@ function sRaidFrames:Sort(force_sort)
 		
 		table.insert(queue, "Warrior")
 		table.insert(queue, "Mage")
-		--if UnitFactionGroup("player") == "Alliance" then table.insert(queue, "Paladin")	else table.insert(queue, "Shaman") end	
 		table.insert(queue, "Shaman")
 		table.insert(queue, "Paladin")
 		table.insert(queue, "Druid")
@@ -1895,8 +1894,7 @@ function sRaidFrames:Sort(force_sort)
 	for _,id in pairs(sort) do
 		local frameAssignee = nil
 		if self.opt.SortBy == "class" then
-			--local _, eClass = UnitClass("raid"..id)
-			local _, eClass = Zorlen_UnitClass("raid"..id)
+			local _, eClass = UnitClass("raid"..id)
 			
 			
 			if eClass then
